@@ -35,7 +35,6 @@ public partial class PassengerService : IPassengerService
     /// Gets all passengers
     /// </summary>
     /// <param name="recoveryNo">Recovery number; 0 to load all passengers</param>
-    /// <param name="recoveryYear">Recovery year; 0 to load all passengers</param>
     /// <param name="personName">Person name; null to load all passengers</param>
     /// <param name="agencyId">Agency identifier; 0 to load all passengers</param>
     /// <param name="pageIndex">Page index</param>
@@ -45,15 +44,13 @@ public partial class PassengerService : IPassengerService
     /// A task that represents the asynchronous operation
     /// The task result contains the passengers
     /// </returns>
-    public virtual async Task<IPagedList<Passenger>> GetAllPassengersAsync(int recoveryNo = 0, int recoveryYear = 0,
+    public virtual async Task<IPagedList<Passenger>> GetAllPassengersAsync(int recoveryNo = 0,
         string personName = null, int agencyId = 0, int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false)
     {
         var passengers = await _passengerRepository.GetAllPagedAsync(query =>
         {
             if (recoveryNo > 0)
                 query = query.Where(p => p.RecoveryNo == recoveryNo);
-            if (recoveryYear > 0)
-                query = query.Where(p => p.RecoveryYear == recoveryYear);
             if (!string.IsNullOrWhiteSpace(personName))
                 query = query.Where(p => p.PersonName.Contains(personName));
             if (agencyId > 0)

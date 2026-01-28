@@ -71,7 +71,6 @@ public partial class PassengerModelFactory : IPassengerModelFactory
         //get passengers
         var passengers = await _passengerService.GetAllPassengersAsync(
             recoveryNo: searchModel.SearchRecoveryNo,
-            recoveryYear: searchModel.SearchRecoveryYear,
             personName: searchModel.SearchPersonName,
             pageIndex: searchModel.Page - 1,
             pageSize: searchModel.PageSize);

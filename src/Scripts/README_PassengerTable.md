@@ -23,10 +23,7 @@
 
 - **Id**: شناسه یکتا (Primary Key, Identity)
 - **RecoveryNo**: شماره بازیابی
-- **RecoveryYear**: سال بازیابی
-- **RecoveryMonth**: ماه بازیابی
 - **PersonName**: نام شخص
-- **BranchName**: نام شعبه
 - **GuideNameAndLegionNo**: نام راهنما و شماره لژیون
 - **ClinicName**: نام کلینیک
 - **BirthDateUtc**: تاریخ تولد
@@ -34,11 +31,12 @@
 - **MaritalStatus**: وضعیت تاهل (enum)
 - **EmploymentStatus**: وضعیت اشتغال (enum)
 - **CardNo**: شماره کارت
-- **AntiX1**: فیلد AntiX1
-- **AntiX2**: فیلد AntiX2
+- **AntiX1**: فیلد AntiX1 (عدد)
+- **AntiX2**: فیلد AntiX2 (عدد)
 - **TravelStartDateUtc**: تاریخ شروع سفر
 - **TravelEndDateUtc**: تاریخ پایان سفر
 - **PictureId**: شناسه تصویر
+- **AgencyId**: شناسه نمایندگی
 - **CreatedOnUtc**: تاریخ ایجاد
 
 ## Indexes

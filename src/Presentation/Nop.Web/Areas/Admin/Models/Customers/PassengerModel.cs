@@ -27,17 +27,8 @@ public partial record PassengerModel : BaseNopEntityModel
     [NopResourceDisplayName("Admin.Passengers.Fields.RecoveryNo")]
     public int RecoveryNo { get; set; }
 
-    [NopResourceDisplayName("Admin.Passengers.Fields.RecoveryYear")]
-    public int RecoveryYear { get; set; }
-
-    [NopResourceDisplayName("Admin.Passengers.Fields.RecoveryMonth")]
-    public string RecoveryMonth { get; set; }
-
     [NopResourceDisplayName("Admin.Passengers.Fields.PersonName")]
     public string PersonName { get; set; }
-
-    [NopResourceDisplayName("Admin.Passengers.Fields.BranchName")]
-    public string BranchName { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.Fields.GuideNameAndLegionNo")]
     public string GuideNameAndLegionNo { get; set; }
@@ -66,10 +57,10 @@ public partial record PassengerModel : BaseNopEntityModel
     public long? CardNo { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.Fields.AntiX1")]
-    public string AntiX1 { get; set; }
+    public int AntiX1 { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.Fields.AntiX2")]
-    public string AntiX2 { get; set; }
+    public int AntiX2 { get; set; }
 
     [UIHint("PersianDateNullable")]
     [PersianDate]

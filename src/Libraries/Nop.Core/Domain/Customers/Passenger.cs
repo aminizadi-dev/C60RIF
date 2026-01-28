@@ -11,13 +11,7 @@ public partial class Passenger : BaseEntity
 {
     public int RecoveryNo { get; set; }
 
-    public int RecoveryYear { get; set; }
-
-    public string RecoveryMonth { get; set; }
-
     public string PersonName { get; set; }
-
-    public string BranchName { get; set; }
 
     public string GuideNameAndLegionNo { get; set; }
 
@@ -33,9 +27,9 @@ public partial class Passenger : BaseEntity
 
     public long? CardNo { get; set; }
 
-    public string AntiX1 { get; set; }
+    public int AntiX1 { get; set; }
 
-    public string AntiX2 { get; set; }
+    public int AntiX2 { get; set; }
 
     public DateTime? TravelStartDateUtc { get; set; }
 

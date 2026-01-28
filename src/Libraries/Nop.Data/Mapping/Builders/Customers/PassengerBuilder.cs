@@ -20,10 +20,7 @@ public partial class PassengerBuilder : NopEntityBuilder<Passenger>
     {
         table
             .WithColumn(nameof(Passenger.RecoveryNo)).AsInt32().NotNullable()
-            .WithColumn(nameof(Passenger.RecoveryYear)).AsInt32().NotNullable()
-            .WithColumn(nameof(Passenger.RecoveryMonth)).AsString(50).Nullable()
             .WithColumn(nameof(Passenger.PersonName)).AsString(500).Nullable()
-            .WithColumn(nameof(Passenger.BranchName)).AsString(500).Nullable()
             .WithColumn(nameof(Passenger.GuideNameAndLegionNo)).AsString(500).Nullable()
             .WithColumn(nameof(Passenger.ClinicName)).AsString(500).Nullable()
             .WithColumn(nameof(Passenger.BirthDateUtc)).AsDateTime2().Nullable()
@@ -31,8 +28,8 @@ public partial class PassengerBuilder : NopEntityBuilder<Passenger>
             .WithColumn(nameof(Passenger.MaritalStatus)).AsInt32().NotNullable()
             .WithColumn(nameof(Passenger.EmploymentStatus)).AsInt32().NotNullable()
             .WithColumn(nameof(Passenger.CardNo)).AsInt64().Nullable()
-            .WithColumn(nameof(Passenger.AntiX1)).AsString(500).Nullable()
-            .WithColumn(nameof(Passenger.AntiX2)).AsString(500).Nullable()
+            .WithColumn(nameof(Passenger.AntiX1)).AsInt32().NotNullable()
+            .WithColumn(nameof(Passenger.AntiX2)).AsInt32().NotNullable()
             .WithColumn(nameof(Passenger.TravelStartDateUtc)).AsDateTime2().Nullable()
             .WithColumn(nameof(Passenger.TravelEndDateUtc)).AsDateTime2().Nullable()
             .WithColumn(nameof(Passenger.PictureId)).AsInt32().NotNullable()

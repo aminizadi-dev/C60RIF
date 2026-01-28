@@ -22,9 +22,6 @@ public partial record PassengerSearchModel : BaseSearchModel
     [NopResourceDisplayName("Admin.Passengers.List.SearchRecoveryNo")]
     public int SearchRecoveryNo { get; set; }
 
-    [NopResourceDisplayName("Admin.Passengers.List.SearchRecoveryYear")]
-    public int SearchRecoveryYear { get; set; }
-
     [NopResourceDisplayName("Admin.Passengers.List.SearchPersonName")]
     public string SearchPersonName { get; set; }
 

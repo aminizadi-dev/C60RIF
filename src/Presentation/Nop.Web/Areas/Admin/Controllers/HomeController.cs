@@ -142,7 +142,6 @@ public partial class HomeController : BaseAdminController
         // Get all passengers with TravelEndDateUtc
         var allPassengers = await _passengerService.GetAllPassengersAsync(
             recoveryNo: 0,
-            recoveryYear: 0,
             personName: null,
             pageIndex: 0,
             pageSize: int.MaxValue,

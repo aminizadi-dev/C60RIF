@@ -48,14 +48,6 @@
                                                 <nop-editor asp-for="SearchRecoveryNo" />
                                             </div>
                                         </div>
-                                        <div class="form-group row">
-                                            <div class="col-md-4">
-                                                <nop-label asp-for="SearchRecoveryYear" />
-                                            </div>
-                                            <div class="col-md-8">
-                                                <nop-editor asp-for="SearchRecoveryYear" />
-                                            </div>
-                                        </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group row">
@@ -93,7 +85,6 @@
                                     Filters = new List<FilterParameter>
                                     {
                                         new FilterParameter(nameof(Model.SearchRecoveryNo)),
-                                        new FilterParameter(nameof(Model.SearchRecoveryYear)),
                                         new FilterParameter(nameof(Model.SearchPersonName)),
                                     }
                                 };
@@ -112,18 +103,6 @@
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.GuideNameAndLegionNo))
                                 {
                                     Title = T("Admin.Passengers.Fields.GuideNameAndLegionNo").Text
-                                });
-                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.BranchName))
-                                {
-                                    Title = T("Admin.Passengers.Fields.BranchName").Text
-                                });
-                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.RecoveryYear))
-                                {
-                                    Title = T("Admin.Passengers.Fields.RecoveryYear").Text
-                                });
-                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.RecoveryMonth))
-                                {
-                                    Title = T("Admin.Passengers.Fields.RecoveryMonth").Text
                                 });
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.RecoveryNo))
                                 {

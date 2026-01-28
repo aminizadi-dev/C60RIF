@@ -14,7 +14,6 @@ public partial interface IPassengerService
     /// Gets all passengers
     /// </summary>
     /// <param name="recoveryNo">Recovery number; 0 to load all passengers</param>
-    /// <param name="recoveryYear">Recovery year; 0 to load all passengers</param>
     /// <param name="personName">Person name; null to load all passengers</param>
     /// <param name="agencyId">Agency identifier; 0 to load all passengers</param>
     /// <param name="pageIndex">Page index</param>
@@ -24,7 +23,7 @@ public partial interface IPassengerService
     /// A task that represents the asynchronous operation
     /// The task result contains the passengers
     /// </returns>
-    Task<IPagedList<Passenger>> GetAllPassengersAsync(int recoveryNo = 0, int recoveryYear = 0, 
+    Task<IPagedList<Passenger>> GetAllPassengersAsync(int recoveryNo = 0,
         string personName = null, int agencyId = 0, int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false);
 
     /// <summary>
