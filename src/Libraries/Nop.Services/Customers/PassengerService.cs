@@ -37,6 +37,7 @@ public partial class PassengerService : IPassengerService
     /// <param name="recoveryNo">Recovery number; 0 to load all passengers</param>
     /// <param name="recoveryYear">Recovery year; 0 to load all passengers</param>
     /// <param name="personName">Person name; null to load all passengers</param>
+    /// <param name="agencyId">Agency identifier; 0 to load all passengers</param>
     /// <param name="pageIndex">Page index</param>
     /// <param name="pageSize">Page size</param>
     /// <param name="getOnlyTotalCount">A value indicating whether you want to load only total number of records. Set to "true" if you don't want to load data from database</param>
@@ -45,7 +46,7 @@ public partial class PassengerService : IPassengerService
     /// The task result contains the passengers
     /// </returns>
     public virtual async Task<IPagedList<Passenger>> GetAllPassengersAsync(int recoveryNo = 0, int recoveryYear = 0,
-        string personName = null, int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false)
+        string personName = null, int agencyId = 0, int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false)
     {
         var passengers = await _passengerRepository.GetAllPagedAsync(query =>
         {
@@ -55,6 +56,8 @@ public partial class PassengerService : IPassengerService
                 query = query.Where(p => p.RecoveryYear == recoveryYear);
             if (!string.IsNullOrWhiteSpace(personName))
                 query = query.Where(p => p.PersonName.Contains(personName));
+            if (agencyId > 0)
+                query = query.Where(p => p.AgencyId == agencyId);
 
             query = query.OrderByDescending(p => p.CreatedOnUtc);
 

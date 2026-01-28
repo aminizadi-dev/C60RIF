@@ -750,6 +750,24 @@
   <LocaleResource Name="ActivityLog.AddNewCountry">
     <Value>Added a new country (ID = {0})</Value>
   </LocaleResource>
+  <LocaleResource Name="ActivityLog.AddNewCity">
+    <Value>Added a new city (ID = {0})</Value>
+  </LocaleResource>
+  <LocaleResource Name="ActivityLog.EditCity">
+    <Value>Edited a city (ID = {0})</Value>
+  </LocaleResource>
+  <LocaleResource Name="ActivityLog.DeleteCity">
+    <Value>Deleted a city (ID = {0})</Value>
+  </LocaleResource>
+  <LocaleResource Name="ActivityLog.AddNewAgency">
+    <Value>Added a new agency (ID = {0})</Value>
+  </LocaleResource>
+  <LocaleResource Name="ActivityLog.EditAgency">
+    <Value>Edited an agency (ID = {0})</Value>
+  </LocaleResource>
+  <LocaleResource Name="ActivityLog.DeleteAgency">
+    <Value>Deleted an agency (ID = {0})</Value>
+  </LocaleResource>
   <LocaleResource Name="ActivityLog.AddNewCustomer">
     <Value>Added a new customer (ID = {0})</Value>
   </LocaleResource>
@@ -5051,6 +5069,75 @@
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Countries.EditCountryDetails">
     <Value>Edit country details</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities">
+    <Value>Cities</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Added">
+    <Value>The new city has been added successfully.</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.AddNew">
+    <Value>Add a new city</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.BackToList">
+    <Value>back to city list</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Deleted">
+    <Value>The city has been deleted successfully.</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.EditCityDetails">
+    <Value>Edit city details</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Info">
+    <Value>City info</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.PublishSelected">
+    <Value>Publish selected</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.UnpublishSelected">
+    <Value>Unpublish selected</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Updated">
+    <Value>The city has been updated successfully.</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Fields.Name">
+    <Value>Name</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Fields.Name.Required">
+    <Value>City name is required</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Fields.Published">
+    <Value>Published</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Fields.DisplayOrder">
+    <Value>Display order</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Fields.NumberOfAgencies">
+    <Value>Number of agencies</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Agencies">
+    <Value>Agencies</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Agencies.AddNew">
+    <Value>Add a new agency</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Agencies.Edit">
+    <Value>Edit agency</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Agencies.SaveBeforeEdit">
+    <Value>Save before edit agencies</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Agencies.Fields.Name">
+    <Value>Name</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Agencies.Fields.Name.Required">
+    <Value>Agency name is required</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Agencies.Fields.Published">
+    <Value>Published</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Agencies.Fields.DisplayOrder">
+    <Value>Display order</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Countries.ExportToCsv">
     <Value>Export states to CSV</Value>

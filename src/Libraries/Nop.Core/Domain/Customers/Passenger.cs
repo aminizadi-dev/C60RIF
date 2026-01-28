@@ -43,6 +43,8 @@ public partial class Passenger : BaseEntity
 
     public int PictureId { get; set; }
 
+    public int AgencyId { get; set; }
+
     public DateTime CreatedOnUtc { get; set; }
 }
 

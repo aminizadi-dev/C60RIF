@@ -245,6 +245,15 @@ public partial class AdminMenu : IAdminMenu
                         },
                         new()
                         {
+                            SystemName = "Cities",
+                            Title = await _localizationService.GetResourceAsync("Admin.Configuration.Cities"),
+                            PermissionNames = new List<string> { StandardPermission.Configuration.MANAGE_CITIES },
+                            Url = GetMenuItemUrl("City",
+                            "List"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                        new()
+                        {
                             SystemName = "Languages",
                             Title = await _localizationService.GetResourceAsync("Admin.Configuration.Languages"),
                             PermissionNames = new List<string> { StandardPermission.Configuration.MANAGE_LANGUAGES },

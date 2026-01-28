@@ -1,0 +1,84 @@
+@model CityModel
+
+@if (Model.Id > 0)
+{
+    <div class="card-body">
+        @await Html.PartialAsync("Table", new DataTablesModel
+        {
+            Name = "agencies-grid",
+            UrlRead = new DataUrl("Agencies", "City", new RouteValueDictionary { [nameof(AgencySearchModel.CityId)] = Model.AgencySearchModel.CityId }),
+            UrlDelete = new DataUrl("AgencyDelete", "City", null),
+            Length = Model.AgencySearchModel.PageSize,
+            LengthMenu = Model.AgencySearchModel.AvailablePageSizes,
+            ColumnCollection = new List<ColumnProperty>
+            {
+                new ColumnProperty(nameof(AgencyModel.Name))
+                {
+                    Title = T("Admin.Configuration.Cities.Agencies.Fields.Name").Text,
+                    Width = "300"
+                },
+                new ColumnProperty(nameof(AgencyModel.Published))
+                {
+                    Title = T("Admin.Configuration.Cities.Agencies.Fields.Published").Text,
+                    Width = "100",
+                    ClassName = NopColumnClassDefaults.CenterAll,
+                    Render = new RenderBoolean()
+                },
+                new ColumnProperty(nameof(AgencyModel.DisplayOrder))
+                {
+                    Title = T("Admin.Configuration.Cities.Agencies.Fields.DisplayOrder").Text,
+                    Width = "100",
+                    ClassName =  NopColumnClassDefaults.CenterAll
+                },
+                new ColumnProperty(nameof(AgencyModel.Id))
+                {
+                    Title = T("Admin.Common.Edit").Text,
+                    Width = "100",
+                    ClassName = NopColumnClassDefaults.Button,
+                    Render = new RenderCustom("renderAgencyColumnEdit")
+                },
+                new ColumnProperty(nameof(AgencyModel.Id))
+                {
+                    Title = T("Admin.Common.Delete").Text,
+                    Width = "100",
+                    Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                    ClassName = NopColumnClassDefaults.Button
+                }
+            }
+        })
+    </div>
+    <div class="card-footer">
+        <div width="100%">
+            <button type="submit" id="btnAddNewAgency"
+                    onclick="javascript:OpenWindow('@(Url.Action("AgencyCreatePopup", "City", new { cityId = Model.Id, btnId = "btnRefresh", formId = "city-form" }))', 800, 450, true); return false;"
+                    class="btn btn-primary">
+                @T("Admin.Configuration.Cities.Agencies.AddNew")
+            </button>
+            <button type="submit" id="btnRefresh" style="display: none"></button>
+            <script>
+                $(function() {
+                    $('#btnRefresh').click(function () {
+                        //refresh grid
+                        updateTable('#agencies-grid');
+
+                        //return false to don't reload a page
+                        return false;
+                    });
+                });
+            </script>
+        </div>
+    </div>
+}
+else
+{
+    <div class="card-body">
+        @T("Admin.Configuration.Cities.Agencies.SaveBeforeEdit")
+    </div>
+}
+
+<script>
+    function renderAgencyColumnEdit(data, type, row, meta) {
+        return '<button onclick="javascript:OpenWindow(\'@Url.Content("~/Admin/City/AgencyEditPopup/")' + data + '?btnId=btnRefresh&formId=city-form\', 800, 400, true); return false;" class="btn btn-default"><i class="fas fa-pencil"></i>@T("Admin.Common.Edit").Text</button>';
+    }
+</script>
+

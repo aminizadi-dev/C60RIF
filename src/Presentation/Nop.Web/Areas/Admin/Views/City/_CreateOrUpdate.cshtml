@@ -1,0 +1,25 @@
+@model CityModel
+
+@{
+    const string hideInfoBlockAttributeName = "CityPage.HideInfoBlock";
+    var customer = await workContext.GetCurrentCustomerAsync();
+    var hideInfoBlock = await genericAttributeService.GetAttributeAsync<bool>(customer, hideInfoBlockAttributeName);
+
+    const string hideAgenciesBlockAttributeName = "CityPage.HideAgenciesBlock";
+    var hideAgenciesBlock = await genericAttributeService.GetAttributeAsync<bool>(customer, hideAgenciesBlockAttributeName, defaultValue: true);
+}
+
+<div asp-validation-summary="All"></div>
+<input asp-for="Id" type="hidden" />
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <nop-cards id="city-cards">
+                <nop-card asp-name="city-info" asp-icon="fas fa-info" asp-title="@T("Admin.Configuration.Cities.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</nop-card>
+                <nop-card asp-name="city-agencies" asp-icon="fas fa-building" asp-title="@T("Admin.Configuration.Cities.Agencies")" asp-hide-block-attribute-name="@hideAgenciesBlockAttributeName" asp-hide="@hideAgenciesBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Agencies", Model)</nop-card>
+            </nop-cards>
+        </div>
+    </div>
+</section>
+
