@@ -13,6 +13,7 @@ public partial class PassengerService : IPassengerService
     #region Fields
 
     protected readonly IEventPublisher _eventPublisher;
+    protected readonly IRepository<Agency> _agencyRepository;
     protected readonly IRepository<Passenger> _passengerRepository;
 
     #endregion
@@ -21,9 +22,11 @@ public partial class PassengerService : IPassengerService
 
     public PassengerService(
         IEventPublisher eventPublisher,
+        IRepository<Agency> agencyRepository,
         IRepository<Passenger> passengerRepository)
     {
         _eventPublisher = eventPublisher;
+        _agencyRepository = agencyRepository;
         _passengerRepository = passengerRepository;
     }
 
@@ -36,7 +39,9 @@ public partial class PassengerService : IPassengerService
     /// </summary>
     /// <param name="recoveryNo">Recovery number; 0 to load all passengers</param>
     /// <param name="personName">Person name; null to load all passengers</param>
+    /// <param name="cityId">City identifier; 0 to load all passengers</param>
     /// <param name="agencyId">Agency identifier; 0 to load all passengers</param>
+    /// <param name="antiXId">AntiX identifier; 0 to load all passengers</param>
     /// <param name="pageIndex">Page index</param>
     /// <param name="pageSize">Page size</param>
     /// <param name="getOnlyTotalCount">A value indicating whether you want to load only total number of records. Set to "true" if you don't want to load data from database</param>
@@ -45,7 +50,8 @@ public partial class PassengerService : IPassengerService
     /// The task result contains the passengers
     /// </returns>
     public virtual async Task<IPagedList<Passenger>> GetAllPassengersAsync(int recoveryNo = 0,
-        string personName = null, int agencyId = 0, int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false)
+        string personName = null, int cityId = 0, int agencyId = 0, int antiXId = 0,
+        int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false)
     {
         var passengers = await _passengerRepository.GetAllPagedAsync(query =>
         {
@@ -55,6 +61,15 @@ public partial class PassengerService : IPassengerService
                 query = query.Where(p => p.PersonName.Contains(personName));
             if (agencyId > 0)
                 query = query.Where(p => p.AgencyId == agencyId);
+            if (antiXId > 0)
+                query = query.Where(p => p.AntiX1 == antiXId || p.AntiX2 == antiXId);
+            if (cityId > 0)
+            {
+                query = from passenger in query
+                    join agency in _agencyRepository.Table on passenger.AgencyId equals agency.Id
+                    where agency.CityId == cityId
+                    select passenger;
+            }
 
             query = query.OrderByDescending(p => p.CreatedOnUtc);
 

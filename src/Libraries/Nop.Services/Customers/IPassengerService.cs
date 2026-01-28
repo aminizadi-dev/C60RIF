@@ -15,7 +15,9 @@ public partial interface IPassengerService
     /// </summary>
     /// <param name="recoveryNo">Recovery number; 0 to load all passengers</param>
     /// <param name="personName">Person name; null to load all passengers</param>
+    /// <param name="cityId">City identifier; 0 to load all passengers</param>
     /// <param name="agencyId">Agency identifier; 0 to load all passengers</param>
+    /// <param name="antiXId">AntiX identifier; 0 to load all passengers</param>
     /// <param name="pageIndex">Page index</param>
     /// <param name="pageSize">Page size</param>
     /// <param name="getOnlyTotalCount">A value indicating whether you want to load only total number of records. Set to "true" if you don't want to load data from database</param>
@@ -24,7 +26,8 @@ public partial interface IPassengerService
     /// The task result contains the passengers
     /// </returns>
     Task<IPagedList<Passenger>> GetAllPassengersAsync(int recoveryNo = 0,
-        string personName = null, int agencyId = 0, int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false);
+        string personName = null, int cityId = 0, int agencyId = 0, int antiXId = 0,
+        int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false);
 
     /// <summary>
     /// Gets a passenger

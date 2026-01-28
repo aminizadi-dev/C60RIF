@@ -143,6 +143,9 @@ public partial class HomeController : BaseAdminController
         var allPassengers = await _passengerService.GetAllPassengersAsync(
             recoveryNo: 0,
             personName: null,
+            cityId: 0,
+            agencyId: 0,
+            antiXId: 0,
             pageIndex: 0,
             pageSize: int.MaxValue,
             getOnlyTotalCount: false);

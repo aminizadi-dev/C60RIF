@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
 using Nop.Core.Domain.Customers;
 using Nop.Services.Customers;
 using Nop.Services.Localization;
@@ -18,6 +20,7 @@ public partial class PassengerController : BaseAdminController
 {
     #region Fields
 
+    protected readonly IAgencyService _agencyService;
     protected readonly ICustomerActivityService _customerActivityService;
     protected readonly ILocalizationService _localizationService;
     protected readonly INotificationService _notificationService;
@@ -30,6 +33,7 @@ public partial class PassengerController : BaseAdminController
     #region Ctor
 
     public PassengerController(
+        IAgencyService agencyService,
         ICustomerActivityService customerActivityService,
         ILocalizationService localizationService,
         INotificationService notificationService,
@@ -37,6 +41,7 @@ public partial class PassengerController : BaseAdminController
         IPassengerService passengerService,
         IPermissionService permissionService)
     {
+        _agencyService = agencyService;
         _customerActivityService = customerActivityService;
         _localizationService = localizationService;
         _notificationService = notificationService;
@@ -71,6 +76,19 @@ public partial class PassengerController : BaseAdminController
         var model = await _passengerModelFactory.PreparePassengerListModelAsync(searchModel);
 
         return Json(model);
+    }
+
+    [HttpGet]
+    [CheckPermission(StandardPermission.Customers.CUSTOMERS_VIEW)]
+    public virtual async Task<IActionResult> GetAgenciesByCityId(int cityId)
+    {
+        if (cityId <= 0)
+            return Json(Array.Empty<object>());
+
+        var agencies = await _agencyService.GetAgenciesByCityIdAsync(cityId, showHidden: true);
+        var result = agencies.Select(agency => new { id = agency.Id, name = agency.Name });
+
+        return Json(result);
     }
 
     [CheckPermission(StandardPermission.Customers.CUSTOMERS_CREATE_EDIT_DELETE)]

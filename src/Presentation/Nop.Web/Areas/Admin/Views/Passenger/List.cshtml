@@ -61,6 +61,40 @@
                                     </div>
                                 </div>
                                 <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="SearchCityId" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-select asp-for="SearchCityId" asp-items="Model.AvailableCities" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="SearchAgencyId" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-select asp-for="SearchAgencyId" asp-items="Model.AvailableAgencies" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="SearchAntiXId" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-select asp-for="SearchAntiXId" asp-items="Model.AvailableAntiXItems" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="text-center col-12">
                                         <button type="button" id="search-passengers" class="btn btn-primary btn-search">
                                             <i class="fas fa-magnifying-glass"></i>
@@ -86,6 +120,9 @@
                                     {
                                         new FilterParameter(nameof(Model.SearchRecoveryNo)),
                                         new FilterParameter(nameof(Model.SearchPersonName)),
+                                        new FilterParameter(nameof(Model.SearchCityId)),
+                                        new FilterParameter(nameof(Model.SearchAgencyId)),
+                                        new FilterParameter(nameof(Model.SearchAntiXId)),
                                     }
                                 };
 
@@ -108,6 +145,18 @@
                                 {
                                     Title = T("Admin.Passengers.Fields.RecoveryNo").Text
                                 });
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.AgencyName))
+                                {
+                                    Title = T("Admin.Passengers.Fields.Agency").Text
+                                });
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.AntiX1Name))
+                                {
+                                    Title = T("Admin.Passengers.Fields.AntiX1").Text
+                                });
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.AntiX2Name))
+                                {
+                                    Title = T("Admin.Passengers.Fields.AntiX2").Text
+                                });
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.CreatedOnUtc))
                                 {
                                     Title = T("Admin.Passengers.Fields.CreatedOn").Text,
@@ -129,4 +178,40 @@
         </div>
     </section>
 </form>
+
+<script>
+    $(document).ready(function () {
+        var citySelect = $("#@Html.IdFor(model => model.SearchCityId)");
+        var agencySelect = $("#@Html.IdFor(model => model.SearchAgencyId)");
+        var agenciesUrl = "@Url.Action("GetAgenciesByCityId", "Passenger")";
+        var defaultAgencyText = "@T("Admin.Common.Select")";
+
+        function loadAgencies(cityId, selectedAgencyId) {
+            agencySelect.empty();
+            agencySelect.append($("<option></option>").attr("value", "0").text(defaultAgencyText));
+
+            if (!cityId || cityId === "0") {
+                return;
+            }
+
+            $.getJSON(agenciesUrl, { cityId: cityId }, function (data) {
+                $.each(data, function (index, item) {
+                    var option = $("<option></option>").attr("value", item.id).text(item.name);
+                    if (selectedAgencyId && selectedAgencyId.toString() === item.id.toString()) {
+                        option.attr("selected", "selected");
+                    }
+                    agencySelect.append(option);
+                });
+            });
+        }
+
+        citySelect.on("change", function () {
+            loadAgencies($(this).val(), 0);
+        });
+
+        if (citySelect.val() && citySelect.val() !== "0") {
+            loadAgencies(citySelect.val(), agencySelect.val());
+        }
+    });
+</script>
 

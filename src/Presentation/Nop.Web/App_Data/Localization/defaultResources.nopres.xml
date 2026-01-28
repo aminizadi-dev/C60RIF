@@ -21380,4 +21380,43 @@
   <LocaleResource Name="Wishlist.YourWishlistURL">
     <Value>Your wishlist URL for sharing</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.City">
+    <Value>City</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.Agency">
+    <Value>Agency</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.PersonName.Required">
+    <Value>Person name is required</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.RecoveryNo.Required">
+    <Value>Recovery number is required</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.GuideNameAndLegionNo.Required">
+    <Value>Guide name and legion number are required</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.CardNo.Required">
+    <Value>Card number is required</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.TravelStartDate.Required">
+    <Value>Travel start date is required</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.TravelEndDate.Required">
+    <Value>Travel end date is required</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.AntiX1.Required">
+    <Value>AntiX1 is required</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.Agency.Required">
+    <Value>Agency is required</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.List.SearchCity">
+    <Value>City</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.List.SearchAgency">
+    <Value>Agency</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.List.SearchAntiX">
+    <Value>AntiX</Value>
+  </LocaleResource>
 </Language>

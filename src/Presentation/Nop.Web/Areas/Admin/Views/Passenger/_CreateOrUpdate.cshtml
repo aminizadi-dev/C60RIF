@@ -114,6 +114,30 @@
                             <div class="col-md-6">
                                 <div class="form-group row">
                                     <div class="col-md-3">
+                                        <nop-label asp-for="CityId" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-select asp-for="CityId" asp-items="Model.AvailableCities" />
+                                        <span asp-validation-for="CityId"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="AgencyId" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-select asp-for="AgencyId" asp-items="Model.AvailableAgencies" />
+                                        <span asp-validation-for="AgencyId"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
                                         <nop-label asp-for="GuideNameAndLegionNo" />
                                     </div>
                                     <div class="col-md-9">
@@ -243,3 +267,39 @@
         </div>
     </div>
 </section>
+
+<script>
+    $(document).ready(function () {
+        var citySelect = $("#@Html.IdFor(model => model.CityId)");
+        var agencySelect = $("#@Html.IdFor(model => model.AgencyId)");
+        var agenciesUrl = "@Url.Action("GetAgenciesByCityId", "Passenger")";
+        var defaultAgencyText = "@T("Admin.Common.Select")";
+
+        function loadAgencies(cityId, selectedAgencyId) {
+            agencySelect.empty();
+            agencySelect.append($("<option></option>").attr("value", "0").text(defaultAgencyText));
+
+            if (!cityId || cityId === "0") {
+                return;
+            }
+
+            $.getJSON(agenciesUrl, { cityId: cityId }, function (data) {
+                $.each(data, function (index, item) {
+                    var option = $("<option></option>").attr("value", item.id).text(item.name);
+                    if (selectedAgencyId && selectedAgencyId.toString() === item.id.toString()) {
+                        option.attr("selected", "selected");
+                    }
+                    agencySelect.append(option);
+                });
+            });
+        }
+
+        citySelect.on("change", function () {
+            loadAgencies($(this).val(), 0);
+        });
+
+        if (citySelect.val() && citySelect.val() !== "0") {
+            loadAgencies(citySelect.val(), agencySelect.val());
+        }
+    });
+</script>

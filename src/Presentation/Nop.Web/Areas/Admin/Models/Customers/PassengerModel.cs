@@ -19,6 +19,8 @@ public partial record PassengerModel : BaseNopEntityModel
         AvailableMaritalStatuses = new List<SelectListItem>();
         AvailableEmploymentStatuses = new List<SelectListItem>();
         AvailableAntiXItems = new List<SelectListItem>();
+        AvailableCities = new List<SelectListItem>();
+        AvailableAgencies = new List<SelectListItem>();
     }
 
     #endregion
@@ -64,6 +66,20 @@ public partial record PassengerModel : BaseNopEntityModel
     public int AntiX2 { get; set; }
 
     public IList<SelectListItem> AvailableAntiXItems { get; set; }
+
+    public string AntiX1Name { get; set; }
+    public string AntiX2Name { get; set; }
+
+    [NopResourceDisplayName("Admin.Passengers.Fields.City")]
+    public int CityId { get; set; }
+
+    [NopResourceDisplayName("Admin.Passengers.Fields.Agency")]
+    public int AgencyId { get; set; }
+
+    public IList<SelectListItem> AvailableCities { get; set; }
+    public IList<SelectListItem> AvailableAgencies { get; set; }
+
+    public string AgencyName { get; set; }
 
     [UIHint("PersianDateNullable")]
     [PersianDate]

@@ -16,7 +16,9 @@ public partial class PassengerModelFactory : IPassengerModelFactory
 {
     #region Fields
 
+    protected readonly IAgencyService _agencyService;
     protected readonly IAntiXService _antiXService;
+    protected readonly ICityService _cityService;
     protected readonly IDateTimeHelper _dateTimeHelper;
     protected readonly ILocalizationService _localizationService;
     protected readonly IPassengerService _passengerService;
@@ -26,12 +28,16 @@ public partial class PassengerModelFactory : IPassengerModelFactory
     #region Ctor
 
     public PassengerModelFactory(
+        IAgencyService agencyService,
         IAntiXService antiXService,
+        ICityService cityService,
         IDateTimeHelper dateTimeHelper,
         ILocalizationService localizationService,
         IPassengerService passengerService)
     {
+        _agencyService = agencyService;
         _antiXService = antiXService;
+        _cityService = cityService;
         _dateTimeHelper = dateTimeHelper;
         _localizationService = localizationService;
         _passengerService = passengerService;
@@ -49,14 +55,65 @@ public partial class PassengerModelFactory : IPassengerModelFactory
     /// A task that represents the asynchronous operation
     /// The task result contains the passenger search model
     /// </returns>
-    public virtual Task<PassengerSearchModel> PreparePassengerSearchModelAsync(PassengerSearchModel searchModel)
+    public virtual async Task<PassengerSearchModel> PreparePassengerSearchModelAsync(PassengerSearchModel searchModel)
     {
         ArgumentNullException.ThrowIfNull(searchModel);
 
         //prepare page parameters
         searchModel.SetGridPageSize();
 
-        return Task.FromResult(searchModel);
+        var cities = await _cityService.GetAllCitiesAsync(pageIndex: 0, pageSize: int.MaxValue);
+        searchModel.AvailableCities.Add(new SelectListItem
+        {
+            Value = "0",
+            Text = await _localizationService.GetResourceAsync("Admin.Common.Select")
+        });
+        foreach (var city in cities)
+        {
+            searchModel.AvailableCities.Add(new SelectListItem
+            {
+                Value = city.Id.ToString(),
+                Text = city.Name,
+                Selected = city.Id == searchModel.SearchCityId
+            });
+        }
+
+        searchModel.AvailableAgencies.Add(new SelectListItem
+        {
+            Value = "0",
+            Text = await _localizationService.GetResourceAsync("Admin.Common.Select")
+        });
+        if (searchModel.SearchCityId > 0)
+        {
+            var agencies = await _agencyService.GetAgenciesByCityIdAsync(searchModel.SearchCityId, showHidden: true);
+            foreach (var agency in agencies)
+            {
+                searchModel.AvailableAgencies.Add(new SelectListItem
+                {
+                    Value = agency.Id.ToString(),
+                    Text = agency.Name,
+                    Selected = agency.Id == searchModel.SearchAgencyId
+                });
+            }
+        }
+
+        searchModel.AvailableAntiXItems.Add(new SelectListItem
+        {
+            Value = "0",
+            Text = await _localizationService.GetResourceAsync("Admin.Common.Select")
+        });
+        var antiXItems = await _antiXService.GetAllAntiXAsync(pageIndex: 0, pageSize: int.MaxValue);
+        foreach (var item in antiXItems)
+        {
+            searchModel.AvailableAntiXItems.Add(new SelectListItem
+            {
+                Value = item.Id.ToString(),
+                Text = item.Name,
+                Selected = item.Id == searchModel.SearchAntiXId
+            });
+        }
+
+        return searchModel;
     }
 
     /// <summary>
@@ -75,8 +132,25 @@ public partial class PassengerModelFactory : IPassengerModelFactory
         var passengers = await _passengerService.GetAllPassengersAsync(
             recoveryNo: searchModel.SearchRecoveryNo,
             personName: searchModel.SearchPersonName,
+            cityId: searchModel.SearchCityId,
+            agencyId: searchModel.SearchAgencyId,
+            antiXId: searchModel.SearchAntiXId,
             pageIndex: searchModel.Page - 1,
             pageSize: searchModel.PageSize);
+
+        var agencyIds = passengers.Select(passenger => passenger.AgencyId)
+            .Distinct()
+            .Where(id => id > 0)
+            .ToArray();
+        var antiXIds = passengers.SelectMany(passenger => new[] { passenger.AntiX1, passenger.AntiX2 })
+            .Distinct()
+            .Where(id => id > 0)
+            .ToArray();
+
+        var agencies = await _agencyService.GetAgenciesByIdsAsync(agencyIds);
+        var antiXItems = await _antiXService.GetAntiXByIdsAsync(antiXIds);
+        var agencyNames = agencies.ToDictionary(agency => agency.Id, agency => agency.Name);
+        var antiXNames = antiXItems.ToDictionary(item => item.Id, item => item.Name);
 
         //prepare list model
         var model = await new PassengerListModel().PrepareToGridAsync(searchModel, passengers, () =>
@@ -94,6 +168,16 @@ public partial class PassengerModelFactory : IPassengerModelFactory
                     passengerModel.TravelStartDateUtc = await _dateTimeHelper.ConvertToUserTimeAsync(passenger.TravelStartDateUtc.Value, DateTimeKind.Utc);
                 if (passenger.TravelEndDateUtc.HasValue)
                     passengerModel.TravelEndDateUtc = await _dateTimeHelper.ConvertToUserTimeAsync(passenger.TravelEndDateUtc.Value, DateTimeKind.Utc);
+
+                passengerModel.AgencyName = agencyNames.TryGetValue(passenger.AgencyId, out var agencyName)
+                    ? agencyName
+                    : string.Empty;
+                passengerModel.AntiX1Name = antiXNames.TryGetValue(passenger.AntiX1, out var antiX1Name)
+                    ? antiX1Name
+                    : string.Empty;
+                passengerModel.AntiX2Name = antiXNames.TryGetValue(passenger.AntiX2, out var antiX2Name)
+                    ? antiX2Name
+                    : string.Empty;
 
                 return passengerModel;
             });
@@ -133,10 +217,24 @@ public partial class PassengerModelFactory : IPassengerModelFactory
                     model.TravelStartDateUtc = await _dateTimeHelper.ConvertToUserTimeAsync(passenger.TravelStartDateUtc.Value, DateTimeKind.Utc);
                 if (passenger.TravelEndDateUtc.HasValue)
                     model.TravelEndDateUtc = await _dateTimeHelper.ConvertToUserTimeAsync(passenger.TravelEndDateUtc.Value, DateTimeKind.Utc);
+
+                if (model.CityId == 0 && model.AgencyId > 0)
+                {
+                    var agency = await _agencyService.GetAgencyByIdAsync(model.AgencyId);
+                    if (agency != null)
+                        model.CityId = agency.CityId;
+                }
             }
         }
 
         model ??= new PassengerModel();
+
+        if (model.CityId == 0 && model.AgencyId > 0)
+        {
+            var agency = await _agencyService.GetAgencyByIdAsync(model.AgencyId);
+            if (agency != null)
+                model.CityId = agency.CityId;
+        }
 
         //prepare available education levels
         var educationLevels = new List<SelectListItem>();
@@ -179,12 +277,56 @@ public partial class PassengerModelFactory : IPassengerModelFactory
 
         //prepare available AntiX items
         var antiXItems = await _antiXService.GetAllAntiXAsync(published: null, pageIndex: 0, pageSize: int.MaxValue);
-        var antiXSelectItems = antiXItems.Select(item => new SelectListItem
+        model.AvailableAntiXItems.Add(new SelectListItem
         {
-            Text = item.Name,
-            Value = item.Id.ToString()
-        }).ToList();
-        model.AvailableAntiXItems = antiXSelectItems;
+            Value = "0",
+            Text = await _localizationService.GetResourceAsync("Admin.Common.Select")
+        });
+        foreach (var item in antiXItems)
+        {
+            model.AvailableAntiXItems.Add(new SelectListItem
+            {
+                Text = item.Name,
+                Value = item.Id.ToString()
+            });
+        }
+
+        //prepare available cities
+        var cities = await _cityService.GetAllCitiesAsync(pageIndex: 0, pageSize: int.MaxValue);
+        model.AvailableCities.Add(new SelectListItem
+        {
+            Value = "0",
+            Text = await _localizationService.GetResourceAsync("Admin.Common.Select")
+        });
+        foreach (var city in cities)
+        {
+            model.AvailableCities.Add(new SelectListItem
+            {
+                Value = city.Id.ToString(),
+                Text = city.Name,
+                Selected = city.Id == model.CityId
+            });
+        }
+
+        //prepare available agencies
+        model.AvailableAgencies.Add(new SelectListItem
+        {
+            Value = "0",
+            Text = await _localizationService.GetResourceAsync("Admin.Common.Select")
+        });
+        if (model.CityId > 0)
+        {
+            var agencies = await _agencyService.GetAgenciesByCityIdAsync(model.CityId, showHidden: true);
+            foreach (var agency in agencies)
+            {
+                model.AvailableAgencies.Add(new SelectListItem
+                {
+                    Value = agency.Id.ToString(),
+                    Text = agency.Name,
+                    Selected = agency.Id == model.AgencyId
+                });
+            }
+        }
 
         return model;
     }
