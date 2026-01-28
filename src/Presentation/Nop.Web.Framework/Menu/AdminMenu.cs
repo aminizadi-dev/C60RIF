@@ -254,6 +254,15 @@ public partial class AdminMenu : IAdminMenu
                         },
                         new()
                         {
+                            SystemName = "AntiX",
+                            Title = await _localizationService.GetResourceAsync("Admin.Configuration.AntiX"),
+                            PermissionNames = new List<string> { StandardPermission.Configuration.MANAGE_ANTIX },
+                            Url = GetMenuItemUrl("AntiX",
+                            "List"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                        new()
+                        {
                             SystemName = "Languages",
                             Title = await _localizationService.GetResourceAsync("Admin.Configuration.Languages"),
                             PermissionNames = new List<string> { StandardPermission.Configuration.MANAGE_LANGUAGES },

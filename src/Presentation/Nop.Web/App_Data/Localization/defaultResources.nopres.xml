@@ -768,6 +768,15 @@
   <LocaleResource Name="ActivityLog.DeleteAgency">
     <Value>Deleted an agency (ID = {0})</Value>
   </LocaleResource>
+  <LocaleResource Name="ActivityLog.AddNewAntiX">
+    <Value>Added a new AntiX item (ID = {0})</Value>
+  </LocaleResource>
+  <LocaleResource Name="ActivityLog.EditAntiX">
+    <Value>Edited an AntiX item (ID = {0})</Value>
+  </LocaleResource>
+  <LocaleResource Name="ActivityLog.DeleteAntiX">
+    <Value>Deleted an AntiX item (ID = {0})</Value>
+  </LocaleResource>
   <LocaleResource Name="ActivityLog.AddNewCustomer">
     <Value>Added a new customer (ID = {0})</Value>
   </LocaleResource>
@@ -5087,6 +5096,45 @@
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Cities.EditCityDetails">
     <Value>Edit city details</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.AntiX">
+    <Value>AntiX</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.AntiX.Added">
+    <Value>The new AntiX item has been added successfully.</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.AntiX.AddNew">
+    <Value>Add a new AntiX item</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.AntiX.BackToList">
+    <Value>back to AntiX list</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.AntiX.Deleted">
+    <Value>The AntiX item has been deleted successfully.</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.AntiX.EditAntiXDetails">
+    <Value>Edit AntiX details</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.AntiX.PublishSelected">
+    <Value>Publish selected</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.AntiX.UnpublishSelected">
+    <Value>Unpublish selected</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.AntiX.Updated">
+    <Value>The AntiX item has been updated successfully.</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.AntiX.Fields.Name">
+    <Value>Name</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.AntiX.Fields.Name.Required">
+    <Value>AntiX name is required</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.AntiX.Fields.Published">
+    <Value>Published</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.AntiX.Fields.DisplayOrder">
+    <Value>Display order</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Cities.Info">
     <Value>City info</Value>

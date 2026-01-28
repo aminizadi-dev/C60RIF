@@ -35,6 +35,25 @@ BEGIN
     
     ALTER TABLE [dbo].[Passenger] CHECK CONSTRAINT [FK_Passenger_Agency];
 
+    -- Add Foreign Key constraint to AntiX table (if exists)
+    IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AntiX]') AND type in (N'U'))
+    BEGIN
+        ALTER TABLE [dbo].[Passenger] WITH CHECK ADD CONSTRAINT [FK_Passenger_AntiX1] 
+        FOREIGN KEY([AntiX1])
+        REFERENCES [dbo].[AntiX] ([Id]);
+
+        ALTER TABLE [dbo].[Passenger] WITH CHECK ADD CONSTRAINT [FK_Passenger_AntiX2] 
+        FOREIGN KEY([AntiX2])
+        REFERENCES [dbo].[AntiX] ([Id]);
+
+        ALTER TABLE [dbo].[Passenger] CHECK CONSTRAINT [FK_Passenger_AntiX1];
+        ALTER TABLE [dbo].[Passenger] CHECK CONSTRAINT [FK_Passenger_AntiX2];
+    END
+    ELSE
+    BEGIN
+        PRINT 'WARNING: AntiX table does not exist. AntiX foreign keys were not created.';
+    END
+
     -- Add index on RecoveryNo for better query performance
     CREATE NONCLUSTERED INDEX [IX_Passenger_RecoveryNo] 
     ON [dbo].[Passenger] ([RecoveryNo] ASC)
@@ -51,6 +70,15 @@ BEGIN
     -- Add index on AgencyId for lookups
     CREATE NONCLUSTERED INDEX [IX_Passenger_AgencyId] 
     ON [dbo].[Passenger] ([AgencyId] ASC)
+    WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY];
+
+    -- Add index on AntiX1/AntiX2 for lookups
+    CREATE NONCLUSTERED INDEX [IX_Passenger_AntiX1] 
+    ON [dbo].[Passenger] ([AntiX1] ASC)
+    WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY];
+
+    CREATE NONCLUSTERED INDEX [IX_Passenger_AntiX2] 
+    ON [dbo].[Passenger] ([AntiX2] ASC)
     WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY];
     WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY];
 

@@ -380,6 +380,9 @@ public partial class AdminMapperConfiguration : Profile, IOrderedMapperProfile
 
         CreateMap<Agency, AgencyModel>();
         CreateMap<AgencyModel, Agency>();
+
+        CreateMap<AntiX, AntiXModel>();
+        CreateMap<AntiXModel, AntiX>();
     }
 
     /// <summary>

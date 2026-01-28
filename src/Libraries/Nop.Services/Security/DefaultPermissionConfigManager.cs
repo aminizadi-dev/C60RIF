@@ -53,6 +53,7 @@ public partial class DefaultPermissionConfigManager : IPermissionConfigManager
         new ("Admin area. Widgets. Manage", StandardPermission.Configuration.MANAGE_WIDGETS, nameof(StandardPermission.Configuration), NopCustomerDefaults.AdministratorsRoleName),
         new ("Admin area. Countries. Manage", StandardPermission.Configuration.MANAGE_COUNTRIES, nameof(StandardPermission.Configuration), NopCustomerDefaults.AdministratorsRoleName),
         new ("Admin area. Cities. Manage", StandardPermission.Configuration.MANAGE_CITIES, nameof(StandardPermission.Configuration), NopCustomerDefaults.AdministratorsRoleName),
+        new ("Admin area. AntiX. Manage", StandardPermission.Configuration.MANAGE_ANTIX, nameof(StandardPermission.Configuration), NopCustomerDefaults.AdministratorsRoleName),
         new ("Admin area. Languages. Manage", StandardPermission.Configuration.MANAGE_LANGUAGES, nameof(StandardPermission.Configuration), NopCustomerDefaults.AdministratorsRoleName),
         new ("Admin area. Settings. Manage", StandardPermission.Configuration.MANAGE_SETTINGS, nameof(StandardPermission.Configuration), NopCustomerDefaults.AdministratorsRoleName),
         //COMMERCE CONFIGURATION PERMISSIONS REMOVED - Phase B

@@ -31,8 +31,8 @@
 - **MaritalStatus**: وضعیت تاهل (enum)
 - **EmploymentStatus**: وضعیت اشتغال (enum)
 - **CardNo**: شماره کارت
-- **AntiX1**: فیلد AntiX1 (عدد)
-- **AntiX2**: فیلد AntiX2 (عدد)
+- **AntiX1**: شناسه AntiX اول (عدد)
+- **AntiX2**: شناسه AntiX دوم (عدد)
 - **TravelStartDateUtc**: تاریخ شروع سفر
 - **TravelEndDateUtc**: تاریخ پایان سفر
 - **PictureId**: شناسه تصویر
@@ -43,9 +43,12 @@
 
 برای بهبود عملکرد، Index های زیر ایجاد شده‌اند:
 
-1. **IX_Passenger_RecoveryNo_RecoveryYear**: برای جستجو بر اساس شماره و سال بازیابی
+1. **IX_Passenger_RecoveryNo**: برای جستجو بر اساس شماره بازیابی
 2. **IX_Passenger_PersonName**: برای جستجو بر اساس نام شخص
-3. **IX_Passenger_CreatedOnUtc**: برای مرتب‌سازی بر اساس تاریخ ایجاد
+3. **IX_Passenger_AgencyId**: برای جستجو بر اساس نمایندگی
+4. **IX_Passenger_AntiX1**: برای جستجو بر اساس AntiX1
+5. **IX_Passenger_AntiX2**: برای جستجو بر اساس AntiX2
+6. **IX_Passenger_CreatedOnUtc**: برای مرتب‌سازی بر اساس تاریخ ایجاد
 
 ## نکات مهم
 

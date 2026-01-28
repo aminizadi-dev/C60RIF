@@ -161,7 +161,7 @@
                                         <nop-label asp-for="AntiX1" />
                                     </div>
                                     <div class="col-md-9">
-                                        <nop-editor asp-for="AntiX1" />
+                                        <nop-select asp-for="AntiX1" asp-items="Model.AvailableAntiXItems" />
                                         <span asp-validation-for="AntiX1"></span>
                                     </div>
                                 </div>
@@ -172,7 +172,7 @@
                                         <nop-label asp-for="AntiX2" />
                                     </div>
                                     <div class="col-md-9">
-                                        <nop-editor asp-for="AntiX2" />
+                                        <nop-select asp-for="AntiX2" asp-items="Model.AvailableAntiXItems" />
                                         <span asp-validation-for="AntiX2"></span>
                                     </div>
                                 </div>

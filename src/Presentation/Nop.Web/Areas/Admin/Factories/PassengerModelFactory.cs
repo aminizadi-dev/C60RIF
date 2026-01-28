@@ -16,6 +16,7 @@ public partial class PassengerModelFactory : IPassengerModelFactory
 {
     #region Fields
 
+    protected readonly IAntiXService _antiXService;
     protected readonly IDateTimeHelper _dateTimeHelper;
     protected readonly ILocalizationService _localizationService;
     protected readonly IPassengerService _passengerService;
@@ -25,10 +26,12 @@ public partial class PassengerModelFactory : IPassengerModelFactory
     #region Ctor
 
     public PassengerModelFactory(
+        IAntiXService antiXService,
         IDateTimeHelper dateTimeHelper,
         ILocalizationService localizationService,
         IPassengerService passengerService)
     {
+        _antiXService = antiXService;
         _dateTimeHelper = dateTimeHelper;
         _localizationService = localizationService;
         _passengerService = passengerService;
@@ -173,6 +176,15 @@ public partial class PassengerModelFactory : IPassengerModelFactory
             });
         }
         model.AvailableEmploymentStatuses = employmentStatuses;
+
+        //prepare available AntiX items
+        var antiXItems = await _antiXService.GetAllAntiXAsync(published: null, pageIndex: 0, pageSize: int.MaxValue);
+        var antiXSelectItems = antiXItems.Select(item => new SelectListItem
+        {
+            Text = item.Name,
+            Value = item.Id.ToString()
+        }).ToList();
+        model.AvailableAntiXItems = antiXSelectItems;
 
         return model;
     }

@@ -18,6 +18,7 @@ public partial record PassengerModel : BaseNopEntityModel
         AvailableEducationLevels = new List<SelectListItem>();
         AvailableMaritalStatuses = new List<SelectListItem>();
         AvailableEmploymentStatuses = new List<SelectListItem>();
+        AvailableAntiXItems = new List<SelectListItem>();
     }
 
     #endregion
@@ -61,6 +62,8 @@ public partial record PassengerModel : BaseNopEntityModel
 
     [NopResourceDisplayName("Admin.Passengers.Fields.AntiX2")]
     public int AntiX2 { get; set; }
+
+    public IList<SelectListItem> AvailableAntiXItems { get; set; }
 
     [UIHint("PersianDateNullable")]
     [PersianDate]
