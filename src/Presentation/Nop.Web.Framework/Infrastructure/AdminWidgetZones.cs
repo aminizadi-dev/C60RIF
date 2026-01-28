@@ -51,7 +51,6 @@ public static partial class AdminWidgetZones
     public static string CurrencyDetailsButtons => "admin_currency_details_buttons";
     public static string CurrencyDetailsTop => "admin_currency_details_top";
     public static string CurrencyListButtons => "admin_currency_list_buttons";
-    public static string CurrentShoppingCartListButtons => "admin_current_shopping_cart_list_buttons";
     public static string CustomerAddressDetailsBottom => "admin_customer_address_details_bottom";
     public static string CustomerAddressDetailsButtons => "admin_customer_address_details_buttons";
     public static string CustomerAddressDetailsTop => "admin_customer_address_details_top";
@@ -63,6 +62,9 @@ public static partial class AdminWidgetZones
     public static string CustomerDetailsBlock => "admin_customer_details_block";
     public static string CustomerDetailsButtons => "admin_customer_details_buttons";
     public static string CustomerListButtons => "admin_customer_list_buttons";
+    public static string PassengerListButtons => "admin_passenger_list_buttons";
+    public static string PassengerDetailsButtons => "admin_passenger_details_buttons";
+    public static string PassengerDetailsBlock => "admin_passenger_details_block";
     public static string CustomerRoleDetailsBottom => "admin_customer_role_details_bottom";
     public static string CustomerRoleDetailsButtons => "admin_customer_role_details_buttons";
     public static string CustomerRoleDetailsTop => "admin_customer_role_details_top";

@@ -1,0 +1,280 @@
+@model PassengerModel
+
+<div asp-validation-summary="All"></div>
+<input asp-for="Id" type="hidden" />
+
+@{
+    const string hideRecoveryBlockAttributeName = "PassengerPage.HideRecoveryBlock";
+    var customer = await workContext.GetCurrentCustomerAsync();
+    var hideRecoveryBlock = await genericAttributeService.GetAttributeAsync<bool>(customer, hideRecoveryBlockAttributeName);
+
+    const string hideLocationBlockAttributeName = "PassengerPage.HideLocationBlock";
+    var hideLocationBlock = await genericAttributeService.GetAttributeAsync<bool>(customer, hideLocationBlockAttributeName);
+
+    const string hidePersonalBlockAttributeName = "PassengerPage.HidePersonalBlock";
+    var hidePersonalBlock = await genericAttributeService.GetAttributeAsync<bool>(customer, hidePersonalBlockAttributeName);
+
+    const string hideCardTravelBlockAttributeName = "PassengerPage.HideCardTravelBlock";
+    var hideCardTravelBlock = await genericAttributeService.GetAttributeAsync<bool>(customer, hideCardTravelBlockAttributeName);
+
+    const string hidePictureBlockAttributeName = "PassengerPage.HidePictureBlock";
+    var hidePictureBlock = await genericAttributeService.GetAttributeAsync<bool>(customer, hidePictureBlockAttributeName);
+}
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <nop-cards id="passenger-cards">
+
+                <nop-card asp-name="passenger-personal" asp-icon="fas fa-user" asp-title="@T("Admin.Passengers.Passengers.PersonalInformation")" asp-hide-block-attribute-name="@hidePersonalBlockAttributeName" asp-hide="@hidePersonalBlock" asp-advanced="false">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="PersonName" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="PersonName" />
+                                        <span asp-validation-for="PersonName"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="BirthDateUtc" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="BirthDateUtc" />
+                                        <span asp-validation-for="BirthDateUtc"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="Education" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-select asp-for="Education" asp-items="Model.AvailableEducationLevels" />
+                                        <span asp-validation-for="Education"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="MaritalStatus" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-select asp-for="MaritalStatus" asp-items="Model.AvailableMaritalStatuses" />
+                                        <span asp-validation-for="MaritalStatus"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="EmploymentStatus" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-select asp-for="EmploymentStatus" asp-items="Model.AvailableEmploymentStatuses" />
+                                        <span asp-validation-for="EmploymentStatus"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="RecoveryNo" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="RecoveryNo" />
+                                        <span asp-validation-for="RecoveryNo"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="RecoveryYear" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="RecoveryYear" />
+                                        <span asp-validation-for="RecoveryYear"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="RecoveryMonth" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="RecoveryMonth" />
+                                        <span asp-validation-for="RecoveryMonth"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nop-card>
+
+
+                <nop-card asp-name="passenger-location" asp-icon="fas fa-map-marker-alt" asp-title="@T("Admin.Passengers.Passengers.LocationInformation")" asp-hide-block-attribute-name="@hideLocationBlockAttributeName" asp-hide="@hideLocationBlock" asp-advanced="false">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="BranchName" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="BranchName" />
+                                        <span asp-validation-for="BranchName"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="GuideNameAndLegionNo" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="GuideNameAndLegionNo" />
+                                        <span asp-validation-for="GuideNameAndLegionNo"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="ClinicName" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="ClinicName" />
+                                        <span asp-validation-for="ClinicName"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nop-card>
+
+                <nop-card asp-name="passenger-card-travel" asp-icon="fas fa-id-card" asp-title="@T("Admin.Passengers.Passengers.CardTravelInformation")" asp-hide-block-attribute-name="@hideCardTravelBlockAttributeName" asp-hide="@hideCardTravelBlock" asp-advanced="false">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="CardNo" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="CardNo" />
+                                        <span asp-validation-for="CardNo"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="AntiX1" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="AntiX1" />
+                                        <span asp-validation-for="AntiX1"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="AntiX2" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="AntiX2" />
+                                        <span asp-validation-for="AntiX2"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="TravelStartDateUtc" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="TravelStartDateUtc" />
+                                        <span asp-validation-for="TravelStartDateUtc"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="TravelEndDateUtc" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="TravelEndDateUtc" />
+                                        <span asp-validation-for="TravelEndDateUtc"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @if (Model.Id > 0)
+                        {
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <div class="col-md-3">
+                                            <nop-label asp-for="CreatedOnUtc" />
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div class="form-text-row">@Model.CreatedOnUtc</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </nop-card>
+
+                <nop-card asp-name="passenger-picture" asp-icon="fas fa-image" asp-title="@T("Admin.Passengers.Passengers.Picture")" asp-hide-block-attribute-name="@hidePictureBlockAttributeName" asp-hide="@hidePictureBlock" asp-advanced="false">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="PictureId" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="PictureId" />
+                                        <span asp-validation-for="PictureId"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nop-card>
+
+                @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.PassengerDetailsBlock, additionalData = Model })
+            </nop-cards>
+        </div>
+    </div>
+</section>

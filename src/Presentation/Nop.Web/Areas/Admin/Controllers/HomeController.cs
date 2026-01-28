@@ -4,6 +4,7 @@ using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
 using Nop.Services.Common;
 using Nop.Services.Configuration;
+using Nop.Services.Customers;
 using Nop.Services.Localization;
 using Nop.Services.Messages;
 using Nop.Services.Security;
@@ -11,6 +12,7 @@ using Nop.Web.Areas.Admin.Factories;
 using Nop.Web.Areas.Admin.Models.Common;
 using Nop.Web.Areas.Admin.Models.Home;
 using Nop.Web.Framework.Models.DataTables;
+using Nop.Web.Framework.Mvc.Filters;
 
 namespace Nop.Web.Areas.Admin.Controllers;
 
@@ -28,6 +30,7 @@ public partial class HomeController : BaseAdminController
     protected readonly IGenericAttributeService _genericAttributeService;
     protected readonly IWorkContext _workContext;
     protected readonly NopHttpClient _nopHttpClient;
+    protected readonly IPassengerService _passengerService;
 
     #endregion
 
@@ -42,7 +45,8 @@ public partial class HomeController : BaseAdminController
         ISettingService settingService,
         IGenericAttributeService genericAttributeService,
         IWorkContext workContext,
-        NopHttpClient nopHttpClient)
+        NopHttpClient nopHttpClient,
+        IPassengerService passengerService)
     {
         _adminAreaSettings = adminAreaSettings;
         _commonModelFactory = commonModelFactory;
@@ -54,6 +58,7 @@ public partial class HomeController : BaseAdminController
         _workContext = workContext;
         _genericAttributeService = genericAttributeService;
         _nopHttpClient = nopHttpClient;
+        _passengerService = passengerService;
     }
 
     #endregion
@@ -122,6 +127,103 @@ public partial class HomeController : BaseAdminController
         catch { }
 
         return Json(new { Result = true });
+    }
+
+    /// <summary>
+    /// Load passenger treatment statistics by TravelEndDateUtc
+    /// </summary>
+    /// <param name="period">Period: "year" for yearly, "month" for monthly</param>
+    /// <returns>JSON result with date labels and counts</returns>
+    [CheckPermission(StandardPermission.Customers.CUSTOMERS_VIEW)]
+    public virtual async Task<IActionResult> LoadPassengerTreatmentStatistics(string period)
+    {
+        var result = new List<object>();
+
+        // Get all passengers with TravelEndDateUtc
+        var allPassengers = await _passengerService.GetAllPassengersAsync(
+            recoveryNo: 0,
+            recoveryYear: 0,
+            personName: null,
+            pageIndex: 0,
+            pageSize: int.MaxValue,
+            getOnlyTotalCount: false);
+
+        // Filter passengers with valid TravelEndDateUtc and convert to Persian dates
+        var passengersWithDate = allPassengers
+            .Where(p => p.TravelEndDateUtc.HasValue && p.TravelEndDateUtc.Value > DateTime.MinValue)
+            .Select(p => new
+            {
+                Passenger = p,
+                PersianDate = new PersianDateTime(p.TravelEndDateUtc.Value)
+            })
+            .ToList();
+
+        switch (period)
+        {
+            case "year":
+                // Yearly statistics - group by Persian year
+                var yearGroups = passengersWithDate
+                    .GroupBy(p => p.PersianDate.Year)
+                    .OrderBy(g => g.Key)
+                    .ToList();
+
+                foreach (var yearGroup in yearGroups)
+                {
+                    result.Add(new
+                    {
+                        date = yearGroup.Key.ToString(),
+                        value = yearGroup.Count()
+                    });
+                }
+                break;
+
+            case "month":
+            default:
+                // Monthly statistics - group by Persian year and month
+                // Get current Persian year or use the most recent year in data
+                var currentPersianYear = new PersianDateTime(DateTime.Now).Year;
+                var targetYear = passengersWithDate.Any() 
+                    ? passengersWithDate.Max(p => p.PersianDate.Year) 
+                    : currentPersianYear;
+
+                // Initialize all 12 months with 0
+                var monthData = new Dictionary<int, int>();
+                for (int month = 1; month <= 12; month++)
+                {
+                    monthData[month] = 0;
+                }
+
+                // Count passengers for each month in the target year
+                var monthGroups = passengersWithDate
+                    .Where(p => p.PersianDate.Year == targetYear)
+                    .GroupBy(p => p.PersianDate.Month)
+                    .ToList();
+
+                foreach (var monthGroup in monthGroups)
+                {
+                    monthData[monthGroup.Key] = monthGroup.Count();
+                }
+
+                // Persian month names
+                var monthNames = new[]
+                {
+                    "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+                    "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+                };
+
+                // Add results for all 12 months
+                for (int month = 1; month <= 12; month++)
+                {
+                    result.Add(new
+                    {
+                        date = monthNames[month - 1],
+                        value = monthData[month]
+                    });
+                }
+                break;
+        }
+
+        return Json(result);
     }
 
     #endregion

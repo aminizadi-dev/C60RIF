@@ -1,0 +1,129 @@
+@using Nop.Core
+@model DateTime?
+
+@{
+    var persianValue = "";
+    if (Model.HasValue && Model.Value > DateTime.MinValue)
+    {
+        var persianDate = new PersianDateTime(Model.Value) { EnglishNumber = true };
+        persianValue = persianDate.ToShortDateString(); // Format: 1403/10/10
+    }
+
+    var inputId = Html.IdForModel();
+    var inputName = Html.NameForModel();
+    var uniqueId = Guid.NewGuid().ToString("N").Substring(0, 8);
+}
+
+<style>
+    .persian-date-wrapper {
+        position: relative;
+    }
+    .persian-date-wrapper .persian-date-input {
+        direction: ltr;
+        text-align: right;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+    .persian-date-wrapper .persian-date-icon {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        cursor: pointer;
+        z-index: 10;
+    }
+    .persian-date-wrapper .persian-date-icon:hover {
+        color: #495057;
+    }
+    .persian-date-wrapper input:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    .persian-date-hint {
+        font-size: 0.75em;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+</style>
+
+<div class="persian-date-wrapper">
+    <input id="@inputId" 
+           name="@inputName"
+           type="text" 
+           class="form-control persian-date-input" 
+           value="@persianValue" 
+           placeholder="1403/10/10"
+           autocomplete="off"
+           pattern="\d{4}/\d{1,2}/\d{1,2}"
+           data-persian-date="true" />
+    <span class="persian-date-icon">
+        <i class="fas fa-calendar-alt"></i>
+    </span>
+</div>
+<div class="persian-date-hint">
+    فرمت: سال/ماه/روز (مثال: 1403/10/10)
+</div>
+
+<script asp-location="Footer">
+    $(document).ready(function () {
+        var $input = $('#@inputId');
+        var $wrapper = $input.closest('.persian-date-wrapper');
+        var $icon = $wrapper.find('.persian-date-icon');
+        
+        // Wait for persian-datepicker library to load
+        function initPersianDatepicker() {
+            if (typeof $.fn.persianDatepicker !== 'undefined') {
+                var initialValue = '@persianValue';
+                
+                $input.persianDatepicker({
+                    format: 'YYYY/MM/DD',
+                    initialValue: initialValue ? true : false,
+                    initialValueType: 'persian',
+                    autoClose: true,
+                    observer: true,
+                    calendar: {
+                        persian: {
+                            locale: 'fa',
+                            showHint: true
+                        }
+                    },
+                    toolbox: {
+                        calendarSwitch: {
+                            enabled: false
+                        }
+                    },
+                    timePicker: {
+                        enabled: false
+                    },
+                    onSelect: function (unix) {
+                        // Value is already in Persian format, no conversion needed
+                        // The model binder will handle conversion server-side
+                    }
+                });
+                
+                // Make icon clickable to open datepicker
+                $icon.off('click').on('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $input.focus();
+                    $input.persianDatepicker('show');
+                });
+                
+                // Also open on input click/focus
+                $input.off('click focus').on('click focus', function (e) {
+                    e.preventDefault();
+                    $input.persianDatepicker('show');
+                });
+            } else {
+                // Retry after a short delay if library not loaded yet
+                setTimeout(initPersianDatepicker, 100);
+            }
+        }
+        
+        // Start initialization - try multiple times to ensure library is loaded
+        initPersianDatepicker();
+        setTimeout(initPersianDatepicker, 200);
+        setTimeout(initPersianDatepicker, 500);
+    });
+</script>
+

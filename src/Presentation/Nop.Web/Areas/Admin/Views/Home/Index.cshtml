@@ -39,6 +39,23 @@
 
                     @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.DashboardLatestordersSearchtermsAfter, additionalData = Model })
 
+                    @* Visual Reports Section - Pie and Bar Charts *@
+                    <div class="row">
+                        <div class="col-md-6">
+                            @await Html.PartialAsync("_OrderStatusPieChart")
+                        </div>
+                        <div class="col-md-6">
+                            @await Html.PartialAsync("_SalesByCategoryBarChart")
+                        </div>
+                    </div>
+
+                    @* Passenger Treatment Statistics *@
+                    <div class="row">
+                        <div class="col-md-12">
+                            @await Html.PartialAsync("_PassengerTreatmentBarChart")
+                        </div>
+                    </div>
+
                     @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.DashboardBottom, additionalData = Model })
                 </div>
             </div>

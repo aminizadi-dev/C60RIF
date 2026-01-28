@@ -21,10 +21,12 @@
 
     var picture = await pictureService.GetPictureByIdAsync(Model);
     var files = new List<object>();
+    var fullSizePictureUrl = string.Empty;
 
     if (picture != null)
     {
         var pictureSource = $"{picture.SeoFilename}.{await pictureService.GetFileExtensionFromMimeTypeAsync(picture.MimeType)}";
+        fullSizePictureUrl = await pictureService.GetPictureUrlAsync(Model, targetSize: 0, showDefaultPicture: false);
         files.Add(new
         {
             source = pictureSource,
@@ -55,7 +57,16 @@
 <div class="upload-picture-block">
     <div class="picture-container">
         <div class="uploaded-image">
-            <img id="@(imageId)" src="@await pictureService.GetPictureUrlAsync(Model, pictureSize)" width="@(pictureSize)" />
+            @if (picture != null && !string.IsNullOrEmpty(fullSizePictureUrl))
+            {
+                <a id="@(clientId)link" href="@fullSizePictureUrl" target="_blank" title="@T("Common.ViewFullSize")" style="cursor: pointer;">
+                    <img id="@(imageId)" src="@await pictureService.GetPictureUrlAsync(Model, pictureSize)" width="@(pictureSize)" style="cursor: pointer;" />
+                </a>
+            }
+            else
+            {
+                <img id="@(imageId)" src="@await pictureService.GetPictureUrlAsync(Model, pictureSize)" width="@(pictureSize)" />
+            }
         </div>
     </div>
 </div>
@@ -80,11 +91,16 @@
         
         const $modelEl = $('#@Html.IdForModel()');
         const $imageEl = $('#@imageId');
+        const $imageLink = $('#@(clientId)link');
         const $removeEl = $('#@clientId');
 
         function resetImageToDefault() {
             $modelEl.val('0');
             $imageEl.attr("src", '@await pictureService.GetDefaultPictureUrlAsync(pictureSize)');
+            // Remove link if exists
+            if ($imageLink.length > 0) {
+                $imageEl.unwrap();
+            }
         }
 
         const serverConfig = {
@@ -112,6 +128,31 @@
                         load(request.responseText);
                         $imageEl.attr("src", response.imageUrl);
                         $modelEl.val(response.pictureId);
+                        
+                        // Update image link to open full size picture
+                        // Get full size URL by removing size parameter from thumbnail URL or constructing it
+                        // The thumbnail URL is like: /images/thumbs/0000123_filename.jpg?size=100
+                        // Full size URL should be: /images/thumbs/0000123_filename.jpg (without size parameter)
+                        let fullSizeUrl = response.imageUrl;
+                        if (fullSizeUrl.includes('?size=')) {
+                            fullSizeUrl = fullSizeUrl.split('?')[0];
+                        } else if (fullSizeUrl.includes('&size=')) {
+                            fullSizeUrl = fullSizeUrl.split('&size=')[0];
+                        }
+                        
+                        if ($imageLink.length > 0) {
+                            $imageLink.attr("href", fullSizeUrl);
+                        } else {
+                            // Create link if it doesn't exist
+                            const $newLink = $('<a>', {
+                                id: '@(clientId)link',
+                                href: fullSizeUrl,
+                                target: '_blank',
+                                title: '@T("Common.ViewFullSize")',
+                                style: 'cursor: pointer;'
+                            });
+                            $imageEl.wrap($newLink);
+                        }
                     } else {
                         error(response.message || commonError);
                     }

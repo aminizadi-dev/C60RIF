@@ -335,6 +335,21 @@ public partial class AdminMapperConfiguration : Profile, IOrderedMapperProfile
             .ForMember(model => model.LastIpAddress, options => options.Ignore())
             .ForMember(model => model.Location, options => options.Ignore())
             .ForMember(model => model.LastVisitedPage, options => options.Ignore());
+
+        CreateMap<Passenger, PassengerModel>()
+            .ForMember(model => model.CreatedOnUtc, options => options.Ignore())
+            .ForMember(model => model.AvailableEducationLevels, options => options.Ignore())
+            .ForMember(model => model.AvailableMaritalStatuses, options => options.Ignore())
+            .ForMember(model => model.AvailableEmploymentStatuses, options => options.Ignore())
+            .ForMember(model => model.Education, options => options.MapFrom(src => (int)src.Education))
+            .ForMember(model => model.MaritalStatus, options => options.MapFrom(src => (int)src.MaritalStatus))
+            .ForMember(model => model.EmploymentStatus, options => options.MapFrom(src => (int)src.EmploymentStatus));
+
+        CreateMap<PassengerModel, Passenger>()
+            .ForMember(entity => entity.CreatedOnUtc, options => options.Ignore())
+            .ForMember(entity => entity.Education, options => options.MapFrom(src => (EducationLevel)src.Education))
+            .ForMember(entity => entity.MaritalStatus, options => options.MapFrom(src => (MaritalStatus)src.MaritalStatus))
+            .ForMember(entity => entity.EmploymentStatus, options => options.MapFrom(src => (EmploymentStatus)src.EmploymentStatus));
     }
 
     /// <summary>

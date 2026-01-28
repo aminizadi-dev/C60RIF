@@ -125,6 +125,14 @@ public partial class AdminMenu : IAdminMenu
                             PermissionNames = new List<string> { StandardPermission.Customers.ACTIVITY_LOG_VIEW },
                             Url = GetMenuItemUrl("ActivityLog", "ActivityTypes"),
                             IconClass = "far fa-dot-circle"
+                        },
+                        new()
+                        {
+                            SystemName = "Passengers list",
+                            Title = await _localizationService.GetResourceAsync("Admin.Passengers.Passengers"),
+                            PermissionNames = new List<string> { StandardPermission.Customers.CUSTOMERS_VIEW },
+                            Url = GetMenuItemUrl("Passenger", "List"),
+                            IconClass = "far fa-dot-circle"
                         }
                     }
                 },

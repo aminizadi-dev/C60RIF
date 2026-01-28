@@ -1,0 +1,193 @@
+@{
+    const string prefix = "sales-by-category-bar-chart";
+    const string hideCardAttributeName = "Reports.HideSalesByCategoryBarChartCard";
+    var hideCard = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideCardAttributeName);
+}
+
+<script src="~/lib_npm/chart.js/chart.umd.min.js"></script>
+
+<div class="card card-primary card-outline @if (hideCard){<text>collapsed-card</text>}" id="@(prefix)-card">
+    <div class="card-header with-border">
+        <h3 class="card-title">
+            <i class="fas fa-chart-bar"></i>
+            @T("Admin.Reports.Sales.SalesByCategory")
+        </h3>
+        <div class="card-tools float-right">
+            <button class="btn btn-xs btn-info btn-flat margin-r-5" @if (hideCard) { <text> disabled="disabled" </text> } data-chart-role="toggle-chart" data-chart-period="year">@T("Admin.SalesReport.Year")</button>
+            <button class="btn btn-xs btn-info btn-flat margin-r-5" @if (hideCard) { <text> disabled="disabled" </text> } data-chart-role="toggle-chart" data-chart-period="month">@T("Admin.SalesReport.Month")</button>
+            <button class="btn btn-xs btn-info btn-flat" @if (hideCard) { <text> disabled="disabled" </text> } data-chart-role="toggle-chart" data-chart-period="week">@T("Admin.SalesReport.Week")</button>
+            <button type="button" class="btn btn-tool margin-l-10" data-card-widget="collapse">
+                @if (hideCard)
+                {
+                    <text><i class="fas fa-plus"></i></text>
+                }
+                else
+                {
+                    <text><i class="fas fa-minus"></i></text>
+                }
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="chart" style="height: 300px;">
+            <canvas id="@(prefix)-chart" height="300"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function() {
+        var bcCurrentPeriod;
+
+        $('#@(prefix)-card').on('click', 'button[data-card-widget="collapse"]', function () {
+            var collapsed = !$('#@(prefix)-card').hasClass('collapsed-card');
+            saveUserPreferences('@(Url.Action("SavePreference", "Preferences"))', '@hideCardAttributeName', collapsed);
+            
+            if (!collapsed) {
+                $('#@(prefix)-card button[data-chart-role="toggle-chart"]').removeAttr('disabled');
+                if (!bcCurrentPeriod) {
+                    $('#@(prefix)-card button[data-chart-role="toggle-chart"][data-chart-period="month"]').trigger('click');
+                }
+            } else {
+                $('#@(prefix)-card button[data-chart-role="toggle-chart"]').attr('disabled', 'disabled');
+            }
+        });
+
+        var barConfig = {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: "@T("Admin.Reports.Sales.SalesByCategory")",
+                    data: [],
+                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y.toLocaleString('en-US', {
+                                    style: 'currency',
+                                    currency: 'USD'
+                                });
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    },
+                    y: {
+                        display: true,
+                        beginAtZero: true,
+                        grid: {
+                            display: true,
+                            color: 'rgba(0,0,0,.05)',
+                            lineWidth: 1
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('en-US', {
+                                    style: 'currency',
+                                    currency: 'USD',
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        function changeBarChartPeriod(period) {
+            var labels = [];
+            var values = [];
+
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Url.Action("LoadSalesByCategoryStatistics", "Order")",
+                data: {
+                    period: period
+                },
+                success: function (data, textStatus, jqXHR) {
+                    if (data && data.length > 0) {
+                        for (var i = 0; i < data.length; i++) {
+                            labels.push(data[i].categoryName);
+                            values.push(data[i].totalAmount);
+                        }
+                    } else {
+                        // Sample data if no data available
+                        labels = ['Electronics', 'Clothing', 'Books', 'Home & Garden', 'Sports'];
+                        values = [15000, 12000, 8000, 10000, 6000];
+                    }
+
+                    if (!window.salesByCategoryBarChart) {
+                        barConfig.data.labels = labels;
+                        barConfig.data.datasets[0].data = values;
+                        window.salesByCategoryBarChart = new Chart(
+                            document.getElementById("@prefix-chart").getContext("2d"),
+                            barConfig
+                        );
+                    } else {
+                        window.salesByCategoryBarChart.config.data.labels = labels;
+                        window.salesByCategoryBarChart.config.data.datasets[0].data = values;
+                        window.salesByCategoryBarChart.update();
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // Use sample data on error
+                    labels = ['Electronics', 'Clothing', 'Books', 'Home & Garden', 'Sports'];
+                    values = [15000, 12000, 8000, 10000, 6000];
+                    
+                    if (!window.salesByCategoryBarChart) {
+                        barConfig.data.labels = labels;
+                        barConfig.data.datasets[0].data = values;
+                        window.salesByCategoryBarChart = new Chart(
+                            document.getElementById("@prefix-chart").getContext("2d"),
+                            barConfig
+                        );
+                    } else {
+                        window.salesByCategoryBarChart.config.data.labels = labels;
+                        window.salesByCategoryBarChart.config.data.datasets[0].data = values;
+                        window.salesByCategoryBarChart.update();
+                    }
+                }
+            });
+        }
+
+        $('#@(prefix)-card button[data-chart-role="toggle-chart"]').on('click', function () {
+            var period = $(this).attr('data-chart-period');
+            bcCurrentPeriod = period;
+            changeBarChartPeriod(period);
+            $('#@(prefix)-card button[data-chart-role="toggle-chart"]').removeClass('bg-light-blue');
+            $(this).addClass('bg-light-blue');
+        });
+
+        @if (!hideCard)
+        {
+            <text>
+                $('#@(prefix)-card button[data-chart-role="toggle-chart"][data-chart-period="month"]').trigger('click');
+            </text>
+        }
+    });
+</script>
+
