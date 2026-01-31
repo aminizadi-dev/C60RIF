@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Nop.Core;
 using Nop.Core.Domain.Customers;
 using Nop.Services.Customers;
 using Nop.Services.Helpers;
 using Nop.Services.Localization;
+using Nop.Services.Media;
 using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
 using Nop.Web.Areas.Admin.Models.Customers;
 using Nop.Web.Framework.Models.Extensions;
@@ -22,6 +24,7 @@ public partial class PassengerModelFactory : IPassengerModelFactory
     protected readonly IDateTimeHelper _dateTimeHelper;
     protected readonly ILocalizationService _localizationService;
     protected readonly IPassengerService _passengerService;
+    protected readonly IPictureService _pictureService;
 
     #endregion
 
@@ -33,7 +36,8 @@ public partial class PassengerModelFactory : IPassengerModelFactory
         ICityService cityService,
         IDateTimeHelper dateTimeHelper,
         ILocalizationService localizationService,
-        IPassengerService passengerService)
+        IPassengerService passengerService,
+        IPictureService pictureService)
     {
         _agencyService = agencyService;
         _antiXService = antiXService;
@@ -41,6 +45,7 @@ public partial class PassengerModelFactory : IPassengerModelFactory
         _dateTimeHelper = dateTimeHelper;
         _localizationService = localizationService;
         _passengerService = passengerService;
+        _pictureService = pictureService;
     }
 
     #endregion
@@ -142,9 +147,10 @@ public partial class PassengerModelFactory : IPassengerModelFactory
             .Distinct()
             .Where(id => id > 0)
             .ToArray();
-        var antiXIds = passengers.SelectMany(passenger => new[] { passenger.AntiX1, passenger.AntiX2 })
+        var antiXIds = passengers.SelectMany(passenger => new int?[] { passenger.AntiX1, passenger.AntiX2 })
+            .Where(id => id.HasValue && id.Value > 0)
+            .Select(id => id.Value)
             .Distinct()
-            .Where(id => id > 0)
             .ToArray();
 
         var agencies = await _agencyService.GetAgenciesByIdsAsync(agencyIds);
@@ -169,13 +175,31 @@ public partial class PassengerModelFactory : IPassengerModelFactory
                 if (passenger.TravelEndDateUtc.HasValue)
                     passengerModel.TravelEndDateUtc = await _dateTimeHelper.ConvertToUserTimeAsync(passenger.TravelEndDateUtc.Value, DateTimeKind.Utc);
 
+                passengerModel.EndDateOnPersian = new PersianDateTime(passengerModel.TravelEndDateUtc)
+                {
+                    EnglishNumber = true
+                }.ToString("yyyy/MM/dd");
+
+                if (passenger.PictureId > 0)
+                {
+                    passengerModel.PictureUrl = await _pictureService.GetPictureUrlAsync(
+                        passenger.PictureId,
+                        targetSize: 60,
+                        showDefaultPicture: false);
+                    passengerModel.PictureFullSizeUrl = await _pictureService.GetPictureUrlAsync(
+                        passenger.PictureId,
+                        targetSize: 0,
+                        showDefaultPicture: false);
+                }
+
                 passengerModel.AgencyName = agencyNames.TryGetValue(passenger.AgencyId, out var agencyName)
                     ? agencyName
                     : string.Empty;
                 passengerModel.AntiX1Name = antiXNames.TryGetValue(passenger.AntiX1, out var antiX1Name)
                     ? antiX1Name
                     : string.Empty;
-                passengerModel.AntiX2Name = antiXNames.TryGetValue(passenger.AntiX2, out var antiX2Name)
+                passengerModel.AntiX2Name = passenger.AntiX2.HasValue &&
+                                            antiXNames.TryGetValue(passenger.AntiX2.Value, out var antiX2Name)
                     ? antiX2Name
                     : string.Empty;
 

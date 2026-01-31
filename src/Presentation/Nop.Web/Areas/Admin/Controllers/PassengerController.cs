@@ -107,6 +107,9 @@ public partial class PassengerController : BaseAdminController
     {
         if (ModelState.IsValid)
         {
+            if (model.AntiX2.GetValueOrDefault() <= 0)
+                model.AntiX2 = null;
+
             //fill entity from model
             var passenger = model.ToEntity<Passenger>();
             passenger.CreatedOnUtc = DateTime.UtcNow;
@@ -159,6 +162,9 @@ public partial class PassengerController : BaseAdminController
         {
             try
             {
+                if (model.AntiX2.GetValueOrDefault() <= 0)
+                    model.AntiX2 = null;
+
                 //fill entity from model
                 passenger = model.ToEntity(passenger);
 

@@ -29,7 +29,7 @@ public partial class Passenger : BaseEntity
 
     public int AntiX1 { get; set; }
 
-    public int AntiX2 { get; set; }
+    public int? AntiX2 { get; set; }
 
     public DateTime? TravelStartDateUtc { get; set; }
 

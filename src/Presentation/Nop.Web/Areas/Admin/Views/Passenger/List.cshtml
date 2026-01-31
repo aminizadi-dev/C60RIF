@@ -141,9 +141,9 @@
                                 {
                                     Title = T("Admin.Passengers.Fields.GuideNameAndLegionNo").Text
                                 });
-                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.RecoveryNo))
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.CardNo))
                                 {
-                                    Title = T("Admin.Passengers.Fields.RecoveryNo").Text
+                                    Title = T("Admin.Passengers.Fields.CardNo").Text
                                 });
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.AgencyName))
                                 {
@@ -157,10 +157,16 @@
                                 {
                                     Title = T("Admin.Passengers.Fields.AntiX2").Text
                                 });
-                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.CreatedOnUtc))
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.EndDateOnPersian))
                                 {
                                     Title = T("Admin.Passengers.Fields.CreatedOn").Text,
-                                    Render = new RenderDate()
+                                });
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.PictureUrl))
+                                {
+                                    Title = T("Admin.Passengers.Fields.PictureId").Text,
+                                    Width = "50",
+                                    ClassName = NopColumnClassDefaults.CenterAll,
+                                    Render = new RenderCustom("renderPassengerPicture")
                                 });
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.Id))
                                 {
@@ -180,6 +186,15 @@
 </form>
 
 <script>
+    function renderPassengerPicture(data, type, row, meta) {
+        if (!data) {
+            return '';
+        }
+
+        var fullUrl = row.PictureFullSizeUrl || data;
+        return '<a href="' + fullUrl + '" target="_blank" class="text-primary">نمایش فرم</a>';
+    }
+
     $(document).ready(function () {
         var citySelect = $("#@Html.IdFor(model => model.SearchCityId)");
         var agencySelect = $("#@Html.IdFor(model => model.SearchAgencyId)");

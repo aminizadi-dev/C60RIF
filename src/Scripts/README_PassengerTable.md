@@ -32,7 +32,7 @@
 - **EmploymentStatus**: وضعیت اشتغال (enum)
 - **CardNo**: شماره کارت
 - **AntiX1**: شناسه AntiX اول (عدد)
-- **AntiX2**: شناسه AntiX دوم (عدد)
+- **AntiX2**: شناسه AntiX دوم (عدد، اختیاری)
 - **TravelStartDateUtc**: تاریخ شروع سفر
 - **TravelEndDateUtc**: تاریخ پایان سفر
 - **PictureId**: شناسه تصویر

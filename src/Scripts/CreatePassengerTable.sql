@@ -17,7 +17,7 @@ BEGIN
         [EmploymentStatus] [int] NOT NULL,
         [CardNo] [bigint] NULL,
         [AntiX1] [int] NOT NULL,
-        [AntiX2] [int] NOT NULL,
+        [AntiX2] [int] NULL,
         [TravelStartDateUtc] [datetime2](7) NULL,
         [TravelEndDateUtc] [datetime2](7) NULL,
         [PictureId] [int] NOT NULL,

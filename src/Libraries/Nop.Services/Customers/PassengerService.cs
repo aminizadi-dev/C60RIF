@@ -66,12 +66,13 @@ public partial class PassengerService : IPassengerService
             if (cityId > 0)
             {
                 query = from passenger in query
-                    join agency in _agencyRepository.Table on passenger.AgencyId equals agency.Id
-                    where agency.CityId == cityId
-                    select passenger;
+                        join agency in _agencyRepository.Table on passenger.AgencyId equals agency.Id
+                        where agency.CityId == cityId
+                        select passenger;
             }
 
-            query = query.OrderByDescending(p => p.CreatedOnUtc);
+            query = query
+                .OrderByDescending(p => p.RecoveryNo);
 
             return query;
         }, pageIndex, pageSize, getOnlyTotalCount);

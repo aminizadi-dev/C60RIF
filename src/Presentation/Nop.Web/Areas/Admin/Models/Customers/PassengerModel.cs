@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core.Domain.Customers;
 using Nop.Web.Framework.Models;
@@ -63,7 +63,7 @@ public partial record PassengerModel : BaseNopEntityModel
     public int AntiX1 { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.Fields.AntiX2")]
-    public int AntiX2 { get; set; }
+    public int? AntiX2 { get; set; }
 
     public IList<SelectListItem> AvailableAntiXItems { get; set; }
 
@@ -80,6 +80,12 @@ public partial record PassengerModel : BaseNopEntityModel
     public IList<SelectListItem> AvailableAgencies { get; set; }
 
     public string AgencyName { get; set; }
+
+    public string PictureUrl { get; set; }
+
+    public string PictureFullSizeUrl { get; set; }
+
+    public string EndDateOnPersian { get; set; }
 
     [UIHint("PersianDateNullable")]
     [PersianDate]
