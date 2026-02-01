@@ -61,6 +61,10 @@ public partial class CommonModelFactory : ICommonModelFactory
     //Removed: protected readonly IBlogService _blogService;
     //Removed: protected readonly ICategoryService _categoryService;
     protected readonly ICustomerService _customerService;
+    protected readonly IAgencyService _agencyService;
+    protected readonly ICityService _cityService;
+    protected readonly IClinicService _clinicService;
+    protected readonly IPassengerService _passengerService;
     protected readonly IDateTimeHelper _dateTimeHelper;
     protected readonly IEventPublisher _eventPublisher;
     protected readonly IHttpContextAccessor _httpContextAccessor;
@@ -103,6 +107,10 @@ public partial class CommonModelFactory : ICommonModelFactory
         //Removed: IBlogService blogService,
         //Removed: ICategoryService categoryService,
         ICustomerService customerService,
+        IAgencyService agencyService,
+        ICityService cityService,
+        IClinicService clinicService,
+        IPassengerService passengerService,
         IDateTimeHelper dateTimeHelper,
         IEventPublisher eventPublisher,
         IHttpContextAccessor httpContextAccessor,
@@ -141,6 +149,10 @@ public partial class CommonModelFactory : ICommonModelFactory
         //Removed: _blogService = blogService;
         //Removed: _categoryService = categoryService;
         _customerService = customerService;
+        _agencyService = agencyService;
+        _cityService = cityService;
+        _clinicService = clinicService;
+        _passengerService = passengerService;
         _eventPublisher = eventPublisher;
         _dataProvider = dataProvider;
         _dateTimeHelper = dateTimeHelper;
@@ -930,11 +942,16 @@ public partial class CommonModelFactory : ICommonModelFactory
     {
         var model = new CommonStatisticsModel();
 
-        //COMMERCE STATISTICS REMOVED - Phase B
-        //Removed: NumberOfOrders, NumberOfPendingReturnRequests, NumberOfLowStockProducts
+        model.NumberOfPassengers = (await _passengerService.GetAllPassengersAsync(
+            pageIndex: 0, pageSize: 1, getOnlyTotalCount: true)).TotalCount;
 
-        var customerRoleIds = new[] { (await _customerService.GetCustomerRoleBySystemNameAsync(NopCustomerDefaults.RegisteredRoleName)).Id };
-        model.NumberOfCustomers = (await _customerService.GetAllCustomersAsync(customerRoleIds: customerRoleIds,
+        model.NumberOfCities = (await _cityService.GetAllCitiesAsync(
+            pageIndex: 0, pageSize: 1, getOnlyTotalCount: true)).TotalCount;
+
+        model.NumberOfAgencies = (await _agencyService.GetAllAgenciesAsync(
+            pageIndex: 0, pageSize: 1, getOnlyTotalCount: true)).TotalCount;
+
+        model.NumberOfClinics = (await _clinicService.GetAllClinicsAsync(
             pageIndex: 0, pageSize: 1, getOnlyTotalCount: true)).TotalCount;
 
         return model;

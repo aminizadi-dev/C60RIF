@@ -29,55 +29,58 @@
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-info">
                         <div class="inner">
-                            <p>@T("Admin.Dashboard.NumberOfOrders")</p>
+                            <h3>@Model.NumberOfPassengers</h3>
+                            <p>@T("Admin.Dashboard.NumberOfPassengers")</p>
                         </div>
                         <div class="icon">
-                            <i class="ion ion-bag"></i>
+                            <i class="fas fa-id-card"></i>
                         </div>
-                        <a asp-controller="Order" asp-action="List" class="small-box-footer">
+                        <a asp-controller="Passenger" asp-action="List" class="small-box-footer">
                             @T("Admin.Dashboard.MoreInfo")
                             <i class="fas fa-arrow-circle-right"></i>
                         </a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box bg-yellow">
+                    <div class="small-box bg-success">
                         <div class="inner">
-                            <p>@T("Admin.Dashboard.NumberOfPendingReturnRequests")</p>
+                            <h3>@Model.NumberOfCities</h3>
+                            <p>@T("Admin.Dashboard.NumberOfCities")</p>
                         </div>
                         <div class="icon">
-                            <i class="ion ion-refresh"></i>
+                            <i class="fas fa-city"></i>
                         </div>
-                        <a asp-controller="ReturnRequest" asp-action="List" class="small-box-footer">
+                        <a asp-controller="City" asp-action="List" class="small-box-footer">
                             @T("Admin.Dashboard.MoreInfo")
                             <i class="fas fa-arrow-circle-right"></i>
                         </a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box bg-green">
+                    <div class="small-box bg-warning">
                         <div class="inner">
-                            <h3>@Model.NumberOfCustomers</h3>
-                            <p>@T("Admin.Dashboard.NumberOfCustomers")</p>
+                            <h3>@Model.NumberOfAgencies</h3>
+                            <p>@T("Admin.Dashboard.NumberOfAgencies")</p>
                         </div>
                         <div class="icon">
-                            <i class="ion ion-person-add"></i>
+                            <i class="fas fa-building"></i>
                         </div>
-                        <a asp-controller="Customer" asp-action="List" class="small-box-footer">
+                        <a asp-controller="Agency" asp-action="List" class="small-box-footer">
                             @T("Admin.Dashboard.MoreInfo")
                             <i class="fas fa-arrow-circle-right"></i>
                         </a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box bg-red">
+                    <div class="small-box bg-danger">
                         <div class="inner">
-                            <p>@T("Admin.Dashboard.NumberOfLowStockProducts")</p>
+                            <h3>@Model.NumberOfClinics</h3>
+                            <p>@T("Admin.Dashboard.NumberOfClinics")</p>
                         </div>
                         <div class="icon">
-                            <i class="ion ion-pie-graph"></i>
+                            <i class="fas fa-clinic-medical"></i>
                         </div>
-                        <a asp-controller="Report" asp-action="LowStock" class="small-box-footer">
+                        <a asp-controller="Clinic" asp-action="List" class="small-box-footer">
                             @T("Admin.Dashboard.MoreInfo")
                             <i class="fas fa-arrow-circle-right"></i>
                         </a>

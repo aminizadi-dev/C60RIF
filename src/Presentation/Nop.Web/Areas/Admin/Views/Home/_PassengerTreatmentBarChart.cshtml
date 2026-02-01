@@ -13,8 +13,12 @@
             @T("Admin.Reports.Passengers.TreatmentStatistics")
         </h3>
         <div class="card-tools float-right">
-            <button class="btn btn-xs btn-info btn-flat margin-r-5" @if (hideCard) { <text> disabled="disabled" </text> } data-chart-role="toggle-chart" data-chart-period="year">@T("Admin.SalesReport.Year")</button>
-            <button class="btn btn-xs btn-info btn-flat" @if (hideCard) { <text> disabled="disabled" </text> } data-chart-role="toggle-chart" data-chart-period="month">@T("Admin.SalesReport.Month")</button>
+            <div class="input-group input-group-sm" style="width: 180px;">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">@T("Admin.SalesReport.Year")</span>
+                </div>
+                <select id="@(prefix)-year" class="form-control" @if (hideCard) { <text> disabled="disabled" </text> }></select>
+            </div>
             <button type="button" class="btn btn-tool margin-l-10" data-card-widget="collapse">
                 @if (hideCard)
                 {
@@ -36,19 +40,19 @@
 
 <script>
     $(function() {
-        var ptCurrentPeriod;
+        var selectedYear;
 
         $('#@(prefix)-card').on('click', 'button[data-card-widget="collapse"]', function () {
             var collapsed = !$('#@(prefix)-card').hasClass('collapsed-card');
             saveUserPreferences('@(Url.Action("SavePreference", "Preferences"))', '@hideCardAttributeName', collapsed);
             
             if (!collapsed) {
-                $('#@(prefix)-card button[data-chart-role="toggle-chart"]').removeAttr('disabled');
-                if (!ptCurrentPeriod) {
-                    $('#@(prefix)-card button[data-chart-role="toggle-chart"][data-chart-period="month"]').trigger('click');
+                $('#@(prefix)-year').removeAttr('disabled');
+                if (!selectedYear) {
+                    loadYearsAndChart();
                 }
             } else {
-                $('#@(prefix)-card button[data-chart-role="toggle-chart"]').attr('disabled', 'disabled');
+                $('#@(prefix)-year').attr('disabled', 'disabled');
             }
         });
 
@@ -109,7 +113,7 @@
             }
         };
 
-        function changeBarChartPeriod(period) {
+        function changeBarChartYear(year) {
             var labels = [];
             var values = [];
 
@@ -118,7 +122,8 @@
                 type: "GET",
                 url: "@Url.Action("LoadPassengerTreatmentStatistics", "Home")",
                 data: {
-                    period: period
+                    period: "month",
+                    year: year
                 },
                 success: function (data, textStatus, jqXHR) {
                     if (data && data.length > 0) {
@@ -127,14 +132,8 @@
                             values.push(parseInt(data[i].value));
                         }
                     } else {
-                        // Sample data if no data available
-                        if (period === "year") {
-                            labels = ['1400', '1401', '1402', '1403'];
-                            values = [10, 25, 30, 15];
-                        } else {
-                            labels = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
-                            values = [5, 8, 12, 10, 15, 20, 18, 14, 10, 8, 6, 4];
-                        }
+                        labels = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
+                        values = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                     }
 
                     if (!window.passengerTreatmentBarChart) {
@@ -151,14 +150,8 @@
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    // Use sample data on error
-                    if (period === "year") {
-                        labels = ['1400', '1401', '1402', '1403'];
-                        values = [10, 25, 30, 15];
-                    } else {
-                        labels = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
-                        values = [5, 8, 12, 10, 15, 20, 18, 14, 10, 8, 6, 4];
-                    }
+                    labels = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
+                    values = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                     
                     if (!window.passengerTreatmentBarChart) {
                         barConfig.data.labels = labels;
@@ -176,18 +169,51 @@
             });
         }
 
-        $('#@(prefix)-card button[data-chart-role="toggle-chart"]').on('click', function () {
-            var period = $(this).attr('data-chart-period');
-            ptCurrentPeriod = period;
-            changeBarChartPeriod(period);
-            $('#@(prefix)-card button[data-chart-role="toggle-chart"]').removeClass('bg-light-blue');
-            $(this).addClass('bg-light-blue');
+        function loadYearsAndChart() {
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Url.Action("LoadPassengerTreatmentYears", "Home")",
+                success: function (data) {
+                    var $select = $('#@(prefix)-year');
+                    $select.empty();
+
+                    if (data && data.length > 0) {
+                        for (var i = 0; i < data.length; i++) {
+                            var option = $('<option></option>')
+                                .attr('value', data[i].year)
+                                .text(data[i].year);
+                            if (data[i].selected) {
+                                option.attr('selected', 'selected');
+                                selectedYear = data[i].year;
+                            }
+                            $select.append(option);
+                        }
+                    }
+
+                    if (!selectedYear && $select.val()) {
+                        selectedYear = parseInt($select.val());
+                    }
+
+                    if (selectedYear) {
+                        changeBarChartYear(selectedYear);
+                    }
+                }
+            });
+        }
+
+        $('#@(prefix)-year').on('change', function () {
+            var year = parseInt($(this).val());
+            if (!isNaN(year)) {
+                selectedYear = year;
+                changeBarChartYear(year);
+            }
         });
 
         @if (!hideCard)
         {
             <text>
-                $('#@(prefix)-card button[data-chart-role="toggle-chart"][data-chart-period="month"]').trigger('click');
+                loadYearsAndChart();
             </text>
         }
     });

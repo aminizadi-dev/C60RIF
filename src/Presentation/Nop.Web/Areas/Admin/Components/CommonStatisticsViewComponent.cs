@@ -43,7 +43,7 @@ public partial class CommonStatisticsViewComponent : NopViewComponent
     /// </returns>
     public async Task<IViewComponentResult> InvokeAsync()
     {
-        if (!await _permissionService.AuthorizeAsync(StandardPermission.Customers.CUSTOMERS_VIEW))
+        if (!await _permissionService.AuthorizeAsync(StandardPermission.Passengers.PASSENGERS_VIEW))
         {
             return Content(string.Empty);
         }

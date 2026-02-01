@@ -1,5 +1,5 @@
 @{
-    const string prefix = "order-status-pie-chart";
+    const string prefix = "antix-consumption-pie-chart";
     const string hideCardAttributeName = "Reports.HideOrderStatusPieChartCard";
     var hideCard = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideCardAttributeName);
 }
@@ -10,7 +10,7 @@
     <div class="card-header with-border">
         <h3 class="card-title">
             <i class="fas fa-chart-pie"></i>
-            @T("Admin.Reports.Sales.OrderStatusDistribution")
+            @T("Admin.Dashboard.AntiXConsumption")
         </h3>
         <div class="card-tools float-right">
             <button type="button" class="btn btn-tool margin-l-10" data-card-widget="collapse">
@@ -43,6 +43,7 @@
             }
         });
 
+        Chart.defaults.font.family = 'Vazirmatn, Arial, Helvetica, sans-serif';
         var pieConfig = {
             type: 'pie',
             data: {
@@ -109,20 +110,26 @@
             $.ajax({
                 cache: false,
                 type: "GET",
-                url: "@Url.Action("LoadOrderStatusStatistics", "Order")",
+                url: "@Url.Action("LoadAntiXConsumptionStatistics", "Home")",
                 success: function (data, textStatus, jqXHR) {
                     var labels = [];
                     var values = [];
 
                     if (data && data.length > 0) {
                         for (var i = 0; i < data.length; i++) {
-                            labels.push(data[i].statusName);
+                            labels.push(data[i].label);
                             values.push(data[i].count);
                         }
                     } else {
-                        // Sample data if no data available
-                        labels = ['Pending', 'Processing', 'Complete', 'Cancelled'];
-                        values = [10, 25, 50, 5];
+                        labels = [
+                            '@T("Admin.Dashboard.AntiXConsumption.Opium")',
+                            '@T("Admin.Dashboard.AntiXConsumption.Shireh")',
+                            '@T("Admin.Dashboard.AntiXConsumption.Cannabis")',
+                            '@T("Admin.Dashboard.AntiXConsumption.Shisheh")',
+                            '@T("Admin.Dashboard.AntiXConsumption.Heroin")',
+                            '@T("Admin.Dashboard.AntiXConsumption.Other")'
+                        ];
+                        values = [0, 0, 0, 0, 0, 0];
                     }
 
                     pieConfig.data.labels = labels;
@@ -140,9 +147,15 @@
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    // Use sample data on error
-                    pieConfig.data.labels = ['Pending', 'Processing', 'Complete', 'Cancelled'];
-                    pieConfig.data.datasets[0].data = [10, 25, 50, 5];
+                    pieConfig.data.labels = [
+                        '@T("Admin.Dashboard.AntiXConsumption.Opium")',
+                        '@T("Admin.Dashboard.AntiXConsumption.Shireh")',
+                        '@T("Admin.Dashboard.AntiXConsumption.Cannabis")',
+                        '@T("Admin.Dashboard.AntiXConsumption.Shisheh")',
+                        '@T("Admin.Dashboard.AntiXConsumption.Heroin")',
+                        '@T("Admin.Dashboard.AntiXConsumption.Other")'
+                    ];
+                    pieConfig.data.datasets[0].data = [0, 0, 0, 0, 0, 0];
                     
                     if (!window.orderStatusPieChart) {
                         window.orderStatusPieChart = new Chart(

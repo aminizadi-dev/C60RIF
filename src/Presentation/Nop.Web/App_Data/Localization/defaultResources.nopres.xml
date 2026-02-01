@@ -13181,6 +13181,27 @@
   <LocaleResource Name="Admin.Dashboard.CommonStatistics">
     <Value>Common statistics</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Dashboard.AntiXConsumption">
+    <Value>AntiX consumption distribution</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Dashboard.AntiXConsumption.Opium">
+    <Value>Opium (oral, smoking, syrup)</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Dashboard.AntiXConsumption.Shireh">
+    <Value>Shireh</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Dashboard.AntiXConsumption.Cannabis">
+    <Value>Cannabis (hashish, marijuana)</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Dashboard.AntiXConsumption.Shisheh">
+    <Value>Shisheh</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Dashboard.AntiXConsumption.Heroin">
+    <Value>Heroin</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Dashboard.AntiXConsumption.Other">
+    <Value>Other</Value>
+  </LocaleResource>
   <LocaleResource Name="Admin.Dashboard.IncompleteOrders">
     <Value>Incomplete orders</Value>
   </LocaleResource>
@@ -13195,6 +13216,18 @@
   </LocaleResource>
   <LocaleResource Name="Admin.Dashboard.NumberOfCustomers">
     <Value>Registered customers</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Dashboard.NumberOfPassengers">
+    <Value>Registered passengers</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Dashboard.NumberOfCities">
+    <Value>Cities</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Dashboard.NumberOfAgencies">
+    <Value>Agencies</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Dashboard.NumberOfClinics">
+    <Value>Clinics</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Dashboard.NumberOfLowStockProducts">
     <Value>Low stock products</Value>

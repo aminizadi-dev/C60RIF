@@ -157,6 +157,24 @@ body {
   color: var(--gray-color);
 }
 
+html, body {
+  height: 100%;
+}
+
+.master-wrapper-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.master-wrapper-content {
+  flex: 1 0 auto;
+}
+
+.footer {
+  margin-top: auto;
+}
+
 h1, h2, h3, h4, h5, h6 {
   color: var(--dark-gray-color);
 }
@@ -8469,7 +8487,7 @@ label, label + * {
 
   .header-logo {
     display: table-cell;
-    text-align: right;
+    text-align: center;
     vertical-align: middle;
     font-size: 0;
   }
@@ -9016,7 +9034,7 @@ label, label + * {
   }
 
   .login-page .new-wrapper {
-    float: right;
+    float: left;
     width: 49%;
     margin: 0;
   }
@@ -9026,7 +9044,7 @@ label, label + * {
     }
 
   .login-page .returning-wrapper {
-    float: left;
+    float: right;
     width: 49%;
   }
 
