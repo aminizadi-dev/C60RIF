@@ -53,7 +53,7 @@ public partial class CityService : ICityService
             if (published.HasValue)
                 query = query.Where(c => c.Published == published.Value);
 
-            query = query.OrderBy(c => c.DisplayOrder).ThenBy(c => c.Name);
+            query = query.OrderBy(c => c.Name).ThenBy(c => c.DisplayOrder);
 
             return query;
         }, pageIndex, pageSize, getOnlyTotalCount);

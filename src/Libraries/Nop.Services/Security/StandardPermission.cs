@@ -18,6 +18,12 @@ public partial class StandardPermission
         public const string ACTIVITY_LOG_MANAGE_TYPES = $"{nameof(Customers)}.ActivityLogManageTypes";
     }
 
+    public partial class Passengers
+    {
+        public const string PASSENGERS_VIEW = $"{nameof(Passengers)}.PassengersView";
+        public const string PASSENGERS_CREATE_EDIT_DELETE = $"{nameof(Passengers)}.PassengersCreateEditDelete";
+    }
+
     //COMMERCE PERMISSIONS REMOVED - Phase B
     //Removed: Orders, Reports, Catalog, Promotions classes
 

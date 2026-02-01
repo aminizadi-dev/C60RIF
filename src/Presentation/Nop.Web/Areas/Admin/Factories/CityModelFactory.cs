@@ -19,6 +19,7 @@ public partial class CityModelFactory : ICityModelFactory
 
     protected readonly IAgencyService _agencyService;
     protected readonly ICityService _cityService;
+    protected readonly IClinicService _clinicService;
 
     #endregion
 
@@ -26,10 +27,12 @@ public partial class CityModelFactory : ICityModelFactory
 
     public CityModelFactory(
         IAgencyService agencyService,
-        ICityService cityService)
+        ICityService cityService,
+        IClinicService clinicService)
     {
         _agencyService = agencyService;
         _cityService = cityService;
+        _clinicService = clinicService;
     }
 
     #endregion
@@ -42,6 +45,22 @@ public partial class CityModelFactory : ICityModelFactory
     /// <param name="searchModel">Agency search model</param>
     /// <param name="city">City</param>
     public virtual void PrepareAgencySearchModel(AgencySearchModel searchModel, City city)
+    {
+        ArgumentNullException.ThrowIfNull(searchModel);
+        ArgumentNullException.ThrowIfNull(city);
+
+        searchModel.CityId = city.Id;
+
+        //prepare page parameters
+        searchModel.SetGridPageSize();
+    }
+
+    /// <summary>
+    /// Prepare clinic search model
+    /// </summary>
+    /// <param name="searchModel">Clinic search model</param>
+    /// <param name="city">City</param>
+    public virtual void PrepareClinicSearchModel(ClinicSearchModel searchModel, City city)
     {
         ArgumentNullException.ThrowIfNull(searchModel);
         ArgumentNullException.ThrowIfNull(city);
@@ -97,6 +116,9 @@ public partial class CityModelFactory : ICityModelFactory
             cityModel.NumberOfAgencies = (await _agencyService.GetAllAgenciesAsync(
                 cityId: city.Id,
                 getOnlyTotalCount: true)).TotalCount;
+            cityModel.NumberOfClinics = (await _clinicService.GetAllClinicsAsync(
+                cityId: city.Id,
+                getOnlyTotalCount: true)).TotalCount;
             cityModels.Add(cityModel);
         }
 
@@ -123,6 +145,9 @@ public partial class CityModelFactory : ICityModelFactory
             model.NumberOfAgencies = (await _agencyService.GetAllAgenciesAsync(
                 cityId: city.Id,
                 getOnlyTotalCount: true)).TotalCount;
+            model.NumberOfClinics = (await _clinicService.GetAllClinicsAsync(
+                cityId: city.Id,
+                getOnlyTotalCount: true)).TotalCount;
         }
 
         //set default values for the new model
@@ -133,7 +158,10 @@ public partial class CityModelFactory : ICityModelFactory
         }
 
         if (city != null)
+        {
             PrepareAgencySearchModel(model.AgencySearchModel, city);
+            PrepareClinicSearchModel(model.ClinicSearchModel, city);
+        }
 
         return model;
     }
@@ -163,6 +191,30 @@ public partial class CityModelFactory : ICityModelFactory
     }
 
     /// <summary>
+    /// Prepare paged clinic list model
+    /// </summary>
+    /// <param name="searchModel">Clinic search model</param>
+    /// <param name="city">City</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation
+    /// The task result contains the clinic list model
+    /// </returns>
+    public virtual async Task<ClinicListModel> PrepareClinicListModelAsync(ClinicSearchModel searchModel, City city)
+    {
+        ArgumentNullException.ThrowIfNull(searchModel);
+        ArgumentNullException.ThrowIfNull(city);
+
+        var clinics = (await _clinicService.GetClinicsByCityIdAsync(city.Id, showHidden: true)).ToPagedList(searchModel);
+
+        var model = new ClinicListModel().PrepareToGrid(searchModel, clinics, () =>
+        {
+            return clinics.Select(clinic => clinic.ToModel<ClinicModel>());
+        });
+
+        return model;
+    }
+
+    /// <summary>
     /// Prepare agency model
     /// </summary>
     /// <param name="model">Agency model</param>
@@ -184,6 +236,36 @@ public partial class CityModelFactory : ICityModelFactory
         if (agency == null)
         {
             model ??= new AgencyModel();
+            model.Published = true;
+        }
+
+        model.CityId = city.Id;
+
+        return Task.FromResult(model);
+    }
+
+    /// <summary>
+    /// Prepare clinic model
+    /// </summary>
+    /// <param name="model">Clinic model</param>
+    /// <param name="city">City</param>
+    /// <param name="clinic">Clinic</param>
+    /// <param name="excludeProperties">Whether to exclude properties</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation
+    /// The task result contains the clinic model
+    /// </returns>
+    public virtual Task<ClinicModel> PrepareClinicModelAsync(ClinicModel model, City city, Clinic clinic, bool excludeProperties = false)
+    {
+        ArgumentNullException.ThrowIfNull(city);
+
+        if (clinic != null)
+            model ??= clinic.ToModel<ClinicModel>();
+
+        //set default values for the new model
+        if (clinic == null)
+        {
+            model ??= new ClinicModel();
             model.Published = true;
         }
 

@@ -5217,17 +5217,62 @@
   <LocaleResource Name="Admin.Configuration.Cities.Fields.NumberOfAgencies">
     <Value>Number of agencies</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Fields.NumberOfClinics">
+    <Value>Number of clinics</Value>
+  </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Cities.Agencies">
     <Value>Agencies</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Clinics">
+    <Value>Clinics</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Agencies.Added">
+    <Value>The new agency has been added successfully.</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Cities.Agencies.AddNew">
     <Value>Add a new agency</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Agencies.Deleted">
+    <Value>The agency has been deleted successfully.</Value>
+  </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Cities.Agencies.Edit">
-    <Value>Edit agency</Value>
+    <Value>Edit agency details</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Agencies.PublishSelected">
+    <Value>Publish selected</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Cities.Agencies.SaveBeforeEdit">
-    <Value>Save before edit agencies</Value>
+    <Value>You need to save the city before you can add agencies.</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Clinics.AddNew">
+    <Value>Add a new clinic</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Clinics.Edit">
+    <Value>Edit clinic details</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Clinics.SaveBeforeEdit">
+    <Value>You need to save the city before you can add clinics.</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Clinics.Fields.Name">
+    <Value>Name</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Clinics.Fields.Published">
+    <Value>Published</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Clinics.Fields.DisplayOrder">
+    <Value>Display order</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Agencies.UnpublishSelected">
+    <Value>Unpublish selected</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Agencies.Updated">
+    <Value>The agency has been updated successfully.</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Agencies.Fields.City">
+    <Value>City</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Cities.Agencies.Fields.City.Required">
+    <Value>City is required</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Cities.Agencies.Fields.Name">
     <Value>Name</Value>

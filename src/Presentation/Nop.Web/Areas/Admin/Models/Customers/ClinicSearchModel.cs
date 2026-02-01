@@ -7,5 +7,6 @@ namespace Nop.Web.Areas.Admin.Models.Customers;
 /// </summary>
 public partial record ClinicSearchModel : BaseSearchModel
 {
+    public int CityId { get; set; }
 }
 

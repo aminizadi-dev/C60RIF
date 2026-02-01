@@ -13,6 +13,7 @@ public partial record CityModel : BaseNopEntityModel
     public CityModel()
     {
         AgencySearchModel = new AgencySearchModel();
+        ClinicSearchModel = new ClinicSearchModel();
     }
 
     #endregion
@@ -31,7 +32,12 @@ public partial record CityModel : BaseNopEntityModel
     [NopResourceDisplayName("Admin.Configuration.Cities.Fields.NumberOfAgencies")]
     public int NumberOfAgencies { get; set; }
 
+    [NopResourceDisplayName("Admin.Configuration.Cities.Fields.NumberOfClinics")]
+    public int NumberOfClinics { get; set; }
+
     public AgencySearchModel AgencySearchModel { get; set; }
+
+    public ClinicSearchModel ClinicSearchModel { get; set; }
 
     #endregion
 }

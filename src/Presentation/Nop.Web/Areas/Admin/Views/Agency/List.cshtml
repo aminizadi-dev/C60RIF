@@ -1,15 +1,15 @@
-@model CitySearchModel
+@model AgencySearchModel
 
 @{
     //page title
-    ViewBag.PageTitle = T("Admin.Configuration.Cities").Text;
+    ViewBag.PageTitle = T("Admin.Configuration.Cities.Agencies").Text;
     //active menu item (system name)
-    NopHtml.SetActiveMenuItemSystemName("Cities");
+    NopHtml.SetActiveMenuItemSystemName("Agencies");
 }
 
 <div class="content-header clearfix">
     <h1 class="float-left">
-        @T("Admin.Configuration.Cities")
+        @T("Admin.Configuration.Cities.Agencies")
     </h1>
     <div class="float-right">
         <a asp-action="Create" class="btn btn-primary">
@@ -18,11 +18,11 @@
         </a>
         <button type="button" id="publish-selected" class="btn bg-teal">
             <i class="fas fa-square-check"></i>
-            @T("Admin.Configuration.Cities.PublishSelected")
+            @T("Admin.Configuration.Cities.Agencies.PublishSelected")
         </button>
         <button type="button" id="unpublish-selected" class="btn btn-secondary">
             <i class="fas fa-square-minus"></i>
-            @T("Admin.Configuration.Cities.UnpublishSelected")
+            @T("Admin.Configuration.Cities.Agencies.UnpublishSelected")
         </button>
     </div>
 </div>
@@ -35,55 +35,47 @@
                 <div class="card-body">
                     @await Html.PartialAsync("Table", new DataTablesModel
                     {
-                        Name = "cities-grid",
-                        UrlRead = new DataUrl("CityList", "City", null),
-                        SearchButtonId = "search-cities",
+                        Name = "agencies-grid",
+                        UrlRead = new DataUrl("AgencyList", "Agency", null),
+                        SearchButtonId = "search-agencies",
                         Length = Model.PageSize,
                         LengthMenu = Model.AvailablePageSizes,
                         ColumnCollection = new List<ColumnProperty>
                         {
-                            new ColumnProperty(nameof(CityModel.Id))
+                            new ColumnProperty(nameof(AgencyModel.Id))
                             {
                                 IsMasterCheckBox = true,
-                                Render = new RenderCheckBox("checkbox_cities"),
+                                Render = new RenderCheckBox("checkbox_agencies"),
                                 ClassName =  NopColumnClassDefaults.CenterAll,
                                 Width = "50"
                             },
-                            new ColumnProperty(nameof(CityModel.Name))
+                            new ColumnProperty(nameof(AgencyModel.Name))
                             {
-                                Title = T("Admin.Configuration.Cities.Fields.Name").Text
+                                Title = T("Admin.Configuration.Cities.Agencies.Fields.Name").Text
                             },
-                            new ColumnProperty(nameof(CityModel.NumberOfAgencies))
+                            new ColumnProperty(nameof(AgencyModel.CityName))
                             {
-                                Title = T("Admin.Configuration.Cities.Fields.NumberOfAgencies").Text,
-                                Width = "150",
-                                ClassName =  NopColumnClassDefaults.CenterAll
+                                Title = T("Admin.Configuration.Cities.Agencies.Fields.City").Text
                             },
-                            new ColumnProperty(nameof(CityModel.NumberOfClinics))
+                            new ColumnProperty(nameof(AgencyModel.DisplayOrder))
                             {
-                                Title = T("Admin.Configuration.Cities.Fields.NumberOfClinics").Text,
-                                Width = "150",
-                                ClassName =  NopColumnClassDefaults.CenterAll
-                            },
-                            new ColumnProperty(nameof(CityModel.DisplayOrder))
-                            {
-                                Title = T("Admin.Configuration.Cities.Fields.DisplayOrder").Text,
+                                Title = T("Admin.Configuration.Cities.Agencies.Fields.DisplayOrder").Text,
                                 Width = "100",
                                 ClassName = NopColumnClassDefaults.CenterAll
                             },
-                            new ColumnProperty(nameof(CityModel.Published))
+                            new ColumnProperty(nameof(AgencyModel.Published))
                             {
-                                Title = T("Admin.Configuration.Cities.Fields.Published").Text,
+                                Title = T("Admin.Configuration.Cities.Agencies.Fields.Published").Text,
                                 Width = "100",
                                 ClassName =  NopColumnClassDefaults.CenterAll,
                                 Render = new RenderBoolean()
                             },
-                            new ColumnProperty(nameof(CityModel.Id))
+                            new ColumnProperty(nameof(AgencyModel.Id))
                             {
                                 Title = T("Admin.Common.Edit").Text,
                                 Width = "50",
                                 ClassName =  NopColumnClassDefaults.Button,
-                                Render = new RenderButtonEdit(new DataUrl("~/Admin/City/Edit"))
+                                Render = new RenderButtonEdit(new DataUrl("~/Admin/Agency/Edit"))
                             }
                         }
                     })
@@ -102,7 +94,7 @@
                                 $.ajax({
                                     cache: false,
                                     type: "POST",
-                                    url: "@(Url.Action("PublishSelected", "City"))",
+                                    url: "@(Url.Action("PublishSelected", "Agency"))",
                                     data: postData,
                                     traditional: true,
                                     complete: function (jqXHR, textStatus) {
@@ -111,7 +103,7 @@
                                             showAlert('nothingSelectedAlert', '@T("Admin.Common.Alert.NothingSelected")');
                                             return;
                                         }
-                                        updateTable('#cities-grid');
+                                        updateTable('#agencies-grid');
                                     },
                                     error: function (jqXHR, textStatus, errorThrown) {
                                         showAlert('publishSelectedFailed', errorThrown);
@@ -132,7 +124,7 @@
                                 $.ajax({
                                     cache: false,
                                     type: "POST",
-                                    url: "@(Url.Action("UnpublishSelected", "City"))",
+                                    url: "@(Url.Action("UnpublishSelected", "Agency"))",
                                     data: postData,
                                     traditional: true,
                                     error: function (jqXHR, textStatus, errorThrown) {
@@ -144,7 +136,7 @@
                                             showAlert('nothingSelectedAlert', '@T("Admin.Common.Alert.NothingSelected")');
                                             return;
                                         }
-                                        updateTable('#cities-grid');
+                                        updateTable('#agencies-grid');
                                     }
                                 });
                                 return false;

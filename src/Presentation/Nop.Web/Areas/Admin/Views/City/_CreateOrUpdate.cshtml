@@ -7,6 +7,8 @@
 
     const string hideAgenciesBlockAttributeName = "CityPage.HideAgenciesBlock";
     var hideAgenciesBlock = await genericAttributeService.GetAttributeAsync<bool>(customer, hideAgenciesBlockAttributeName, defaultValue: true);
+    const string hideClinicsBlockAttributeName = "CityPage.HideClinicsBlock";
+    var hideClinicsBlock = await genericAttributeService.GetAttributeAsync<bool>(customer, hideClinicsBlockAttributeName, defaultValue: true);
 }
 
 <div asp-validation-summary="All"></div>
@@ -18,6 +20,7 @@
             <nop-cards id="city-cards">
                 <nop-card asp-name="city-info" asp-icon="fas fa-info" asp-title="@T("Admin.Configuration.Cities.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</nop-card>
                 <nop-card asp-name="city-agencies" asp-icon="fas fa-building" asp-title="@T("Admin.Configuration.Cities.Agencies")" asp-hide-block-attribute-name="@hideAgenciesBlockAttributeName" asp-hide="@hideAgenciesBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Agencies", Model)</nop-card>
+                <nop-card asp-name="city-clinics" asp-icon="fas fa-clinic-medical" asp-title="@T("Admin.Configuration.Cities.Clinics")" asp-hide-block-attribute-name="@hideClinicsBlockAttributeName" asp-hide="@hideClinicsBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Clinics", Model)</nop-card>
             </nop-cards>
         </div>
     </div>

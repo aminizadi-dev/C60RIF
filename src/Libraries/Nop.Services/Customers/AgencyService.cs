@@ -56,7 +56,7 @@ public partial class AgencyService : IAgencyService
             if (published.HasValue)
                 query = query.Where(a => a.Published == published.Value);
 
-            query = query.OrderBy(a => a.DisplayOrder).ThenBy(a => a.Name);
+            query = query.OrderBy(a => a.Name).ThenBy(a => a.DisplayOrder);
 
             return query;
         }, pageIndex, pageSize, getOnlyTotalCount);

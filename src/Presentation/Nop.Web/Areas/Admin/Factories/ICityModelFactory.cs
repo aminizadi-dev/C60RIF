@@ -70,5 +70,36 @@ public partial interface ICityModelFactory
     /// The task result contains the agency model
     /// </returns>
     Task<AgencyModel> PrepareAgencyModelAsync(AgencyModel model, City city, Agency agency, bool excludeProperties = false);
+
+    /// <summary>
+    /// Prepare clinic search model
+    /// </summary>
+    /// <param name="searchModel">Clinic search model</param>
+    /// <param name="city">City</param>
+    void PrepareClinicSearchModel(ClinicSearchModel searchModel, City city);
+
+    /// <summary>
+    /// Prepare paged clinic list model
+    /// </summary>
+    /// <param name="searchModel">Clinic search model</param>
+    /// <param name="city">City</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation
+    /// The task result contains the clinic list model
+    /// </returns>
+    Task<ClinicListModel> PrepareClinicListModelAsync(ClinicSearchModel searchModel, City city);
+
+    /// <summary>
+    /// Prepare clinic model
+    /// </summary>
+    /// <param name="model">Clinic model</param>
+    /// <param name="city">City</param>
+    /// <param name="clinic">Clinic</param>
+    /// <param name="excludeProperties">Whether to exclude properties</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation
+    /// The task result contains the clinic model
+    /// </returns>
+    Task<ClinicModel> PrepareClinicModelAsync(ClinicModel model, City city, Clinic clinic, bool excludeProperties = false);
 }
 

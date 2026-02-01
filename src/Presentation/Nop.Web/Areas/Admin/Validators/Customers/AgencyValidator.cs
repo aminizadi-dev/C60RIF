@@ -13,6 +13,9 @@ public partial class AgencyValidator : BaseNopValidator<AgencyModel>
         RuleFor(x => x.Name)
             .NotEmpty()
             .WithMessageAwait(localizationService.GetResourceAsync("Admin.Configuration.Cities.Agencies.Fields.Name.Required"));
+        RuleFor(x => x.CityId)
+            .GreaterThan(0)
+            .WithMessageAwait(localizationService.GetResourceAsync("Admin.Configuration.Cities.Agencies.Fields.City.Required"));
 
         SetDatabaseValidationRules<Agency>();
     }

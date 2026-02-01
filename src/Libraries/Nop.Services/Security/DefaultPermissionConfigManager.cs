@@ -33,6 +33,13 @@ public partial class DefaultPermissionConfigManager : IPermissionConfigManager
 
         #endregion
 
+        #region Passengers
+
+        new ("Admin area. Passengers. View", StandardPermission.Passengers.PASSENGERS_VIEW, nameof(StandardPermission.Passengers), NopCustomerDefaults.AdministratorsRoleName),
+        new ("Admin area. Passengers. Create, edit, delete", StandardPermission.Passengers.PASSENGERS_CREATE_EDIT_DELETE, nameof(StandardPermission.Passengers), NopCustomerDefaults.AdministratorsRoleName),
+
+        #endregion
+
         //COMMERCE PERMISSIONS REMOVED - Phase B
         //Removed: Orders section (entire section)
         //Removed: Reports section (entire section)

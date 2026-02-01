@@ -370,7 +370,9 @@ public partial class AdminMapperConfiguration : Profile, IOrderedMapperProfile
 
         CreateMap<City, CityModel>()
             .ForMember(model => model.NumberOfAgencies, options => options.Ignore())
-            .ForMember(model => model.AgencySearchModel, options => options.Ignore());
+            .ForMember(model => model.NumberOfClinics, options => options.Ignore())
+            .ForMember(model => model.AgencySearchModel, options => options.Ignore())
+            .ForMember(model => model.ClinicSearchModel, options => options.Ignore());
         CreateMap<CityModel, City>();
 
         CreateMap<MeasureDimension, MeasureDimensionModel>()
@@ -384,7 +386,9 @@ public partial class AdminMapperConfiguration : Profile, IOrderedMapperProfile
         CreateMap<StateProvince, StateProvinceModel>();
         CreateMap<StateProvinceModel, StateProvince>();
 
-        CreateMap<Agency, AgencyModel>();
+        CreateMap<Agency, AgencyModel>()
+            .ForMember(model => model.CityName, options => options.Ignore())
+            .ForMember(model => model.AvailableCities, options => options.Ignore());
         CreateMap<AgencyModel, Agency>();
 
         CreateMap<Clinic, ClinicModel>()

@@ -78,6 +78,14 @@ public partial class AdminMenu : IAdminMenu
                     Url = GetMenuItemUrl("Home", "Index"),
                     IconClass = "fas fa-desktop"
                 },
+                new()
+                {
+                    SystemName = "Passengers",
+                    Title = await _localizationService.GetResourceAsync("Admin.Passengers.Passengers"),
+                    PermissionNames = new List<string> { StandardPermission.Passengers.PASSENGERS_VIEW },
+                    Url = GetMenuItemUrl("Passenger", "List"),
+                    IconClass = "far fa-id-card"
+                },
                 //customers
                 new()
                 {
@@ -125,14 +133,6 @@ public partial class AdminMenu : IAdminMenu
                             PermissionNames = new List<string> { StandardPermission.Customers.ACTIVITY_LOG_VIEW },
                             Url = GetMenuItemUrl("ActivityLog", "ActivityTypes"),
                             IconClass = "far fa-dot-circle"
-                        },
-                        new()
-                        {
-                            SystemName = "Passengers list",
-                            Title = await _localizationService.GetResourceAsync("Admin.Passengers.Passengers"),
-                            PermissionNames = new List<string> { StandardPermission.Customers.CUSTOMERS_VIEW },
-                            Url = GetMenuItemUrl("Passenger", "List"),
-                            IconClass = "far fa-dot-circle"
                         }
                     }
                 },
@@ -154,6 +154,38 @@ public partial class AdminMenu : IAdminMenu
                                     StandardPermission.ContentManagement.MESSAGE_TEMPLATES_VIEW
                                 },
                             Url = GetMenuItemUrl("MessageTemplate", "List"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                        new()
+                        {
+                            SystemName = "Cities",
+                            Title = await _localizationService.GetResourceAsync("Admin.Configuration.Cities"),
+                            PermissionNames = new List<string> { StandardPermission.Configuration.MANAGE_CITIES },
+                            Url = GetMenuItemUrl("City", "List"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                        new()
+                        {
+                            SystemName = "Agencies",
+                            Title = await _localizationService.GetResourceAsync("Admin.Configuration.Cities.Agencies"),
+                            PermissionNames = new List<string> { StandardPermission.Configuration.MANAGE_CITIES },
+                            Url = GetMenuItemUrl("Agency", "List"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                        new()
+                        {
+                            SystemName = "Clinics",
+                            Title = await _localizationService.GetResourceAsync("Admin.Configuration.Clinics"),
+                            PermissionNames = new List<string> { StandardPermission.Configuration.MANAGE_CLINICS },
+                            Url = GetMenuItemUrl("Clinic", "List"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                        new()
+                        {
+                            SystemName = "AntiX",
+                            Title = await _localizationService.GetResourceAsync("Admin.Configuration.AntiX"),
+                            PermissionNames = new List<string> { StandardPermission.Configuration.MANAGE_ANTIX },
+                            Url = GetMenuItemUrl("AntiX", "List"),
                             IconClass = "far fa-dot-circle"
                         }
                     }
@@ -240,33 +272,6 @@ public partial class AdminMenu : IAdminMenu
                             Title = await _localizationService.GetResourceAsync("Admin.Configuration.Countries"),
                             PermissionNames = new List<string> { StandardPermission.Configuration.MANAGE_COUNTRIES },
                             Url = GetMenuItemUrl("Country",
-                            "List"),
-                            IconClass = "far fa-dot-circle"
-                        },
-                        new()
-                        {
-                            SystemName = "Cities",
-                            Title = await _localizationService.GetResourceAsync("Admin.Configuration.Cities"),
-                            PermissionNames = new List<string> { StandardPermission.Configuration.MANAGE_CITIES },
-                            Url = GetMenuItemUrl("City",
-                            "List"),
-                            IconClass = "far fa-dot-circle"
-                        },
-                        new()
-                        {
-                            SystemName = "Clinics",
-                            Title = await _localizationService.GetResourceAsync("Admin.Configuration.Clinics"),
-                            PermissionNames = new List<string> { StandardPermission.Configuration.MANAGE_CLINICS },
-                            Url = GetMenuItemUrl("Clinic",
-                            "List"),
-                            IconClass = "far fa-dot-circle"
-                        },
-                        new()
-                        {
-                            SystemName = "AntiX",
-                            Title = await _localizationService.GetResourceAsync("Admin.Configuration.AntiX"),
-                            PermissionNames = new List<string> { StandardPermission.Configuration.MANAGE_ANTIX },
-                            Url = GetMenuItemUrl("AntiX",
                             "List"),
                             IconClass = "far fa-dot-circle"
                         },

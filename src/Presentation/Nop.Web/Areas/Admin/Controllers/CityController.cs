@@ -22,6 +22,7 @@ public partial class CityController : BaseAdminController
     #region Fields
 
     protected readonly IAgencyService _agencyService;
+    protected readonly IClinicService _clinicService;
     protected readonly ICityModelFactory _cityModelFactory;
     protected readonly ICityService _cityService;
     protected readonly ICustomerActivityService _customerActivityService;
@@ -33,6 +34,7 @@ public partial class CityController : BaseAdminController
     #region Ctor
 
     public CityController(IAgencyService agencyService,
+        IClinicService clinicService,
         ICityModelFactory cityModelFactory,
         ICityService cityService,
         ICustomerActivityService customerActivityService,
@@ -40,6 +42,7 @@ public partial class CityController : BaseAdminController
         INotificationService notificationService)
     {
         _agencyService = agencyService;
+        _clinicService = clinicService;
         _cityModelFactory = cityModelFactory;
         _cityService = cityService;
         _customerActivityService = customerActivityService;
@@ -328,6 +331,123 @@ public partial class CityController : BaseAdminController
             string.Format(await _localizationService.GetResourceAsync("ActivityLog.DeleteAgency"), agency.Id), agency);
 
         return Json(new { Result = true });
+    }
+
+    #endregion
+
+    #region Clinics
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Configuration.MANAGE_CITIES)]
+    public virtual async Task<IActionResult> Clinics(ClinicSearchModel searchModel)
+    {
+        var city = await _cityService.GetCityByIdAsync(searchModel.CityId)
+            ?? throw new ArgumentException("No city found with the specified id");
+
+        var model = await _cityModelFactory.PrepareClinicListModelAsync(searchModel, city);
+
+        return Json(model);
+    }
+
+    [CheckPermission(StandardPermission.Configuration.MANAGE_CITIES)]
+    public virtual async Task<IActionResult> ClinicCreatePopup(int cityId)
+    {
+        var city = await _cityService.GetCityByIdAsync(cityId);
+        if (city == null)
+            return RedirectToAction("List");
+
+        var model = await _cityModelFactory.PrepareClinicModelAsync(new ClinicModel(), city, null);
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Configuration.MANAGE_CITIES)]
+    public virtual async Task<IActionResult> ClinicCreatePopup(ClinicModel model)
+    {
+        var city = await _cityService.GetCityByIdAsync(model.CityId);
+        if (city == null)
+            return RedirectToAction("List");
+
+        if (ModelState.IsValid)
+        {
+            var clinic = model.ToEntity<Clinic>();
+
+            await _clinicService.InsertClinicAsync(clinic);
+
+            await _customerActivityService.InsertActivityAsync("AddNewClinic",
+                string.Format(await _localizationService.GetResourceAsync("ActivityLog.AddNewClinic"), clinic.Id), clinic);
+
+            ViewBag.RefreshPage = true;
+
+            return View(model);
+        }
+
+        model = await _cityModelFactory.PrepareClinicModelAsync(model, city, null, true);
+
+        return View(model);
+    }
+
+    [CheckPermission(StandardPermission.Configuration.MANAGE_CITIES)]
+    public virtual async Task<IActionResult> ClinicEditPopup(int id)
+    {
+        var clinic = await _clinicService.GetClinicByIdAsync(id);
+        if (clinic == null)
+            return RedirectToAction("List");
+
+        var city = await _cityService.GetCityByIdAsync(clinic.CityId);
+        if (city == null)
+            return RedirectToAction("List");
+
+        var model = await _cityModelFactory.PrepareClinicModelAsync(null, city, clinic);
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Configuration.MANAGE_CITIES)]
+    public virtual async Task<IActionResult> ClinicEditPopup(ClinicModel model)
+    {
+        var clinic = await _clinicService.GetClinicByIdAsync(model.Id);
+        if (clinic == null)
+            return RedirectToAction("List");
+
+        var city = await _cityService.GetCityByIdAsync(clinic.CityId);
+        if (city == null)
+            return RedirectToAction("List");
+
+        if (ModelState.IsValid)
+        {
+            clinic = model.ToEntity(clinic);
+            await _clinicService.UpdateClinicAsync(clinic);
+
+            await _customerActivityService.InsertActivityAsync("EditClinic",
+                string.Format(await _localizationService.GetResourceAsync("ActivityLog.EditClinic"), clinic.Id), clinic);
+
+            ViewBag.RefreshPage = true;
+
+            return View(model);
+        }
+
+        model = await _cityModelFactory.PrepareClinicModelAsync(model, city, clinic, true);
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Configuration.MANAGE_CITIES)]
+    public virtual async Task<IActionResult> ClinicDelete(int id)
+    {
+        var clinic = await _clinicService.GetClinicByIdAsync(id);
+        if (clinic == null)
+            return RedirectToAction("List");
+
+        await _clinicService.DeleteClinicAsync(clinic);
+
+        await _customerActivityService.InsertActivityAsync("DeleteClinic",
+            string.Format(await _localizationService.GetResourceAsync("ActivityLog.DeleteClinic"), clinic.Id), clinic);
+
+        return new NullJsonResult();
     }
 
     #endregion

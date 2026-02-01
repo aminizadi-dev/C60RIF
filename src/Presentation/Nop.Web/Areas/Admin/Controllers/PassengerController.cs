@@ -62,7 +62,7 @@ public partial class PassengerController : BaseAdminController
         return RedirectToAction("List");
     }
 
-    [CheckPermission(StandardPermission.Customers.CUSTOMERS_VIEW)]
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> List()
     {
         //prepare model
@@ -72,7 +72,7 @@ public partial class PassengerController : BaseAdminController
     }
 
     [HttpPost]
-    [CheckPermission(StandardPermission.Customers.CUSTOMERS_VIEW)]
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> PassengerList(PassengerSearchModel searchModel)
     {
         //prepare model
@@ -82,7 +82,7 @@ public partial class PassengerController : BaseAdminController
     }
 
     [HttpGet]
-    [CheckPermission(StandardPermission.Customers.CUSTOMERS_VIEW)]
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> GetAgenciesByCityId(int cityId)
     {
         if (cityId <= 0)
@@ -95,7 +95,7 @@ public partial class PassengerController : BaseAdminController
     }
 
     [HttpGet]
-    [CheckPermission(StandardPermission.Customers.CUSTOMERS_VIEW)]
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> GetClinicsByCityId(int cityId)
     {
         if (cityId <= 0)
@@ -107,7 +107,7 @@ public partial class PassengerController : BaseAdminController
         return Json(result);
     }
 
-    [CheckPermission(StandardPermission.Customers.CUSTOMERS_CREATE_EDIT_DELETE)]
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_CREATE_EDIT_DELETE)]
     public virtual async Task<IActionResult> Create()
     {
         //prepare model
@@ -118,7 +118,7 @@ public partial class PassengerController : BaseAdminController
 
     [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
     [FormValueRequired("save", "save-continue")]
-    [CheckPermission(StandardPermission.Customers.CUSTOMERS_CREATE_EDIT_DELETE)]
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_CREATE_EDIT_DELETE)]
     public virtual async Task<IActionResult> Create(PassengerModel model, bool continueEditing)
     {
         if (ModelState.IsValid)
@@ -150,7 +150,7 @@ public partial class PassengerController : BaseAdminController
         return View(model);
     }
 
-    [CheckPermission(StandardPermission.Customers.CUSTOMERS_VIEW)]
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> Edit(int id)
     {
         //try to get a passenger with the specified id
@@ -166,7 +166,7 @@ public partial class PassengerController : BaseAdminController
 
     [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
     [FormValueRequired("save", "save-continue")]
-    [CheckPermission(StandardPermission.Customers.CUSTOMERS_CREATE_EDIT_DELETE)]
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_CREATE_EDIT_DELETE)]
     public virtual async Task<IActionResult> Edit(PassengerModel model, bool continueEditing)
     {
         //try to get a passenger with the specified id
@@ -211,7 +211,7 @@ public partial class PassengerController : BaseAdminController
     }
 
     [HttpPost]
-    [CheckPermission(StandardPermission.Customers.CUSTOMERS_CREATE_EDIT_DELETE)]
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_CREATE_EDIT_DELETE)]
     public virtual async Task<IActionResult> Delete(int id)
     {
         //try to get a passenger with the specified id

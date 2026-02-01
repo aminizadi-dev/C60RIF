@@ -17,6 +17,7 @@ public partial class ClinicService : IClinicService
 
     protected readonly IEventPublisher _eventPublisher;
     protected readonly IRepository<Clinic> _clinicRepository;
+    protected readonly IRepository<City> _cityRepository;
 
     #endregion
 
@@ -24,10 +25,12 @@ public partial class ClinicService : IClinicService
 
     public ClinicService(
         IEventPublisher eventPublisher,
-        IRepository<Clinic> clinicRepository)
+        IRepository<Clinic> clinicRepository,
+        IRepository<City> cityRepository)
     {
         _eventPublisher = eventPublisher;
         _clinicRepository = clinicRepository;
+        _cityRepository = cityRepository;
     }
 
     #endregion
@@ -59,7 +62,10 @@ public partial class ClinicService : IClinicService
             if (published.HasValue)
                 query = query.Where(c => c.Published == published.Value);
 
-            query = query.OrderBy(c => c.DisplayOrder).ThenBy(c => c.Name);
+            query = from clinic in query
+                join city in _cityRepository.Table on clinic.CityId equals city.Id
+                orderby city.Name, clinic.Name
+                select clinic;
 
             return query;
         }, pageIndex, pageSize, getOnlyTotalCount);
@@ -118,7 +124,7 @@ public partial class ClinicService : IClinicService
             query = query.Where(c => c.CityId == cityId);
             if (!showHidden)
                 query = query.Where(c => c.Published);
-            query = query.OrderBy(c => c.DisplayOrder).ThenBy(c => c.Name);
+            query = query.OrderBy(c => c.Name);
             return query;
         });
 
