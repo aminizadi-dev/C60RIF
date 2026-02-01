@@ -768,6 +768,15 @@
   <LocaleResource Name="ActivityLog.DeleteAgency">
     <Value>Deleted an agency (ID = {0})</Value>
   </LocaleResource>
+  <LocaleResource Name="ActivityLog.AddNewClinic">
+    <Value>Added a new clinic (ID = {0})</Value>
+  </LocaleResource>
+  <LocaleResource Name="ActivityLog.EditClinic">
+    <Value>Edited a clinic (ID = {0})</Value>
+  </LocaleResource>
+  <LocaleResource Name="ActivityLog.DeleteClinic">
+    <Value>Deleted a clinic (ID = {0})</Value>
+  </LocaleResource>
   <LocaleResource Name="ActivityLog.AddNewAntiX">
     <Value>Added a new AntiX item (ID = {0})</Value>
   </LocaleResource>
@@ -5096,6 +5105,51 @@
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Cities.EditCityDetails">
     <Value>Edit city details</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Clinics">
+    <Value>Clinics</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Clinics.Added">
+    <Value>The new clinic has been added successfully.</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Clinics.AddNew">
+    <Value>Add a new clinic</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Clinics.BackToList">
+    <Value>back to clinic list</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Clinics.Deleted">
+    <Value>The clinic has been deleted successfully.</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Clinics.EditClinicDetails">
+    <Value>Edit clinic details</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Clinics.PublishSelected">
+    <Value>Publish selected</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Clinics.UnpublishSelected">
+    <Value>Unpublish selected</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Clinics.Updated">
+    <Value>The clinic has been updated successfully.</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Clinics.Fields.Name">
+    <Value>Name</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Clinics.Fields.Name.Required">
+    <Value>Clinic name is required</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Clinics.Fields.City">
+    <Value>City</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Clinics.Fields.City.Required">
+    <Value>City is required</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Clinics.Fields.Published">
+    <Value>Published</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Clinics.Fields.DisplayOrder">
+    <Value>Display order</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.AntiX">
     <Value>AntiX</Value>
@@ -21386,6 +21440,9 @@
   <LocaleResource Name="Admin.Passengers.Fields.Agency">
     <Value>Agency</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.Clinic">
+    <Value>Clinic</Value>
+  </LocaleResource>
   <LocaleResource Name="Admin.Passengers.Fields.PersonName.Required">
     <Value>Person name is required</Value>
   </LocaleResource>
@@ -21409,6 +21466,39 @@
   </LocaleResource>
   <LocaleResource Name="Admin.Passengers.Fields.Agency.Required">
     <Value>Agency is required</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.Clinic.Required">
+    <Value>Clinic is required</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.List.SearchRecoveryNo">
+    <Value>Recovery number</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.List.SearchCardNo">
+    <Value>Card number</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.List.SearchPersonName">
+    <Value>Person name</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.List.SearchGuideNameAndLegionNo">
+    <Value>Guide name and legion number</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.List.SearchCity">
+    <Value>City</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.List.SearchAgency">
+    <Value>Agency</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.List.SearchClinic">
+    <Value>Clinic</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.List.SearchAntiX">
+    <Value>AntiX</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.List.SearchTravelStartDate">
+    <Value>Travel start date</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.List.SearchTravelEndDate">
+    <Value>Travel end date</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Passengers.List.SearchCity">
     <Value>City</Value>

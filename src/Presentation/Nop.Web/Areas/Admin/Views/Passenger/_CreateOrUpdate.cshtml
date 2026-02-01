@@ -151,11 +151,11 @@
                             <div class="col-md-6">
                                 <div class="form-group row">
                                     <div class="col-md-3">
-                                        <nop-label asp-for="ClinicName" />
+                                        <nop-label asp-for="ClinicId" />
                                     </div>
                                     <div class="col-md-9">
-                                        <nop-editor asp-for="ClinicName" />
-                                        <span asp-validation-for="ClinicName"></span>
+                                        <nop-select asp-for="ClinicId" asp-items="Model.AvailableClinics" />
+                                        <span asp-validation-for="ClinicId"></span>
                                     </div>
                                 </div>
                             </div>
@@ -273,7 +273,10 @@
         var citySelect = $("#@Html.IdFor(model => model.CityId)");
         var agencySelect = $("#@Html.IdFor(model => model.AgencyId)");
         var agenciesUrl = "@Url.Action("GetAgenciesByCityId", "Passenger")";
+        var clinicsUrl = "@Url.Action("GetClinicsByCityId", "Passenger")";
         var defaultAgencyText = "@T("Admin.Common.Select")";
+        var defaultClinicText = "@T("Admin.Common.Select")";
+        var clinicSelect = $("#@Html.IdFor(model => model.ClinicId)");
 
         function loadAgencies(cityId, selectedAgencyId) {
             agencySelect.empty();
@@ -294,12 +297,33 @@
             });
         }
 
+        function loadClinics(cityId, selectedClinicId) {
+            clinicSelect.empty();
+            clinicSelect.append($("<option></option>").attr("value", "0").text(defaultClinicText));
+
+            if (!cityId || cityId === "0") {
+                return;
+            }
+
+            $.getJSON(clinicsUrl, { cityId: cityId }, function (data) {
+                $.each(data, function (index, item) {
+                    var option = $("<option></option>").attr("value", item.id).text(item.name);
+                    if (selectedClinicId && selectedClinicId.toString() === item.id.toString()) {
+                        option.attr("selected", "selected");
+                    }
+                    clinicSelect.append(option);
+                });
+            });
+        }
+
         citySelect.on("change", function () {
             loadAgencies($(this).val(), 0);
+            loadClinics($(this).val(), 0);
         });
 
         if (citySelect.val() && citySelect.val() !== "0") {
             loadAgencies(citySelect.val(), agencySelect.val());
+            loadClinics(citySelect.val(), clinicSelect.val());
         }
     });
 </script>

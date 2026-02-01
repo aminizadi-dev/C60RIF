@@ -34,6 +34,7 @@ public partial class StandardPermission
         public const string MANAGE_WIDGETS = $"{nameof(Configuration)}.ManageWidgets";
         public const string MANAGE_COUNTRIES = $"{nameof(Configuration)}.ManageCountries";
         public const string MANAGE_CITIES = $"{nameof(Configuration)}.ManageCities";
+        public const string MANAGE_CLINICS = $"{nameof(Configuration)}.ManageClinics";
         public const string MANAGE_ANTIX = $"{nameof(Configuration)}.ManageAntiX";
         public const string MANAGE_LANGUAGES = $"{nameof(Configuration)}.ManageLanguages";
         public const string MANAGE_SETTINGS = $"{nameof(Configuration)}.ManageSettings";

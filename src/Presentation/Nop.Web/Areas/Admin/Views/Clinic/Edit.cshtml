@@ -1,0 +1,35 @@
+@model ClinicModel
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Configuration.Clinics.EditClinicDetails").Text;
+    //active menu item (system name)
+    NopHtml.SetActiveMenuItemSystemName("Clinics");
+}
+
+<form asp-controller="Clinic" asp-action="Edit" method="post" id="clinic-form">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("Admin.Configuration.Clinics.EditClinicDetails")
+        </h1>
+        <div class="float-right">
+            <button type="submit" name="save" class="btn btn-primary">
+                <i class="far fa-floppy-disk"></i>
+                @T("Admin.Common.Save")
+            </button>
+            <button type="submit" name="save-continue" class="btn btn-secondary">
+                <i class="far fa-floppy-disk"></i>
+                @T("Admin.Common.SaveContinue")
+            </button>
+            <span id="clinic-delete" class="btn btn-danger">
+                <i class="far fa-trash-can"></i>
+                @T("Admin.Common.Delete")
+            </span>
+        </div>
+    </div>
+
+    @await Html.PartialAsync("_CreateOrUpdate", Model)
+</form>
+
+<nop-delete-confirmation asp-model-id="@Model.Id" asp-button-id="clinic-delete" />
+

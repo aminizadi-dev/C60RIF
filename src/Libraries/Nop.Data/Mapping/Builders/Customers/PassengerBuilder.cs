@@ -22,7 +22,7 @@ public partial class PassengerBuilder : NopEntityBuilder<Passenger>
             .WithColumn(nameof(Passenger.RecoveryNo)).AsInt32().NotNullable()
             .WithColumn(nameof(Passenger.PersonName)).AsString(500).Nullable()
             .WithColumn(nameof(Passenger.GuideNameAndLegionNo)).AsString(500).NotNullable()
-            .WithColumn(nameof(Passenger.ClinicName)).AsString(500).Nullable()
+            .WithColumn(nameof(Passenger.ClinicId)).AsInt32().NotNullable().ForeignKey<Clinic>()
             .WithColumn(nameof(Passenger.BirthDateUtc)).AsDateTime2().Nullable()
             .WithColumn(nameof(Passenger.Education)).AsInt32().NotNullable()
             .WithColumn(nameof(Passenger.MaritalStatus)).AsInt32().NotNullable()

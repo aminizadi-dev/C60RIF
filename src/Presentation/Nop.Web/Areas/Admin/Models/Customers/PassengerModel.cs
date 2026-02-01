@@ -21,6 +21,7 @@ public partial record PassengerModel : BaseNopEntityModel
         AvailableAntiXItems = new List<SelectListItem>();
         AvailableCities = new List<SelectListItem>();
         AvailableAgencies = new List<SelectListItem>();
+        AvailableClinics = new List<SelectListItem>();
     }
 
     #endregion
@@ -36,8 +37,8 @@ public partial record PassengerModel : BaseNopEntityModel
     [NopResourceDisplayName("Admin.Passengers.Fields.GuideNameAndLegionNo")]
     public string GuideNameAndLegionNo { get; set; }
 
-    [NopResourceDisplayName("Admin.Passengers.Fields.ClinicName")]
-    public string ClinicName { get; set; }
+    [NopResourceDisplayName("Admin.Passengers.Fields.Clinic")]
+    public int ClinicId { get; set; }
 
     [UIHint("PersianDateNullable")]
     [PersianDate]
@@ -78,6 +79,7 @@ public partial record PassengerModel : BaseNopEntityModel
 
     public IList<SelectListItem> AvailableCities { get; set; }
     public IList<SelectListItem> AvailableAgencies { get; set; }
+    public IList<SelectListItem> AvailableClinics { get; set; }
 
     public string AgencyName { get; set; }
 

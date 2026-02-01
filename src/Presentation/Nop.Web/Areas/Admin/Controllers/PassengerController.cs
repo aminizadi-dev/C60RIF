@@ -21,6 +21,7 @@ public partial class PassengerController : BaseAdminController
     #region Fields
 
     protected readonly IAgencyService _agencyService;
+    protected readonly IClinicService _clinicService;
     protected readonly ICustomerActivityService _customerActivityService;
     protected readonly ILocalizationService _localizationService;
     protected readonly INotificationService _notificationService;
@@ -34,6 +35,7 @@ public partial class PassengerController : BaseAdminController
 
     public PassengerController(
         IAgencyService agencyService,
+        IClinicService clinicService,
         ICustomerActivityService customerActivityService,
         ILocalizationService localizationService,
         INotificationService notificationService,
@@ -42,6 +44,7 @@ public partial class PassengerController : BaseAdminController
         IPermissionService permissionService)
     {
         _agencyService = agencyService;
+        _clinicService = clinicService;
         _customerActivityService = customerActivityService;
         _localizationService = localizationService;
         _notificationService = notificationService;
@@ -87,6 +90,19 @@ public partial class PassengerController : BaseAdminController
 
         var agencies = await _agencyService.GetAgenciesByCityIdAsync(cityId, showHidden: true);
         var result = agencies.Select(agency => new { id = agency.Id, name = agency.Name });
+
+        return Json(result);
+    }
+
+    [HttpGet]
+    [CheckPermission(StandardPermission.Customers.CUSTOMERS_VIEW)]
+    public virtual async Task<IActionResult> GetClinicsByCityId(int cityId)
+    {
+        if (cityId <= 0)
+            return Json(Array.Empty<object>());
+
+        var clinics = await _clinicService.GetClinicsByCityIdAsync(cityId, showHidden: true);
+        var result = clinics.Select(clinic => new { id = clinic.Id, name = clinic.Name });
 
         return Json(result);
     }

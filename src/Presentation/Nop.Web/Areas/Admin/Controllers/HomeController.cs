@@ -145,7 +145,12 @@ public partial class HomeController : BaseAdminController
             personName: null,
             cityId: 0,
             agencyId: 0,
+            clinicId: 0,
             antiXId: 0,
+            guideNameAndLegionNo: null,
+            cardNo: null,
+            travelStartDateUtc: null,
+            travelEndDateUtc: null,
             pageIndex: 0,
             pageSize: int.MaxValue,
             getOnlyTotalCount: false);

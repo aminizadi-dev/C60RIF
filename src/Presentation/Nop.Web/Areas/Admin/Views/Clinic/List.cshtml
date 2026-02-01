@@ -1,0 +1,155 @@
+@model ClinicSearchModel
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Configuration.Clinics").Text;
+    //active menu item (system name)
+    NopHtml.SetActiveMenuItemSystemName("Clinics");
+}
+
+<div class="content-header clearfix">
+    <h1 class="float-left">
+        @T("Admin.Configuration.Clinics")
+    </h1>
+    <div class="float-right">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-square-plus"></i>
+            @T("Admin.Common.AddNew")
+        </a>
+        <button type="button" id="publish-selected" class="btn bg-teal">
+            <i class="fas fa-square-check"></i>
+            @T("Admin.Configuration.Clinics.PublishSelected")
+        </button>
+        <button type="button" id="unpublish-selected" class="btn btn-secondary">
+            <i class="fas fa-square-minus"></i>
+            @T("Admin.Configuration.Clinics.UnpublishSelected")
+        </button>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+    <div class="form-horizontal">
+        <div class="cards-group">
+            <div class="card card-default">
+                <div class="card-body">
+                    @await Html.PartialAsync("Table", new DataTablesModel
+                    {
+                        Name = "clinics-grid",
+                        UrlRead = new DataUrl("ClinicList", "Clinic", null),
+                        SearchButtonId = "search-clinics",
+                        Length = Model.PageSize,
+                        LengthMenu = Model.AvailablePageSizes,
+                        ColumnCollection = new List<ColumnProperty>
+                        {
+                            new ColumnProperty(nameof(ClinicModel.Id))
+                            {
+                                IsMasterCheckBox = true,
+                                Render = new RenderCheckBox("checkbox_clinics"),
+                                ClassName =  NopColumnClassDefaults.CenterAll,
+                                Width = "50"
+                            },
+                            new ColumnProperty(nameof(ClinicModel.Name))
+                            {
+                                Title = T("Admin.Configuration.Clinics.Fields.Name").Text
+                            },
+                            new ColumnProperty(nameof(ClinicModel.CityName))
+                            {
+                                Title = T("Admin.Configuration.Clinics.Fields.City").Text
+                            },
+                            new ColumnProperty(nameof(ClinicModel.DisplayOrder))
+                            {
+                                Title = T("Admin.Configuration.Clinics.Fields.DisplayOrder").Text,
+                                Width = "100",
+                                ClassName = NopColumnClassDefaults.CenterAll
+                            },
+                            new ColumnProperty(nameof(ClinicModel.Published))
+                            {
+                                Title = T("Admin.Configuration.Clinics.Fields.Published").Text,
+                                Width = "100",
+                                ClassName =  NopColumnClassDefaults.CenterAll,
+                                Render = new RenderBoolean()
+                            },
+                            new ColumnProperty(nameof(ClinicModel.Id))
+                            {
+                                Title = T("Admin.Common.Edit").Text,
+                                Width = "50",
+                                ClassName =  NopColumnClassDefaults.Button,
+                                Render = new RenderButtonEdit(new DataUrl("~/Admin/Clinic/Edit"))
+                            }
+                        }
+                    })
+
+                    <script>
+                        $(function() {
+                            //"publish selected" button
+                            $('#publish-selected').click(function (e) {
+                                e.preventDefault();
+
+                                var postData = {
+                                    selectedIds: selectedIds
+                                };
+                                addAntiForgeryToken(postData);
+
+                                $.ajax({
+                                    cache: false,
+                                    type: "POST",
+                                    url: "@(Url.Action("PublishSelected", "Clinic"))",
+                                    data: postData,
+                                    traditional: true,
+                                    complete: function (jqXHR, textStatus) {
+                                        if (jqXHR.status === 204)
+                                        {
+                                            showAlert('nothingSelectedAlert', '@T("Admin.Common.Alert.NothingSelected")');
+                                            return;
+                                        }
+                                        updateTable('#clinics-grid');
+                                    },
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                        showAlert('publishSelectedFailed', errorThrown);
+                                    }
+                                });
+                                return false;
+                            });
+
+                            //"unpublish selected" button
+                            $('#unpublish-selected').click(function (e) {
+                                e.preventDefault();
+
+                                var postData = {
+                                    selectedIds: selectedIds
+                                };
+                                addAntiForgeryToken(postData);
+
+                                $.ajax({
+                                    cache: false,
+                                    type: "POST",
+                                    url: "@(Url.Action("UnpublishSelected", "Clinic"))",
+                                    data: postData,
+                                    traditional: true,
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                        showAlert('unpublishSelectedFailed', errorThrown);
+                                    },
+                                    complete: function (jqXHR, textStatus) {
+                                        if (jqXHR.status === 204)
+                                        {
+                                            showAlert('nothingSelectedAlert', '@T("Admin.Common.Alert.NothingSelected")');
+                                            return;
+                                        }
+                                        updateTable('#clinics-grid');
+                                    }
+                                });
+                                return false;
+                            });
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+<nop-alert asp-alert-id="publishSelectedFailed" />
+<nop-alert asp-alert-id="unpublishSelectedFailed" />
+<nop-alert asp-alert-id="nothingSelectedAlert" />
+

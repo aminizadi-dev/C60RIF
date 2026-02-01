@@ -42,6 +42,10 @@ public partial class PassengerValidator : BaseNopValidator<PassengerModel>
             .GreaterThan(0)
             .WithMessageAwait(localizationService.GetResourceAsync("Admin.Passengers.Fields.Agency.Required"));
 
+        RuleFor(x => x.ClinicId)
+            .GreaterThan(0)
+            .WithMessageAwait(localizationService.GetResourceAsync("Admin.Passengers.Fields.Clinic.Required"));
+
         SetDatabaseValidationRules<Passenger>();
     }
 }

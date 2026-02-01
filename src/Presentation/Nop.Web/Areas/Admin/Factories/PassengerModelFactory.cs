@@ -20,6 +20,7 @@ public partial class PassengerModelFactory : IPassengerModelFactory
 
     protected readonly IAgencyService _agencyService;
     protected readonly IAntiXService _antiXService;
+    protected readonly IClinicService _clinicService;
     protected readonly ICityService _cityService;
     protected readonly IDateTimeHelper _dateTimeHelper;
     protected readonly ILocalizationService _localizationService;
@@ -33,6 +34,7 @@ public partial class PassengerModelFactory : IPassengerModelFactory
     public PassengerModelFactory(
         IAgencyService agencyService,
         IAntiXService antiXService,
+        IClinicService clinicService,
         ICityService cityService,
         IDateTimeHelper dateTimeHelper,
         ILocalizationService localizationService,
@@ -41,6 +43,7 @@ public partial class PassengerModelFactory : IPassengerModelFactory
     {
         _agencyService = agencyService;
         _antiXService = antiXService;
+        _clinicService = clinicService;
         _cityService = cityService;
         _dateTimeHelper = dateTimeHelper;
         _localizationService = localizationService;
@@ -102,6 +105,25 @@ public partial class PassengerModelFactory : IPassengerModelFactory
             }
         }
 
+        searchModel.AvailableClinics.Add(new SelectListItem
+        {
+            Value = "0",
+            Text = await _localizationService.GetResourceAsync("Admin.Common.Select")
+        });
+        if (searchModel.SearchCityId > 0)
+        {
+            var clinics = await _clinicService.GetClinicsByCityIdAsync(searchModel.SearchCityId, showHidden: true);
+            foreach (var clinic in clinics)
+            {
+                searchModel.AvailableClinics.Add(new SelectListItem
+                {
+                    Value = clinic.Id.ToString(),
+                    Text = clinic.Name,
+                    Selected = clinic.Id == searchModel.SearchClinicId
+                });
+            }
+        }
+
         searchModel.AvailableAntiXItems.Add(new SelectListItem
         {
             Value = "0",
@@ -139,7 +161,12 @@ public partial class PassengerModelFactory : IPassengerModelFactory
             personName: searchModel.SearchPersonName,
             cityId: searchModel.SearchCityId,
             agencyId: searchModel.SearchAgencyId,
+            clinicId: searchModel.SearchClinicId,
             antiXId: searchModel.SearchAntiXId,
+            guideNameAndLegionNo: searchModel.SearchGuideNameAndLegionNo,
+            cardNo: searchModel.SearchCardNo,
+            travelStartDateUtc: searchModel.SearchTravelStartDateUtc,
+            travelEndDateUtc: searchModel.SearchTravelEndDateUtc,
             pageIndex: searchModel.Page - 1,
             pageSize: searchModel.PageSize);
 
@@ -248,6 +275,13 @@ public partial class PassengerModelFactory : IPassengerModelFactory
                     if (agency != null)
                         model.CityId = agency.CityId;
                 }
+
+                if (model.CityId == 0 && model.ClinicId > 0)
+                {
+                    var clinic = await _clinicService.GetClinicByIdAsync(model.ClinicId);
+                    if (clinic != null)
+                        model.CityId = clinic.CityId;
+                }
             }
         }
 
@@ -258,6 +292,13 @@ public partial class PassengerModelFactory : IPassengerModelFactory
             var agency = await _agencyService.GetAgencyByIdAsync(model.AgencyId);
             if (agency != null)
                 model.CityId = agency.CityId;
+        }
+
+        if (model.CityId == 0 && model.ClinicId > 0)
+        {
+            var clinic = await _clinicService.GetClinicByIdAsync(model.ClinicId);
+            if (clinic != null)
+                model.CityId = clinic.CityId;
         }
 
         //prepare available education levels
@@ -348,6 +389,26 @@ public partial class PassengerModelFactory : IPassengerModelFactory
                     Value = agency.Id.ToString(),
                     Text = agency.Name,
                     Selected = agency.Id == model.AgencyId
+                });
+            }
+        }
+
+        //prepare available clinics
+        model.AvailableClinics.Add(new SelectListItem
+        {
+            Value = "0",
+            Text = await _localizationService.GetResourceAsync("Admin.Common.Select")
+        });
+        if (model.CityId > 0)
+        {
+            var clinics = await _clinicService.GetClinicsByCityIdAsync(model.CityId, showHidden: true);
+            foreach (var clinic in clinics)
+            {
+                model.AvailableClinics.Add(new SelectListItem
+                {
+                    Value = clinic.Id.ToString(),
+                    Text = clinic.Name,
+                    Selected = clinic.Id == model.ClinicId
                 });
             }
         }

@@ -52,10 +52,32 @@
                                     <div class="col-md-6">
                                         <div class="form-group row">
                                             <div class="col-md-4">
+                                                <nop-label asp-for="SearchCardNo" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-editor asp-for="SearchCardNo" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
                                                 <nop-label asp-for="SearchPersonName" />
                                             </div>
                                             <div class="col-md-8">
                                                 <nop-editor asp-for="SearchPersonName" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="SearchGuideNameAndLegionNo" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-editor asp-for="SearchGuideNameAndLegionNo" />
                                             </div>
                                         </div>
                                     </div>
@@ -71,6 +93,8 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group row">
                                             <div class="col-md-4">
@@ -81,15 +105,35 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="SearchClinicId" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-select asp-for="SearchClinicId" asp-items="Model.AvailableClinics" />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group row">
                                             <div class="col-md-4">
-                                                <nop-label asp-for="SearchAntiXId" />
+                                                <nop-label asp-for="SearchTravelStartDateUtc" />
                                             </div>
                                             <div class="col-md-8">
-                                                <nop-select asp-for="SearchAntiXId" asp-items="Model.AvailableAntiXItems" />
+                                                <nop-editor asp-for="SearchTravelStartDateUtc" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="SearchTravelEndDateUtc" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-editor asp-for="SearchTravelEndDateUtc" />
                                             </div>
                                         </div>
                                     </div>
@@ -122,7 +166,12 @@
                                         new FilterParameter(nameof(Model.SearchPersonName)),
                                         new FilterParameter(nameof(Model.SearchCityId)),
                                         new FilterParameter(nameof(Model.SearchAgencyId)),
+                                        new FilterParameter(nameof(Model.SearchClinicId)),
                                         new FilterParameter(nameof(Model.SearchAntiXId)),
+                                        new FilterParameter(nameof(Model.SearchGuideNameAndLegionNo)),
+                                        new FilterParameter(nameof(Model.SearchCardNo)),
+                                        new FilterParameter(nameof(Model.SearchTravelStartDateUtc)),
+                                        new FilterParameter(nameof(Model.SearchTravelEndDateUtc)),
                                     }
                                 };
 
@@ -199,7 +248,10 @@
         var citySelect = $("#@Html.IdFor(model => model.SearchCityId)");
         var agencySelect = $("#@Html.IdFor(model => model.SearchAgencyId)");
         var agenciesUrl = "@Url.Action("GetAgenciesByCityId", "Passenger")";
+        var clinicsUrl = "@Url.Action("GetClinicsByCityId", "Passenger")";
         var defaultAgencyText = "@T("Admin.Common.Select")";
+        var defaultClinicText = "@T("Admin.Common.Select")";
+        var clinicSelect = $("#@Html.IdFor(model => model.SearchClinicId)");
 
         function loadAgencies(cityId, selectedAgencyId) {
             agencySelect.empty();
@@ -220,12 +272,33 @@
             });
         }
 
+        function loadClinics(cityId, selectedClinicId) {
+            clinicSelect.empty();
+            clinicSelect.append($("<option></option>").attr("value", "0").text(defaultClinicText));
+
+            if (!cityId || cityId === "0") {
+                return;
+            }
+
+            $.getJSON(clinicsUrl, { cityId: cityId }, function (data) {
+                $.each(data, function (index, item) {
+                    var option = $("<option></option>").attr("value", item.id).text(item.name);
+                    if (selectedClinicId && selectedClinicId.toString() === item.id.toString()) {
+                        option.attr("selected", "selected");
+                    }
+                    clinicSelect.append(option);
+                });
+            });
+        }
+
         citySelect.on("change", function () {
             loadAgencies($(this).val(), 0);
+            loadClinics($(this).val(), 0);
         });
 
         if (citySelect.val() && citySelect.val() !== "0") {
             loadAgencies(citySelect.val(), agencySelect.val());
+            loadClinics(citySelect.val(), clinicSelect.val());
         }
     });
 </script>

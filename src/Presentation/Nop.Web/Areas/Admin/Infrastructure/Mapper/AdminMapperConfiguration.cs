@@ -344,6 +344,7 @@ public partial class AdminMapperConfiguration : Profile, IOrderedMapperProfile
             .ForMember(model => model.AvailableAntiXItems, options => options.Ignore())
             .ForMember(model => model.AvailableCities, options => options.Ignore())
             .ForMember(model => model.AvailableAgencies, options => options.Ignore())
+            .ForMember(model => model.AvailableClinics, options => options.Ignore())
             .ForMember(model => model.Education, options => options.MapFrom(src => (int)src.Education))
             .ForMember(model => model.MaritalStatus, options => options.MapFrom(src => (int)src.MaritalStatus))
             .ForMember(model => model.EmploymentStatus, options => options.MapFrom(src => (int)src.EmploymentStatus));
@@ -385,6 +386,11 @@ public partial class AdminMapperConfiguration : Profile, IOrderedMapperProfile
 
         CreateMap<Agency, AgencyModel>();
         CreateMap<AgencyModel, Agency>();
+
+        CreateMap<Clinic, ClinicModel>()
+            .ForMember(model => model.CityName, options => options.Ignore())
+            .ForMember(model => model.AvailableCities, options => options.Ignore());
+        CreateMap<ClinicModel, Clinic>();
 
         CreateMap<AntiX, AntiXModel>();
         CreateMap<AntiXModel, AntiX>();

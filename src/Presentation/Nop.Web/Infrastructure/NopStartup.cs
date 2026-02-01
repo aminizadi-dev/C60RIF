@@ -33,6 +33,7 @@ public partial class NopStartup : INopStartup
         services.AddScoped<ICommonModelFactory, CommonModelFactory>();
         services.AddScoped<ICountryModelFactory, CountryModelFactory>();
         services.AddScoped<IAntiXModelFactory, AntiXModelFactory>();
+        services.AddScoped<IClinicModelFactory, ClinicModelFactory>();
         services.AddScoped<ICityModelFactory, CityModelFactory>();
         services.AddScoped<ICustomerModelFactory, CustomerModelFactory>();
         services.AddScoped<ICustomerRoleModelFactory, CustomerRoleModelFactory>();

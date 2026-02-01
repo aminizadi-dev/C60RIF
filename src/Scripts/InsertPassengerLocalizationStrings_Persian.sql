@@ -95,9 +95,9 @@ IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admi
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
     VALUES (@LanguageId, 'Admin.Passengers.Fields.GuideNameAndLegionNo', N'نام راهنما و شماره لژیون');
 
-IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.ClinicName' AND [LanguageId] = @LanguageId)
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.Clinic' AND [LanguageId] = @LanguageId)
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
-    VALUES (@LanguageId, 'Admin.Passengers.Fields.ClinicName', N'نام کلینیک');
+    VALUES (@LanguageId, 'Admin.Passengers.Fields.Clinic', N'کلینیک');
 
 IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.BirthDate' AND [LanguageId] = @LanguageId)
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
@@ -184,10 +184,26 @@ IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admi
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
     VALUES (@LanguageId, 'Admin.Passengers.Fields.Agency.Required', N'انتخاب نمایندگی الزامی است');
 
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.Clinic.Required' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Passengers.Fields.Clinic.Required', N'انتخاب کلینیک الزامی است');
+
 -- Passenger List Search Fields
 IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.List.SearchRecoveryNo' AND [LanguageId] = @LanguageId)
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
     VALUES (@LanguageId, 'Admin.Passengers.List.SearchRecoveryNo', N'شماره بازیابی');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.List.SearchCardNo' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Passengers.List.SearchCardNo', N'شماره کارت');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.List.SearchPersonName' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Passengers.List.SearchPersonName', N'نام شخص');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.List.SearchGuideNameAndLegionNo' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Passengers.List.SearchGuideNameAndLegionNo', N'نام راهنما و شماره لژیون');
 
 IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.List.SearchCity' AND [LanguageId] = @LanguageId)
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
@@ -197,9 +213,21 @@ IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admi
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
     VALUES (@LanguageId, 'Admin.Passengers.List.SearchAgency', N'نمایندگی');
 
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.List.SearchClinic' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Passengers.List.SearchClinic', N'کلینیک');
+
 IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.List.SearchAntiX' AND [LanguageId] = @LanguageId)
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
     VALUES (@LanguageId, 'Admin.Passengers.List.SearchAntiX', N'AntiX');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.List.SearchTravelStartDate' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Passengers.List.SearchTravelStartDate', N'تاریخ شروع سفر');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.List.SearchTravelEndDate' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Passengers.List.SearchTravelEndDate', N'تاریخ پایان سفر');
 
 IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.List.SearchRecoveryYear' AND [LanguageId] = @LanguageId)
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])

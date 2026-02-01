@@ -10,7 +10,7 @@ BEGIN
         [RecoveryNo] [int] NOT NULL,
         [PersonName] [nvarchar](500) NULL,
         [GuideNameAndLegionNo] [nvarchar](500) NULL,
-        [ClinicName] [nvarchar](500) NULL,
+        [ClinicId] [int] NOT NULL,
         [BirthDateUtc] [datetime2](7) NULL,
         [Education] [int] NOT NULL,
         [MaritalStatus] [int] NOT NULL,
@@ -54,6 +54,20 @@ BEGIN
         PRINT 'WARNING: AntiX table does not exist. AntiX foreign keys were not created.';
     END
 
+    -- Add Foreign Key constraint to Clinic table (if exists)
+    IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Clinic]') AND type in (N'U'))
+    BEGIN
+        ALTER TABLE [dbo].[Passenger] WITH CHECK ADD CONSTRAINT [FK_Passenger_Clinic] 
+        FOREIGN KEY([ClinicId])
+        REFERENCES [dbo].[Clinic] ([Id]);
+
+        ALTER TABLE [dbo].[Passenger] CHECK CONSTRAINT [FK_Passenger_Clinic];
+    END
+    ELSE
+    BEGIN
+        PRINT 'WARNING: Clinic table does not exist. Clinic foreign key was not created.';
+    END
+
     -- Add index on RecoveryNo for better query performance
     CREATE NONCLUSTERED INDEX [IX_Passenger_RecoveryNo] 
     ON [dbo].[Passenger] ([RecoveryNo] ASC)
@@ -70,6 +84,11 @@ BEGIN
     -- Add index on AgencyId for lookups
     CREATE NONCLUSTERED INDEX [IX_Passenger_AgencyId] 
     ON [dbo].[Passenger] ([AgencyId] ASC)
+    WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY];
+
+    -- Add index on ClinicId for lookups
+    CREATE NONCLUSTERED INDEX [IX_Passenger_ClinicId] 
+    ON [dbo].[Passenger] ([ClinicId] ASC)
     WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY];
 
     -- Add index on AntiX1/AntiX2 for lookups

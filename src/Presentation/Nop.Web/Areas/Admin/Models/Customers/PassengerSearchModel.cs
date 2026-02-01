@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Web.Framework.Models;
-using Nop.Web.Framework.Mvc.ModelBinding;
 using Nop.Web.Framework.Mvc.ModelBinding;
 
 namespace Nop.Web.Areas.Admin.Models.Customers;
@@ -17,6 +17,7 @@ public partial record PassengerSearchModel : BaseSearchModel
     {
         AvailableCities = new List<SelectListItem>();
         AvailableAgencies = new List<SelectListItem>();
+        AvailableClinics = new List<SelectListItem>();
         AvailableAntiXItems = new List<SelectListItem>();
     }
 
@@ -27,11 +28,17 @@ public partial record PassengerSearchModel : BaseSearchModel
     [NopResourceDisplayName("Admin.Passengers.List.SearchRecoveryNo")]
     public int SearchRecoveryNo { get; set; }
 
+    [NopResourceDisplayName("Admin.Passengers.List.SearchCardNo")]
+    public long? SearchCardNo { get; set; }
+
     [NopResourceDisplayName("Admin.Passengers.List.SearchCity")]
     public int SearchCityId { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.List.SearchAgency")]
     public int SearchAgencyId { get; set; }
+
+    [NopResourceDisplayName("Admin.Passengers.List.SearchClinic")]
+    public int SearchClinicId { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.List.SearchAntiX")]
     public int SearchAntiXId { get; set; }
@@ -39,8 +46,22 @@ public partial record PassengerSearchModel : BaseSearchModel
     [NopResourceDisplayName("Admin.Passengers.List.SearchPersonName")]
     public string SearchPersonName { get; set; }
 
+    [NopResourceDisplayName("Admin.Passengers.List.SearchGuideNameAndLegionNo")]
+    public string SearchGuideNameAndLegionNo { get; set; }
+
+    [UIHint("PersianDateNullable")]
+    [PersianDate]
+    [NopResourceDisplayName("Admin.Passengers.List.SearchTravelStartDate")]
+    public DateTime? SearchTravelStartDateUtc { get; set; }
+
+    [UIHint("PersianDateNullable")]
+    [PersianDate]
+    [NopResourceDisplayName("Admin.Passengers.List.SearchTravelEndDate")]
+    public DateTime? SearchTravelEndDateUtc { get; set; }
+
     public IList<SelectListItem> AvailableCities { get; set; }
     public IList<SelectListItem> AvailableAgencies { get; set; }
+    public IList<SelectListItem> AvailableClinics { get; set; }
     public IList<SelectListItem> AvailableAntiXItems { get; set; }
 
     #endregion

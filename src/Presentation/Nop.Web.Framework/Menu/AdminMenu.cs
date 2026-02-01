@@ -254,6 +254,15 @@ public partial class AdminMenu : IAdminMenu
                         },
                         new()
                         {
+                            SystemName = "Clinics",
+                            Title = await _localizationService.GetResourceAsync("Admin.Configuration.Clinics"),
+                            PermissionNames = new List<string> { StandardPermission.Configuration.MANAGE_CLINICS },
+                            Url = GetMenuItemUrl("Clinic",
+                            "List"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                        new()
+                        {
                             SystemName = "AntiX",
                             Title = await _localizationService.GetResourceAsync("Admin.Configuration.AntiX"),
                             PermissionNames = new List<string> { StandardPermission.Configuration.MANAGE_ANTIX },

@@ -26,7 +26,9 @@ public partial interface IPassengerService
     /// The task result contains the passengers
     /// </returns>
     Task<IPagedList<Passenger>> GetAllPassengersAsync(int recoveryNo = 0,
-        string personName = null, int cityId = 0, int agencyId = 0, int antiXId = 0,
+        string personName = null, int cityId = 0, int agencyId = 0, int clinicId = 0, int antiXId = 0,
+        string guideNameAndLegionNo = null, long? cardNo = null,
+        DateTime? travelStartDateUtc = null, DateTime? travelEndDateUtc = null,
         int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false);
 
     /// <summary>

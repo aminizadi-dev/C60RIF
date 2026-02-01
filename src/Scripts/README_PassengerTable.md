@@ -25,7 +25,7 @@
 - **RecoveryNo**: شماره بازیابی
 - **PersonName**: نام شخص
 - **GuideNameAndLegionNo**: نام راهنما و شماره لژیون
-- **ClinicName**: نام کلینیک
+- **ClinicId**: شناسه کلینیک (Foreign Key, الزامی)
 - **BirthDateUtc**: تاریخ تولد
 - **Education**: سطح تحصیلات (enum)
 - **MaritalStatus**: وضعیت تاهل (enum)
@@ -46,9 +46,10 @@
 1. **IX_Passenger_RecoveryNo**: برای جستجو بر اساس شماره بازیابی
 2. **IX_Passenger_PersonName**: برای جستجو بر اساس نام شخص
 3. **IX_Passenger_AgencyId**: برای جستجو بر اساس نمایندگی
-4. **IX_Passenger_AntiX1**: برای جستجو بر اساس AntiX1
-5. **IX_Passenger_AntiX2**: برای جستجو بر اساس AntiX2
-6. **IX_Passenger_CreatedOnUtc**: برای مرتب‌سازی بر اساس تاریخ ایجاد
+4. **IX_Passenger_ClinicId**: برای جستجو بر اساس کلینیک
+5. **IX_Passenger_AntiX1**: برای جستجو بر اساس AntiX1
+6. **IX_Passenger_AntiX2**: برای جستجو بر اساس AntiX2
+7. **IX_Passenger_CreatedOnUtc**: برای مرتب‌سازی بر اساس تاریخ ایجاد
 
 ## نکات مهم
 

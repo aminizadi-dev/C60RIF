@@ -50,7 +50,7 @@ DECLARE @LanguageId INT = 2; -- شناسه زبان فارسی خود را ای�
 - `Admin.Passengers.Fields.PersonName` - نام شخص
 - `Admin.Passengers.Fields.BranchName` - نام شعبه
 - `Admin.Passengers.Fields.GuideNameAndLegionNo` - نام راهنما و شماره لژیون
-- `Admin.Passengers.Fields.ClinicName` - نام کلینیک
+- `Admin.Passengers.Fields.Clinic` - کلینیک
 - `Admin.Passengers.Fields.BirthDate` - تاریخ تولد
 - `Admin.Passengers.Fields.Education` - سطح تحصیلات
 - `Admin.Passengers.Fields.MaritalStatus` - وضعیت تاهل
@@ -58,6 +58,7 @@ DECLARE @LanguageId INT = 2; -- شناسه زبان فارسی خود را ای�
 - `Admin.Passengers.Fields.CardNo` - شماره کارت
 - `Admin.Passengers.Fields.AntiX1` - AntiX1
 - `Admin.Passengers.Fields.AntiX2` - AntiX2
+- `Admin.Passengers.Fields.Clinic.Required` - انتخاب کلینیک الزامی است
 - `Admin.Passengers.Fields.TravelStartDate` - تاریخ شروع سفر
 - `Admin.Passengers.Fields.TravelEndDate` - تاریخ پایان سفر
 - `Admin.Passengers.Fields.PictureId` - شناسه تصویر
@@ -65,8 +66,15 @@ DECLARE @LanguageId INT = 2; -- شناسه زبان فارسی خود را ای�
 
 ### فیلدهای جستجو
 - `Admin.Passengers.List.SearchRecoveryNo` - شماره بازیابی
-- `Admin.Passengers.List.SearchRecoveryYear` - سال بازیابی
+- `Admin.Passengers.List.SearchCardNo` - شماره کارت
 - `Admin.Passengers.List.SearchPersonName` - نام شخص
+- `Admin.Passengers.List.SearchGuideNameAndLegionNo` - نام راهنما و شماره لژیون
+- `Admin.Passengers.List.SearchCity` - شهر
+- `Admin.Passengers.List.SearchAgency` - نمایندگی
+- `Admin.Passengers.List.SearchClinic` - کلینیک
+- `Admin.Passengers.List.SearchAntiX` - AntiX
+- `Admin.Passengers.List.SearchTravelStartDate` - تاریخ شروع سفر
+- `Admin.Passengers.List.SearchTravelEndDate` - تاریخ پایان سفر
 
 ### Enum ها
 
