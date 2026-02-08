@@ -14,7 +14,7 @@ public partial class RenderButtonEdit : IRender
     public RenderButtonEdit(DataUrl url)
     {
         Url = url;
-        ClassName = NopButtonClassDefaults.Success;
+        ClassName = NopButtonClassDefaults.Default;
     }
 
     #endregion
