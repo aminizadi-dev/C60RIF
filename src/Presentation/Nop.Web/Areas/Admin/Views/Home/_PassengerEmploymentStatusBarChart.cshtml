@@ -1,0 +1,141 @@
+@{
+    const string prefix = "passenger-employment-status-bar-chart";
+    const string hideCardAttributeName = "Reports.HidePassengerEmploymentStatusBarChartCard";
+    var hideCard = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideCardAttributeName);
+}
+
+<script src="~/lib_npm/chart.js/chart.umd.min.js"></script>
+
+<div class="card card-primary card-outline @if (hideCard){<text>collapsed-card</text>}" id="@(prefix)-card">
+    <div class="card-header with-border">
+        <h3 class="card-title">
+            <i class="fas fa-chart-bar"></i>
+            @T("Admin.Reports.Passengers.EmploymentStatusStatistics")
+        </h3>
+        <div class="card-tools float-right">
+            <button type="button" class="btn btn-tool margin-l-10" data-card-widget="collapse">
+                @if (hideCard)
+                {
+                    <text><i class="fas fa-plus"></i></text>
+                }
+                else
+                {
+                    <text><i class="fas fa-minus"></i></text>
+                }
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="chart" style="height: 300px;">
+            <canvas id="@(prefix)-chart" height="300"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function() {
+        $('#@(prefix)-card').on('click', 'button[data-card-widget="collapse"]', function () {
+            var collapsed = !$('#@(prefix)-card').hasClass('collapsed-card');
+            saveUserPreferences('@(Url.Action("SavePreference", "Preferences"))', '@hideCardAttributeName', collapsed);
+
+            if (!collapsed && !window.passengerEmploymentStatusBarChart) {
+                loadEmploymentStatusChart();
+            }
+        });
+
+        var barConfig = {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    data: [],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 99, 132, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y + ' ' + '@T("Admin.Reports.Passengers.Person")';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        display: true,
+                        beginAtZero: true,
+                        grid: {
+                            display: true,
+                            color: 'rgba(0,0,0,.05)',
+                            lineWidth: 1
+                        },
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        };
+
+        function loadEmploymentStatusChart() {
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Url.Action("LoadPassengerEmploymentStatusStatistics", "Home")",
+                success: function (data) {
+                    var labels = [];
+                    var values = [];
+
+                    if (data && data.length > 0) {
+                        for (var i = 0; i < data.length; i++) {
+                            labels.push(data[i].label);
+                            values.push(data[i].count);
+                        }
+                    }
+
+                    barConfig.data.labels = labels;
+                    barConfig.data.datasets[0].data = values;
+
+                    if (!window.passengerEmploymentStatusBarChart) {
+                        window.passengerEmploymentStatusBarChart = new Chart(
+                            document.getElementById("@prefix-chart").getContext("2d"),
+                            barConfig
+                        );
+                    } else {
+                        window.passengerEmploymentStatusBarChart.config.data.labels = labels;
+                        window.passengerEmploymentStatusBarChart.config.data.datasets[0].data = values;
+                        window.passengerEmploymentStatusBarChart.update();
+                    }
+                }
+            });
+        }
+
+        @if (!hideCard)
+        {
+            <text>
+                loadEmploymentStatusChart();
+            </text>
+        }
+    });
+</script>

@@ -1,6 +1,6 @@
 @{
-    const string prefix = "sales-by-category-bar-chart";
-    const string hideCardAttributeName = "Reports.HideSalesByCategoryBarChartCard";
+    const string prefix = "passenger-average-travel-length-by-agency-bar-chart";
+    const string hideCardAttributeName = "Reports.HidePassengerAverageTravelLengthByAgencyBarChartCard";
     var hideCard = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideCardAttributeName);
 }
 
@@ -10,7 +10,7 @@
     <div class="card-header with-border">
         <h3 class="card-title">
             <i class="fas fa-chart-bar"></i>
-            @T("Admin.Reports.Passengers.DistributionByAgency")
+            @T("Admin.Reports.Passengers.AverageTravelLengthByAgency")
         </h3>
         <div class="card-tools float-right">
             <div class="input-group input-group-sm" style="width: 220px;">
@@ -61,7 +61,7 @@
             data: {
                 labels: [],
                 datasets: [{
-                    label: "@T("Admin.Reports.Passengers.DistributionByAgency.Label")",
+                    label: "@T("Admin.Reports.Passengers.AverageTravelLengthByAgency.Label")",
                     data: [],
                     backgroundColor: 'rgba(54, 162, 235, 0.8)',
                     borderColor: 'rgba(54, 162, 235, 1)',
@@ -78,7 +78,11 @@
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return context.parsed.y + ' ' + '@T("Admin.Reports.Passengers.Person")';
+                                var row = context.raw || {};
+                                if (row.averageLabel) {
+                                    return row.averageLabel;
+                                }
+                                return context.parsed.y + ' ' + '@T("Admin.Reports.Passengers.AverageTravelLengthByAgency.Days")';
                             }
                         }
                     }
@@ -101,9 +105,6 @@
                             display: true,
                             color: 'rgba(0,0,0,.05)',
                             lineWidth: 1
-                        },
-                        ticks: {
-                            stepSize: 1
                         }
                     }
                 }
@@ -117,49 +118,36 @@
             $.ajax({
                 cache: false,
                 type: "GET",
-                url: "@Url.Action("LoadPassengerDistributionByAgency", "Home")",
+                url: "@Url.Action("LoadPassengerAverageTravelLengthByAgency", "Home")",
                 data: {
                     cityId: cityId
                 },
-                success: function (data, textStatus, jqXHR) {
+                success: function (data) {
                     if (data && data.length > 0) {
                         for (var i = 0; i < data.length; i++) {
                             labels.push(data[i].agencyName);
-                            values.push(data[i].count);
+                            values.push({
+                                x: data[i].agencyName,
+                                y: data[i].averageDays,
+                                averageLabel: data[i].averageLabel
+                            });
                         }
                     } else {
                         labels = [];
                         values = [];
                     }
 
-                    if (!window.salesByCategoryBarChart) {
+                    if (!window.passengerAverageTravelLengthByAgencyBarChart) {
                         barConfig.data.labels = labels;
                         barConfig.data.datasets[0].data = values;
-                        window.salesByCategoryBarChart = new Chart(
+                        window.passengerAverageTravelLengthByAgencyBarChart = new Chart(
                             document.getElementById("@prefix-chart").getContext("2d"),
                             barConfig
                         );
                     } else {
-                        window.salesByCategoryBarChart.config.data.labels = labels;
-                        window.salesByCategoryBarChart.config.data.datasets[0].data = values;
-                        window.salesByCategoryBarChart.update();
-                    }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    labels = [];
-                    values = [];
-                    
-                    if (!window.salesByCategoryBarChart) {
-                        barConfig.data.labels = labels;
-                        barConfig.data.datasets[0].data = values;
-                        window.salesByCategoryBarChart = new Chart(
-                            document.getElementById("@prefix-chart").getContext("2d"),
-                            barConfig
-                        );
-                    } else {
-                        window.salesByCategoryBarChart.config.data.labels = labels;
-                        window.salesByCategoryBarChart.config.data.datasets[0].data = values;
-                        window.salesByCategoryBarChart.update();
+                        window.passengerAverageTravelLengthByAgencyBarChart.config.data.labels = labels;
+                        window.passengerAverageTravelLengthByAgencyBarChart.config.data.datasets[0].data = values;
+                        window.passengerAverageTravelLengthByAgencyBarChart.update();
                     }
                 }
             });
@@ -181,7 +169,7 @@
                         }
                     }
 
-                    var defaultCityId = 4;
+                    var defaultCityId = 8;
                     if ($select.find('option[value="' + defaultCityId + '"]').length) {
                         $select.val(defaultCityId);
                     }
@@ -193,15 +181,16 @@
                 }
             });
         }
+
         $('#@(prefix)-city').on('change', function () {
             var cityId = parseInt($(this).val());
             selectedCityId = cityId;
             if (cityId > 0) {
                 changeBarChartCity(cityId);
-            } else if (window.salesByCategoryBarChart) {
-                window.salesByCategoryBarChart.config.data.labels = [];
-                window.salesByCategoryBarChart.config.data.datasets[0].data = [];
-                window.salesByCategoryBarChart.update();
+            } else if (window.passengerAverageTravelLengthByAgencyBarChart) {
+                window.passengerAverageTravelLengthByAgencyBarChart.config.data.labels = [];
+                window.passengerAverageTravelLengthByAgencyBarChart.config.data.datasets[0].data = [];
+                window.passengerAverageTravelLengthByAgencyBarChart.update();
             }
         });
 
@@ -213,4 +202,3 @@
         }
     });
 </script>
-

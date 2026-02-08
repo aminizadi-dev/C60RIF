@@ -51,10 +51,16 @@ DECLARE @LanguageId INT = 2; -- شناسه زبان فارسی خود را ای�
 - `Admin.Passengers.Fields.BranchName` - نام شعبه
 - `Admin.Passengers.Fields.GuideNameAndLegionNo` - نام راهنما و شماره لژیون
 - `Admin.Passengers.Fields.Clinic` - کلینیک
-- `Admin.Passengers.Fields.BirthDate` - تاریخ تولد
+- `Admin.Passengers.Fields.BirthYear` - سال تولد
 - `Admin.Passengers.Fields.Education` - سطح تحصیلات
-- `Admin.Passengers.Fields.MaritalStatus` - وضعیت تاهل
-- `Admin.Passengers.Fields.EmploymentStatus` - وضعیت اشتغال
+- `Admin.Passengers.Fields.IsMarried` - وضعیت تاهل
+- `Admin.Passengers.Fields.IsSingle` - مجرد
+- `Admin.Passengers.Fields.IsEmployed` - وضعیت اشتغال
+- `Admin.Passengers.Fields.IsUnemployed` - بیکار
+- `Admin.Passengers.Fields.HasCompanion` - همسفر
+- `Admin.Passengers.Fields.HasCompanion.Unknown` - نامشخص
+- `Admin.Passengers.Fields.HasCompanion.No` - ندارد
+- `Admin.Passengers.Fields.HasCompanion.Yes` - دارد
 - `Admin.Passengers.Fields.CardNo` - شماره کارت
 - `Admin.Passengers.Fields.AntiX1` - AntiX1
 - `Admin.Passengers.Fields.AntiX2` - AntiX2
@@ -76,6 +82,17 @@ DECLARE @LanguageId INT = 2; -- شناسه زبان فارسی خود را ای�
 - `Admin.Passengers.List.SearchTravelStartDate` - تاریخ شروع سفر
 - `Admin.Passengers.List.SearchTravelEndDate` - تاریخ پایان سفر
 
+### نمودارهای داشبورد
+- `Admin.Reports.Passengers.MaritalStatusStatistics` - وضعیت تاهل
+- `Admin.Reports.Passengers.MaritalStatusStatistics.Married` - متاهل
+- `Admin.Reports.Passengers.MaritalStatusStatistics.Single` - مجرد
+- `Admin.Reports.Passengers.EmploymentStatusStatistics` - وضعیت اشتغال
+- `Admin.Reports.Passengers.EmploymentStatusStatistics.Employed` - شاغل
+- `Admin.Reports.Passengers.EmploymentStatusStatistics.Unemployed` - بیکار
+- `Admin.Reports.Passengers.AverageTravelLengthByAgency` - میانگین طول سفر به تفکیک نمایندگی
+- `Admin.Reports.Passengers.AverageTravelLengthByAgency.Label` - میانگین طول سفر
+- `Admin.Reports.Passengers.AverageTravelLengthByAgency.Days` - روز
+
 ### Enum ها
 
 #### EducationLevel (سطح تحصیلات)
@@ -88,16 +105,6 @@ DECLARE @LanguageId INT = 2; -- شناسه زبان فارسی خود را ای�
 - `Enums.EducationLevel.Bachelor` - کارشناسی
 - `Enums.EducationLevel.Master` - کارشناسی ارشد
 - `Enums.EducationLevel.Doctorate` - دکترا
-
-#### MaritalStatus (وضعیت تاهل)
-- `Enums.MaritalStatus.Unknown` - نامشخص
-- `Enums.MaritalStatus.Single` - مجرد
-- `Enums.MaritalStatus.Married` - متاهل
-
-#### EmploymentStatus (وضعیت اشتغال)
-- `Enums.EmploymentStatus.Unknown` - نامشخص
-- `Enums.EmploymentStatus.Employed` - شاغل
-- `Enums.EmploymentStatus.Unemployed` - بیکار
 
 ### Activity Log
 - `ActivityLog.AddNewPassenger` - مسافر جدید با شناسه {0} افزوده شد

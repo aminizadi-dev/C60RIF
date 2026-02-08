@@ -195,8 +195,6 @@ public partial class PassengerModelFactory : IPassengerModelFactory
 
                 //convert dates to the user time
                 passengerModel.CreatedOnUtc = await _dateTimeHelper.ConvertToUserTimeAsync(passenger.CreatedOnUtc, DateTimeKind.Utc);
-                if (passenger.BirthDateUtc.HasValue)
-                    passengerModel.BirthDateUtc = await _dateTimeHelper.ConvertToUserTimeAsync(passenger.BirthDateUtc.Value, DateTimeKind.Utc);
                 if (passenger.TravelStartDateUtc.HasValue)
                     passengerModel.TravelStartDateUtc = await _dateTimeHelper.ConvertToUserTimeAsync(passenger.TravelStartDateUtc.Value, DateTimeKind.Utc);
                 if (passenger.TravelEndDateUtc.HasValue)
@@ -258,12 +256,8 @@ public partial class PassengerModelFactory : IPassengerModelFactory
                 model = passenger.ToModel(model);
                 //convert enum values
                 model.Education = (int)passenger.Education;
-                model.MaritalStatus = (int)passenger.MaritalStatus;
-                model.EmploymentStatus = (int)passenger.EmploymentStatus;
                 //convert dates to the user time
                 model.CreatedOnUtc = await _dateTimeHelper.ConvertToUserTimeAsync(passenger.CreatedOnUtc, DateTimeKind.Utc);
-                if (passenger.BirthDateUtc.HasValue)
-                    model.BirthDateUtc = await _dateTimeHelper.ConvertToUserTimeAsync(passenger.BirthDateUtc.Value, DateTimeKind.Utc);
                 if (passenger.TravelStartDateUtc.HasValue)
                     model.TravelStartDateUtc = await _dateTimeHelper.ConvertToUserTimeAsync(passenger.TravelStartDateUtc.Value, DateTimeKind.Utc);
                 if (passenger.TravelEndDateUtc.HasValue)
@@ -313,32 +307,6 @@ public partial class PassengerModelFactory : IPassengerModelFactory
             });
         }
         model.AvailableEducationLevels = educationLevels;
-
-        //prepare available marital statuses
-        var maritalStatuses = new List<SelectListItem>();
-        foreach (MaritalStatus m in Enum.GetValues(typeof(MaritalStatus)))
-        {
-            maritalStatuses.Add(new SelectListItem
-            {
-                Text = await _localizationService.GetLocalizedEnumAsync(m),
-                Value = ((int)m).ToString(),
-                Selected = passenger != null && (int)m == (int)passenger.MaritalStatus
-            });
-        }
-        model.AvailableMaritalStatuses = maritalStatuses;
-
-        //prepare available employment statuses
-        var employmentStatuses = new List<SelectListItem>();
-        foreach (EmploymentStatus e in Enum.GetValues(typeof(EmploymentStatus)))
-        {
-            employmentStatuses.Add(new SelectListItem
-            {
-                Text = await _localizationService.GetLocalizedEnumAsync(e),
-                Value = ((int)e).ToString(),
-                Selected = passenger != null && (int)e == (int)passenger.EmploymentStatus
-            });
-        }
-        model.AvailableEmploymentStatuses = employmentStatuses;
 
         //prepare available AntiX items
         var antiXItems = await _antiXService.GetAllAntiXAsync(published: null, pageIndex: 0, pageSize: int.MaxValue);

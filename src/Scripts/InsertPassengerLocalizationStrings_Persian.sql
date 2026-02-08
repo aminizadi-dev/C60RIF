@@ -99,21 +99,45 @@ IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admi
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
     VALUES (@LanguageId, 'Admin.Passengers.Fields.Clinic', N'کلینیک');
 
-IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.BirthDate' AND [LanguageId] = @LanguageId)
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.BirthYear' AND [LanguageId] = @LanguageId)
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
-    VALUES (@LanguageId, 'Admin.Passengers.Fields.BirthDate', N'تاریخ تولد');
+    VALUES (@LanguageId, 'Admin.Passengers.Fields.BirthYear', N'سال تولد');
 
 IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.Education' AND [LanguageId] = @LanguageId)
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
     VALUES (@LanguageId, 'Admin.Passengers.Fields.Education', N'سطح تحصیلات');
 
-IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.MaritalStatus' AND [LanguageId] = @LanguageId)
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.IsMarried' AND [LanguageId] = @LanguageId)
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
-    VALUES (@LanguageId, 'Admin.Passengers.Fields.MaritalStatus', N'وضعیت تاهل');
+    VALUES (@LanguageId, 'Admin.Passengers.Fields.IsMarried', N'وضعیت تاهل');
 
-IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.EmploymentStatus' AND [LanguageId] = @LanguageId)
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.IsSingle' AND [LanguageId] = @LanguageId)
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
-    VALUES (@LanguageId, 'Admin.Passengers.Fields.EmploymentStatus', N'وضعیت اشتغال');
+    VALUES (@LanguageId, 'Admin.Passengers.Fields.IsSingle', N'مجرد');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.IsEmployed' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Passengers.Fields.IsEmployed', N'وضعیت اشتغال');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.IsUnemployed' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Passengers.Fields.IsUnemployed', N'بیکار');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.HasCompanion' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Passengers.Fields.HasCompanion', N'همسفر');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.HasCompanion.Unknown' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Passengers.Fields.HasCompanion.Unknown', N'نامشخص');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.HasCompanion.No' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Passengers.Fields.HasCompanion.No', N'ندارد');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.HasCompanion.Yes' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Passengers.Fields.HasCompanion.Yes', N'دارد');
 
 IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.CardNo' AND [LanguageId] = @LanguageId)
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
@@ -237,6 +261,43 @@ IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admi
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
     VALUES (@LanguageId, 'Admin.Passengers.List.SearchPersonName', N'نام شخص');
 
+-- Passenger Dashboard Charts
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Reports.Passengers.MaritalStatusStatistics' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Reports.Passengers.MaritalStatusStatistics', N'وضعیت تاهل');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Reports.Passengers.MaritalStatusStatistics.Married' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Reports.Passengers.MaritalStatusStatistics.Married', N'متاهل');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Reports.Passengers.MaritalStatusStatistics.Single' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Reports.Passengers.MaritalStatusStatistics.Single', N'مجرد');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Reports.Passengers.EmploymentStatusStatistics' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Reports.Passengers.EmploymentStatusStatistics', N'وضعیت اشتغال');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Reports.Passengers.EmploymentStatusStatistics.Employed' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Reports.Passengers.EmploymentStatusStatistics.Employed', N'شاغل');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Reports.Passengers.EmploymentStatusStatistics.Unemployed' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Reports.Passengers.EmploymentStatusStatistics.Unemployed', N'بیکار');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Reports.Passengers.AverageTravelLengthByAgency' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Reports.Passengers.AverageTravelLengthByAgency', N'میانگین طول سفر به تفکیک نمایندگی');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Reports.Passengers.AverageTravelLengthByAgency.Label' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Reports.Passengers.AverageTravelLengthByAgency.Label', N'میانگین طول سفر');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Reports.Passengers.AverageTravelLengthByAgency.Days' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Reports.Passengers.AverageTravelLengthByAgency.Days', N'روز');
+
 -- Menu Item (if needed - usually handled by Admin.Customers)
 -- Note: The menu item "Passengers list" uses the same permission as Customers, 
 -- so it might use Admin.Customers resource or you may need to add Admin.Passengers.Menu if separate
@@ -281,32 +342,6 @@ IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Enum
 IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Enums.EducationLevel.Doctorate' AND [LanguageId] = @LanguageId)
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
     VALUES (@LanguageId, 'enums.nop.core.domain.EducationLevel.Doctorate', N'دکترا');
-
--- MaritalStatus Enum
-IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Enums.MaritalStatus.Unknown' AND [LanguageId] = @LanguageId)
-    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
-    VALUES (@LanguageId, 'enums.nop.core.domain.MaritalStatus.Unknown', N'نامشخص');
-
-IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Enums.MaritalStatus.Single' AND [LanguageId] = @LanguageId)
-    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
-    VALUES (@LanguageId, 'enums.nop.core.domain.MaritalStatus.Single', N'مجرد');
-
-IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Enums.MaritalStatus.Married' AND [LanguageId] = @LanguageId)
-    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
-    VALUES (@LanguageId, 'enums.nop.core.domain.MaritalStatus.Married', N'متاهل');
-
--- EmploymentStatus Enum
-IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Enums.EmploymentStatus.Unknown' AND [LanguageId] = @LanguageId)
-    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
-    VALUES (@LanguageId, 'enums.nop.core.domain.EmploymentStatus.Unknown', N'نامشخص');
-
-IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Enums.EmploymentStatus.Employed' AND [LanguageId] = @LanguageId)
-    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
-    VALUES (@LanguageId, 'enums.nop.core.domain.EmploymentStatus.Employed', N'شاغل');
-
-IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Enums.EmploymentStatus.Unemployed' AND [LanguageId] = @LanguageId)
-    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
-    VALUES (@LanguageId, 'enums.nop.core.domain.EmploymentStatus.Unemployed', N'بیکار');
 
 -- =============================================
 -- Activity Log Strings

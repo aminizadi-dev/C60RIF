@@ -9,7 +9,7 @@
     const string closeCardAttributeName = "CloseConfigurationSteps";
     var closeConfigurationStepsCard = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), closeCardAttributeName);
 
-     //active menu item (system name)
+    //active menu item (system name)
     NopHtml.SetActiveMenuItemSystemName("Dashboard");
 }
 
@@ -34,7 +34,7 @@
                     @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.DashboardNewsAfter, additionalData = Model })
 
                     @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.DashboardCommonstatisticsAfter, additionalData = Model })
-                   
+
                     @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.DashboardCustomerorderchartsAfter, additionalData = Model })
 
                     @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.DashboardOrderreportsAfter, additionalData = Model })
@@ -46,8 +46,11 @@
                         <div class="col-md-6">
                             @await Html.PartialAsync("_OrderStatusPieChart")
                         </div>
-                        <div class="col-md-6">
-                            @await Html.PartialAsync("_SalesByCategoryBarChart")
+                        <div class="col-md-3">
+                            @await Html.PartialAsync("_PassengerMaritalStatusBarChart")
+                        </div>
+                        <div class="col-md-3">
+                            @await Html.PartialAsync("_PassengerEmploymentStatusBarChart")
                         </div>
                     </div>
 
@@ -58,11 +61,25 @@
                         </div>
                     </div>
 
+                    @* Passenger Status Statistics *@
+                    <div class="row">
+                        <div class="col-md-12">
+                            @await Html.PartialAsync("_SalesByCategoryBarChart")
+                        </div>
+                    </div>
+
+                    @* Passenger Average Travel Length *@
+                    <div class="row">
+                        <div class="col-md-12">
+                            @await Html.PartialAsync("_PassengerAverageTravelLengthByAgencyBarChart")
+                        </div>
+                    </div>
+
                     @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.DashboardBottom, additionalData = Model })
                 </div>
             </div>
         </div>
     </div>
 </section>
-    <nop-alert asp-alert-id="loadOrderStatisticsAlert" asp-alert-message="@T("Admin.SalesReport.OrderStatistics.Alert.FailedLoad")" />
-    <nop-alert asp-alert-id="loadCustomerStatisticsAlert" asp-alert-message="@T("Admin.Reports.Customers.CustomerStatistics.Alert.FailedLoad")" />
+<nop-alert asp-alert-id="loadOrderStatisticsAlert" asp-alert-message="@T("Admin.SalesReport.OrderStatistics.Alert.FailedLoad")" />
+<nop-alert asp-alert-id="loadCustomerStatisticsAlert" asp-alert-message="@T("Admin.Reports.Customers.CustomerStatistics.Alert.FailedLoad")" />

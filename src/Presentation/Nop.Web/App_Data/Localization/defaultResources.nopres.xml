@@ -13238,6 +13238,39 @@
   <LocaleResource Name="Admin.Dashboard.NumberOfPendingReturnRequests">
     <Value>Pending return requests</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Passengers.DistributionByAgency">
+    <Value>Passenger distribution by agency</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Passengers.DistributionByAgency.Label">
+    <Value>Passengers</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Passengers.MaritalStatusStatistics">
+    <Value>Marital status</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Passengers.MaritalStatusStatistics.Married">
+    <Value>Married</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Passengers.MaritalStatusStatistics.Single">
+    <Value>Single</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Passengers.EmploymentStatusStatistics">
+    <Value>Employment status</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Passengers.EmploymentStatusStatistics.Employed">
+    <Value>Employed</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Passengers.EmploymentStatusStatistics.Unemployed">
+    <Value>Unemployed</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Passengers.AverageTravelLengthByAgency">
+    <Value>Average travel length by agency</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Passengers.AverageTravelLengthByAgency.Label">
+    <Value>Average length</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Passengers.AverageTravelLengthByAgency.Days">
+    <Value>days</Value>
+  </LocaleResource>
   <LocaleResource Name="Admin.Documentation.Reference.Acl">
     <Value><![CDATA[Learn more about <a target="_blank" href="{0}">access control list</a>]]></Value>
   </LocaleResource>
@@ -21520,6 +21553,33 @@
   </LocaleResource>
   <LocaleResource Name="Admin.Passengers.Fields.Clinic">
     <Value>Clinic</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.BirthYear">
+    <Value>Birth year</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.IsMarried">
+    <Value>Married</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.IsSingle">
+    <Value>Single</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.IsEmployed">
+    <Value>Employed</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.IsUnemployed">
+    <Value>Unemployed</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.HasCompanion">
+    <Value>Companion</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.HasCompanion.Unknown">
+    <Value>Unknown</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.HasCompanion.No">
+    <Value>No</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.HasCompanion.Yes">
+    <Value>Yes</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Passengers.Fields.PersonName.Required">
     <Value>Person name is required</Value>

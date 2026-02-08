@@ -16,8 +16,6 @@ public partial record PassengerModel : BaseNopEntityModel
     public PassengerModel()
     {
         AvailableEducationLevels = new List<SelectListItem>();
-        AvailableMaritalStatuses = new List<SelectListItem>();
-        AvailableEmploymentStatuses = new List<SelectListItem>();
         AvailableAntiXItems = new List<SelectListItem>();
         AvailableCities = new List<SelectListItem>();
         AvailableAgencies = new List<SelectListItem>();
@@ -40,22 +38,21 @@ public partial record PassengerModel : BaseNopEntityModel
     [NopResourceDisplayName("Admin.Passengers.Fields.Clinic")]
     public int ClinicId { get; set; }
 
-    [UIHint("PersianDateNullable")]
-    [PersianDate]
-    [NopResourceDisplayName("Admin.Passengers.Fields.BirthDate")]
-    public DateTime? BirthDateUtc { get; set; }
+    [NopResourceDisplayName("Admin.Passengers.Fields.BirthYear")]
+    public int? BirthYear { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.Fields.Education")]
     public int Education { get; set; }
     public IList<SelectListItem> AvailableEducationLevels { get; set; }
 
-    [NopResourceDisplayName("Admin.Passengers.Fields.MaritalStatus")]
-    public int MaritalStatus { get; set; }
-    public IList<SelectListItem> AvailableMaritalStatuses { get; set; }
+    [NopResourceDisplayName("Admin.Passengers.Fields.IsMarried")]
+    public bool IsMarried { get; set; }
 
-    [NopResourceDisplayName("Admin.Passengers.Fields.EmploymentStatus")]
-    public int EmploymentStatus { get; set; }
-    public IList<SelectListItem> AvailableEmploymentStatuses { get; set; }
+    [NopResourceDisplayName("Admin.Passengers.Fields.IsEmployed")]
+    public bool IsEmployed { get; set; }
+
+    [NopResourceDisplayName("Admin.Passengers.Fields.HasCompanion")]
+    public bool? HasCompanion { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.Fields.CardNo")]
     public long? CardNo { get; set; }

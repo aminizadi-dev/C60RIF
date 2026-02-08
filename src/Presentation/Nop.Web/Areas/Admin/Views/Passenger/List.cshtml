@@ -217,6 +217,20 @@
                                     ClassName = NopColumnClassDefaults.CenterAll,
                                     Render = new RenderCustom("renderPassengerPicture")
                                 });
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.IsMarried))
+                                {
+                                    Title = T("Admin.Passengers.Fields.IsMarried").Text,
+                                    Width = "50",
+                                    ClassName = NopColumnClassDefaults.CenterAll,
+                                    Render = new RenderBoolean()
+                                });
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.IsEmployed))
+                                {
+                                    Title = T("Admin.Passengers.Fields.IsEmployed").Text,
+                                    Width = "50",
+                                    ClassName = NopColumnClassDefaults.CenterAll,
+                                    Render = new RenderBoolean()
+                                });
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.Id))
                                 {
                                     Title = T("Admin.Common.Edit").Text,

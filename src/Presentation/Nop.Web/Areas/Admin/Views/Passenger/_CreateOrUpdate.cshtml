@@ -45,11 +45,11 @@
                             <div class="col-md-6">
                                 <div class="form-group row">
                                     <div class="col-md-3">
-                                        <nop-label asp-for="BirthDateUtc" />
+                                        <nop-label asp-for="BirthYear" />
                                     </div>
                                     <div class="col-md-9">
-                                        <nop-editor asp-for="BirthDateUtc" />
-                                        <span asp-validation-for="BirthDateUtc"></span>
+                                        <nop-editor asp-for="BirthYear" />
+                                        <span asp-validation-for="BirthYear"></span>
                                     </div>
                                 </div>
                             </div>
@@ -69,22 +69,80 @@
                             <div class="col-md-6">
                                 <div class="form-group row">
                                     <div class="col-md-3">
-                                        <nop-label asp-for="MaritalStatus" />
+                                        <nop-label asp-for="IsMarried" />
                                     </div>
                                     <div class="col-md-9">
-                                        <nop-select asp-for="MaritalStatus" asp-items="Model.AvailableMaritalStatuses" />
-                                        <span asp-validation-for="MaritalStatus"></span>
+                                        <div class="raw">
+                                            <div class="form-check">
+                                                <input type="radio" class="form-check-input" name="IsMarried" id="IsMarried_False" value="false" @(!Model.IsMarried ? Html.Raw("checked") : null)>
+                                                <label class="form-check-label" for="IsMarried_False">
+                                                    @T("Admin.Passengers.Fields.IsSingle")
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input type="radio" class="form-check-input" name="IsMarried" id="IsMarried_True" value="true" @(Model.IsMarried ? Html.Raw("checked") : null)>
+                                                <label class="form-check-label" for="IsMarried_True">
+                                                    @T("Admin.Passengers.Fields.IsMarried")
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <span asp-validation-for="IsMarried"></span>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group row">
                                     <div class="col-md-3">
-                                        <nop-label asp-for="EmploymentStatus" />
+                                        <nop-label asp-for="IsEmployed" />
                                     </div>
                                     <div class="col-md-9">
-                                        <nop-select asp-for="EmploymentStatus" asp-items="Model.AvailableEmploymentStatuses" />
-                                        <span asp-validation-for="EmploymentStatus"></span>
+                                        <div class="raw">
+                                            <div class="form-check">
+                                                <input type="radio" class="form-check-input" name="IsEmployed" id="IsEmployed_False" value="false" @(!Model.IsEmployed ? Html.Raw("checked") : null)>
+                                                <label class="form-check-label" for="IsEmployed_False">
+                                                    @T("Admin.Passengers.Fields.IsUnemployed")
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input type="radio" class="form-check-input" name="IsEmployed" id="IsEmployed_True" value="true" @(Model.IsEmployed ? Html.Raw("checked") : null)>
+                                                <label class="form-check-label" for="IsEmployed_True">
+                                                    @T("Admin.Passengers.Fields.IsEmployed")
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <span asp-validation-for="IsEmployed"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="HasCompanion" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="raw">
+                                            <div class="form-check">
+                                                <input type="radio" class="form-check-input" name="HasCompanion" id="HasCompanion_Unknown" value="" @(Model.HasCompanion == null ? Html.Raw("checked") : null)>
+                                                <label class="form-check-label" for="HasCompanion_Unknown">
+                                                    @T("Admin.Passengers.Fields.HasCompanion.Unknown")
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input type="radio" class="form-check-input" name="HasCompanion" id="HasCompanion_False" value="false" @(Model.HasCompanion == false ? Html.Raw("checked") : null)>
+                                                <label class="form-check-label" for="HasCompanion_False">
+                                                    @T("Admin.Passengers.Fields.HasCompanion.No")
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input type="radio" class="form-check-input" name="HasCompanion" id="HasCompanion_True" value="true" @(Model.HasCompanion == true ? Html.Raw("checked") : null)>
+                                                <label class="form-check-label" for="HasCompanion_True">
+                                                    @T("Admin.Passengers.Fields.HasCompanion.Yes")
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <span asp-validation-for="HasCompanion"></span>
                                     </div>
                                 </div>
                             </div>

@@ -26,10 +26,11 @@
 - **PersonName**: نام شخص
 - **GuideNameAndLegionNo**: نام راهنما و شماره لژیون
 - **ClinicId**: شناسه کلینیک (Foreign Key, الزامی)
-- **BirthDateUtc**: تاریخ تولد
+- **BirthYear**: سال تولد
 - **Education**: سطح تحصیلات (enum)
-- **MaritalStatus**: وضعیت تاهل (enum)
-- **EmploymentStatus**: وضعیت اشتغال (enum)
+- **IsMarried**: وضعیت تاهل (boolean)
+- **IsEmployed**: وضعیت اشتغال (boolean)
+- **HasCompanion**: همسفر دارد/ندارد (boolean, nullable)
 - **CardNo**: شماره کارت
 - **AntiX1**: شناسه AntiX اول (عدد)
 - **AntiX2**: شناسه AntiX دوم (عدد، اختیاری)

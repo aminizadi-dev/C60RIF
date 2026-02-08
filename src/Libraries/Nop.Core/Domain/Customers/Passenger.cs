@@ -17,13 +17,15 @@ public partial class Passenger : BaseEntity
 
     public int ClinicId { get; set; }
 
-    public DateTime? BirthDateUtc { get; set; }
+    public int? BirthYear { get; set; }
 
     public EducationLevel Education { get; set; }
 
-    public MaritalStatus MaritalStatus { get; set; }
+    public bool IsMarried { get; set; }
 
-    public EmploymentStatus EmploymentStatus { get; set; }
+    public bool IsEmployed { get; set; }
+
+    public bool? HasCompanion { get; set; }
 
     public long? CardNo { get; set; }
 
@@ -56,18 +58,3 @@ public enum EducationLevel
     Doctorate = 80
 }
 
-public enum MaritalStatus
-{
-    Unknown = 0,
-
-    Single = 10,
-    Married = 20,
-}
-
-public enum EmploymentStatus
-{
-    Unknown = 0,
-
-    Employed = 10,
-    Unemployed = 20,
-}
