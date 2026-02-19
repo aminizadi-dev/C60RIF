@@ -1,4 +1,4 @@
-﻿@model DashboardModel
+@model DashboardModel
 @{
     //page title
     ViewBag.PageTitle = T("Admin.Dashboard").Text;
@@ -41,18 +41,16 @@
 
                     @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.DashboardLatestordersSearchtermsAfter, additionalData = Model })
 
-                    @* Visual Reports Section - Pie and Bar Charts *@
+                    @* Passenger Age & Education Distribution *@
                     <div class="row">
                         <div class="col-md-6">
-                            @await Html.PartialAsync("_OrderStatusPieChart")
+                            @await Html.PartialAsync("_PassengerAgeDistributionBarChart")
                         </div>
-                        <div class="col-md-3">
-                            @await Html.PartialAsync("_PassengerMaritalStatusBarChart")
-                        </div>
-                        <div class="col-md-3">
-                            @await Html.PartialAsync("_PassengerEmploymentStatusBarChart")
+                        <div class="col-md-6">
+                            @await Html.PartialAsync("_PassengerEducationDistributionBarChart")
                         </div>
                     </div>
+
 
                     @* Passenger Treatment Statistics *@
                     <div class="row">
@@ -64,7 +62,7 @@
                     @* Passenger Status Statistics *@
                     <div class="row">
                         <div class="col-md-12">
-                            @await Html.PartialAsync("_SalesByCategoryBarChart")
+                            @await Html.PartialAsync("_PassengerDistributionByAgencyBarChart")
                         </div>
                     </div>
 
@@ -75,6 +73,18 @@
                         </div>
                     </div>
 
+                    @* Visual Reports Section - Pie and Bar Charts *@
+                    <div class="row">
+                        <div class="col-md-6">
+                            @await Html.PartialAsync("_PassengerAntiXDistributionBarChart")
+                        </div>
+                        <div class="col-md-3">
+                            @await Html.PartialAsync("_PassengerMaritalStatusBarChart")
+                        </div>
+                        <div class="col-md-3">
+                            @await Html.PartialAsync("_PassengerEmploymentStatusBarChart")
+                        </div>
+                    </div>
                     @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.DashboardBottom, additionalData = Model })
                 </div>
             </div>

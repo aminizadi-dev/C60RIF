@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using FluentMigrator.Builders.Create.Table;
 using Nop.Core.Domain.Customers;
 using Nop.Data.Extensions;
@@ -28,7 +28,7 @@ public partial class PassengerBuilder : NopEntityBuilder<Passenger>
             .WithColumn(nameof(Passenger.IsMarried)).AsBoolean().NotNullable()
             .WithColumn(nameof(Passenger.IsEmployed)).AsBoolean().NotNullable()
             .WithColumn(nameof(Passenger.HasCompanion)).AsBoolean().Nullable()
-            .WithColumn(nameof(Passenger.CardNo)).AsInt64().Nullable()
+            .WithColumn(nameof(Passenger.CardNo)).AsString(50).Nullable()
             .WithColumn(nameof(Passenger.AntiX1)).AsInt32().NotNullable().ForeignKey<AntiX>()
             .WithColumn(nameof(Passenger.AntiX2)).AsInt32().Nullable().ForeignKey<AntiX>()
             .WithColumn(nameof(Passenger.TravelStartDateUtc)).AsDateTime2().Nullable()

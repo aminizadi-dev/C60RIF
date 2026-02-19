@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using Nop.Core;
 using Nop.Core.Domain.Customers;
 using Nop.Services.Customers;
+using Nop.Services.ExportImport;
 using Nop.Services.Localization;
 using Nop.Services.Logging;
 using Nop.Services.Messages;
@@ -23,11 +25,14 @@ public partial class PassengerController : BaseAdminController
     protected readonly IAgencyService _agencyService;
     protected readonly IClinicService _clinicService;
     protected readonly ICustomerActivityService _customerActivityService;
+    protected readonly IExportManager _exportManager;
     protected readonly ILocalizationService _localizationService;
     protected readonly INotificationService _notificationService;
     protected readonly IPassengerModelFactory _passengerModelFactory;
     protected readonly IPassengerService _passengerService;
     protected readonly IPermissionService _permissionService;
+
+    private static readonly char[] _separator = [','];
 
     #endregion
 
@@ -37,6 +42,7 @@ public partial class PassengerController : BaseAdminController
         IAgencyService agencyService,
         IClinicService clinicService,
         ICustomerActivityService customerActivityService,
+        IExportManager exportManager,
         ILocalizationService localizationService,
         INotificationService notificationService,
         IPassengerModelFactory passengerModelFactory,
@@ -46,6 +52,7 @@ public partial class PassengerController : BaseAdminController
         _agencyService = agencyService;
         _clinicService = clinicService;
         _customerActivityService = customerActivityService;
+        _exportManager = exportManager;
         _localizationService = localizationService;
         _notificationService = notificationService;
         _passengerModelFactory = passengerModelFactory;
@@ -85,11 +92,14 @@ public partial class PassengerController : BaseAdminController
     [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> GetAgenciesByCityId(int cityId)
     {
-        if (cityId <= 0)
+        if (cityId == 0)
             return Json(Array.Empty<object>());
 
-        var agencies = await _agencyService.GetAgenciesByCityIdAsync(cityId, showHidden: true);
-        var result = agencies.Select(agency => new { id = agency.Id, name = agency.Name });
+        var agencies = cityId == -1
+            ? (await _agencyService.GetAllAgenciesAsync(pageIndex: 0, pageSize: int.MaxValue)).ToList()
+            : await _agencyService.GetAgenciesByCityIdAsync(cityId, showHidden: true);
+
+        var result = agencies.Select(agency => new { id = agency.Id, name = agency.Name, cityId = agency.CityId });
 
         return Json(result);
     }
@@ -98,11 +108,14 @@ public partial class PassengerController : BaseAdminController
     [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> GetClinicsByCityId(int cityId)
     {
-        if (cityId <= 0)
+        if (cityId == 0)
             return Json(Array.Empty<object>());
 
-        var clinics = await _clinicService.GetClinicsByCityIdAsync(cityId, showHidden: true);
-        var result = clinics.Select(clinic => new { id = clinic.Id, name = clinic.Name });
+        var clinics = cityId == -1
+            ? (await _clinicService.GetAllClinicsAsync(pageIndex: 0, pageSize: int.MaxValue)).ToList()
+            : await _clinicService.GetClinicsByCityIdAsync(cityId, showHidden: true);
+
+        var result = clinics.Select(clinic => new { id = clinic.Id, name = clinic.Name, cityId = clinic.CityId });
 
         return Json(result);
     }
@@ -123,6 +136,15 @@ public partial class PassengerController : BaseAdminController
     {
         if (ModelState.IsValid)
         {
+            if (await _passengerService.IsRecoveryNoExistsAsync(model.RecoveryNo))
+            {
+                ModelState.AddModelError(nameof(model.RecoveryNo),
+                    await _localizationService.GetResourceAsync("Admin.Passengers.Fields.RecoveryNo.Duplicate"));
+            }
+
+            if (!ModelState.IsValid)
+                return await RecreateModelAsync(model);
+
             if (model.AntiX2.GetValueOrDefault() <= 0)
                 model.AntiX2 = null;
 
@@ -131,6 +153,13 @@ public partial class PassengerController : BaseAdminController
             passenger.CreatedOnUtc = DateTime.UtcNow;
 
             await _passengerService.InsertPassengerAsync(passenger);
+
+            if (!string.IsNullOrWhiteSpace(model.CardNo) &&
+                await _passengerService.IsCardNoExistsAsync(model.CardNo, passenger.Id))
+            {
+                _notificationService.WarningNotification(
+                    await _localizationService.GetResourceAsync("Admin.Passengers.Fields.CardNo.DuplicateWarning"));
+            }
 
             //activity log
             await _customerActivityService.InsertActivityAsync("AddNewPassenger",
@@ -143,11 +172,7 @@ public partial class PassengerController : BaseAdminController
             return RedirectToAction("Edit", new { id = passenger.Id });
         }
 
-        //prepare model
-        model = await _passengerModelFactory.PreparePassengerModelAsync(model, null, true);
-
-        //if we got this far, something failed, redisplay form
-        return View(model);
+        return await RecreateModelAsync(model);
     }
 
     [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
@@ -178,6 +203,15 @@ public partial class PassengerController : BaseAdminController
         {
             try
             {
+                if (await _passengerService.IsRecoveryNoExistsAsync(model.RecoveryNo, passenger.Id))
+                {
+                    ModelState.AddModelError(nameof(model.RecoveryNo),
+                        await _localizationService.GetResourceAsync("Admin.Passengers.Fields.RecoveryNo.Duplicate"));
+                }
+
+                if (!ModelState.IsValid)
+                    return await RecreateModelAsync(model, passenger);
+
                 if (model.AntiX2.GetValueOrDefault() <= 0)
                     model.AntiX2 = null;
 
@@ -185,6 +219,13 @@ public partial class PassengerController : BaseAdminController
                 passenger = model.ToEntity(passenger);
 
                 await _passengerService.UpdatePassengerAsync(passenger);
+
+                if (!string.IsNullOrWhiteSpace(model.CardNo) &&
+                    await _passengerService.IsCardNoExistsAsync(model.CardNo, passenger.Id))
+                {
+                    _notificationService.WarningNotification(
+                        await _localizationService.GetResourceAsync("Admin.Passengers.Fields.CardNo.DuplicateWarning"));
+                }
 
                 //activity log
                 await _customerActivityService.InsertActivityAsync("EditPassenger",
@@ -203,7 +244,11 @@ public partial class PassengerController : BaseAdminController
             }
         }
 
-        //prepare model
+        return await RecreateModelAsync(model, passenger);
+    }
+
+    private async Task<IActionResult> RecreateModelAsync(PassengerModel model, Passenger passenger = null)
+    {
         model = await _passengerModelFactory.PreparePassengerModelAsync(model, passenger, true);
 
         //if we got this far, something failed, redisplay form
@@ -236,6 +281,49 @@ public partial class PassengerController : BaseAdminController
             _notificationService.ErrorNotification(exc.Message);
             return RedirectToAction("Edit", new { id = passenger.Id });
         }
+    }
+
+    [HttpPost, ActionName("ExportExcel")]
+    [FormValueRequired("exportexcel-all")]
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
+    public virtual async Task<IActionResult> ExportExcelAll(PassengerSearchModel model)
+    {
+        var passengers = await _passengerService.GetAllPassengersAsync(
+            recoveryNo: model.SearchRecoveryNo,
+            personName: model.SearchPersonName,
+            cityId: model.SearchCityId,
+            agencyId: model.SearchAgencyId,
+            clinicId: model.SearchClinicId,
+            antiXId: model.SearchAntiXId,
+            guideNameAndLegionNo: model.SearchGuideNameAndLegionNo,
+            cardNo: model.SearchCardNo,
+            travelStartDateUtc: model.SearchTravelStartDateUtc,
+            travelEndDateUtc: model.SearchTravelEndDateUtc,
+            recoveryYear: model.SearchRecoveryYear,
+            recoveryMonth: model.SearchRecoveryMonth);
+
+        var bytes = await _exportManager.ExportPassengersToXlsxAsync(passengers.ToList());
+
+        return File(bytes, MimeTypes.TextXlsx, "passengers.xlsx");
+    }
+
+    [HttpPost]
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
+    public virtual async Task<IActionResult> ExportExcelSelected(string selectedIds)
+    {
+        var passengers = new List<Passenger>();
+        if (selectedIds != null)
+        {
+            var ids = selectedIds
+                .Split(_separator, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => Convert.ToInt32(x))
+                .ToArray();
+            passengers.AddRange(await _passengerService.GetPassengersByIdsAsync(ids));
+        }
+
+        var bytes = await _exportManager.ExportPassengersToXlsxAsync(passengers);
+
+        return File(bytes, MimeTypes.TextXlsx, "passengers.xlsx");
     }
 
     #endregion

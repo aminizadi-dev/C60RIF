@@ -1,4 +1,4 @@
-﻿using Nop.Core.Domain.Customers;
+using Nop.Core.Domain.Customers;
 
 namespace Nop.Services.ExportImport;
 
@@ -23,5 +23,12 @@ public partial interface IExportManager
     /// The task result contains the result in XML format
     /// </returns>
     Task<string> ExportCustomersToXmlAsync(IList<Customer> customers);
+
+    /// <summary>
+    /// Export passenger list to XLSX
+    /// </summary>
+    /// <param name="passengers">Passengers</param>
+    /// <returns>A task that represents the asynchronous operation</returns>
+    Task<byte[]> ExportPassengersToXlsxAsync(IList<Passenger> passengers);
 
 }

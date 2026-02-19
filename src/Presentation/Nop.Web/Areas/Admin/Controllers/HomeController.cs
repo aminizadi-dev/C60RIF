@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
@@ -33,6 +33,7 @@ public partial class HomeController : BaseAdminController
     protected readonly IPassengerService _passengerService;
     protected readonly ICityService _cityService;
     protected readonly IAgencyService _agencyService;
+    protected readonly IAntiXService _antiXService;
 
     #endregion
 
@@ -50,7 +51,8 @@ public partial class HomeController : BaseAdminController
         NopHttpClient nopHttpClient,
         IPassengerService passengerService,
         ICityService cityService,
-        IAgencyService agencyService)
+        IAgencyService agencyService,
+        IAntiXService antiXService)
     {
         _adminAreaSettings = adminAreaSettings;
         _commonModelFactory = commonModelFactory;
@@ -65,6 +67,7 @@ public partial class HomeController : BaseAdminController
         _passengerService = passengerService;
         _cityService = cityService;
         _agencyService = agencyService;
+        _antiXService = antiXService;
     }
 
     #endregion
@@ -343,7 +346,9 @@ public partial class HomeController : BaseAdminController
     }
 
     /// <summary>
-    /// Load AntiX consumption distribution for dashboard pie chart
+    /// Load AntiX consumption distribution for dashboard bar chart.
+    /// Counts both AntiX1 and AntiX2 (when AntiX2 has a value).
+    /// Categories are matched by AntiX name from the database.
     /// </summary>
     /// <returns>JSON result with labels and counts</returns>
     [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
@@ -364,33 +369,41 @@ public partial class HomeController : BaseAdminController
             pageSize: int.MaxValue,
             getOnlyTotalCount: false);
 
-        var opiumIds = new HashSet<int> { 2, 3, 4 };
-        var shirehIds = new HashSet<int> { 5, 6 };
-        var cannabisIds = new HashSet<int> { 7, 8 };
-        const int shisheId = 9;
-        const int heroinId = 10;
-        var knownIds = new HashSet<int>(opiumIds
-            .Concat(shirehIds)
-            .Concat(cannabisIds)
-            .Append(shisheId)
-            .Append(heroinId));
+        // Collect all AntiX values (AntiX1 + AntiX2 when present)
+        var allAntiXValues = passengers
+            .Where(p => p.AntiX1 > 0)
+            .Select(p => p.AntiX1)
+            .Concat(passengers
+                .Where(p => p.AntiX2.HasValue && p.AntiX2.Value > 0)
+                .Select(p => p.AntiX2.Value))
+            .ToList();
 
-        var opiumCount = passengers.Count(p => opiumIds.Contains(p.AntiX1));
-        var shirehCount = passengers.Count(p => shirehIds.Contains(p.AntiX1));
-        var cannabisCount = passengers.Count(p => cannabisIds.Contains(p.AntiX1));
-        var shisheCount = passengers.Count(p => p.AntiX1 == shisheId);
-        var heroinCount = passengers.Count(p => p.AntiX1 == heroinId);
-        var otherCount = passengers.Count(p => p.AntiX1 > 0 && !knownIds.Contains(p.AntiX1));
-
-        var result = new[]
+        // Categories mapped by AntiX IDs from database:
+        // 2=تریاک, 3=تریاک خوراکی, 4=تریاک کشیدنی, 5=شربت تریاک / OT
+        // 6=شیره, 7=شیره خوراکی, 8=شیره کشیدنی
+        // 11=شیشه, 12=هروئین, 16=متادون (قرص / شربت), 20=قرص B2
+        var categories = new (string label, HashSet<int> ids)[]
         {
-            new { label = await _localizationService.GetResourceAsync("Admin.Dashboard.AntiXConsumption.Opium"), count = opiumCount },
-            new { label = await _localizationService.GetResourceAsync("Admin.Dashboard.AntiXConsumption.Shireh"), count = shirehCount },
-            new { label = await _localizationService.GetResourceAsync("Admin.Dashboard.AntiXConsumption.Cannabis"), count = cannabisCount },
-            new { label = await _localizationService.GetResourceAsync("Admin.Dashboard.AntiXConsumption.Shisheh"), count = shisheCount },
-            new { label = await _localizationService.GetResourceAsync("Admin.Dashboard.AntiXConsumption.Heroin"), count = heroinCount },
-            new { label = await _localizationService.GetResourceAsync("Admin.Dashboard.AntiXConsumption.Other"), count = otherCount }
+            ("تریاک کشیدنی", new HashSet<int> { 2, 4 }),
+            ("شیره خوراکی", new HashSet<int> { 7 }),
+            ("شیره کشیدنی", new HashSet<int> { 6, 8 }),
+            ("تریاک خوراکی", new HashSet<int> { 3 }),
+            ("شربت تریاک / OT", new HashSet<int> { 5 }),
+            ("متادون", new HashSet<int> { 16 }),
+            ("هروئین", new HashSet<int> { 12 }),
+            ("شیشه", new HashSet<int> { 11 }),
+            ("قرص B2", new HashSet<int> { 20 })
         };
+
+        var knownIds = new HashSet<int>(categories.SelectMany(c => c.ids));
+
+        // Count per category
+        var result = new List<object>();
+        foreach (var (label, ids) in categories)
+        {
+            result.Add(new { label, count = allAntiXValues.Count(v => ids.Contains(v)) });
+        }
+        result.Add(new { label = "سایر", count = allAntiXValues.Count(v => !knownIds.Contains(v)) });
 
         return Json(result);
     }
@@ -514,18 +527,94 @@ public partial class HomeController : BaseAdminController
             {
                 if (!travelGroups.TryGetValue(a.Id, out var stats) || stats.Count == 0)
                 {
-                    return new { agencyName = a.Name, averageDays = 0d, averageLabel = "0 ماه 0 روز" };
+                    return new { agencyName = a.Name, averageDays = 0d, averageMonths = 0d, averageLabel = "0 ماه 0 روز" };
                 }
 
                 var averageDays = stats.TotalDays / stats.Count;
                 var totalRoundedDays = (int)Math.Round(averageDays, MidpointRounding.AwayFromZero);
                 var months = totalRoundedDays / 30;
                 var days = totalRoundedDays % 30;
+                var averageMonths = Math.Round(averageDays / 30.0, 1);
                 var averageLabel = $"{months} ماه {days} روز";
 
-                return new { agencyName = a.Name, averageDays = Math.Round(averageDays, 1), averageLabel };
+                return new { agencyName = a.Name, averageDays = Math.Round(averageDays, 1), averageMonths, averageLabel };
             })
             .ToList();
+
+        return Json(result);
+    }
+
+    /// <summary>
+    /// Load age distribution statistics for dashboard bar chart
+    /// Age is calculated from BirthYear (Persian year) relative to current Persian year
+    /// </summary>
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
+    public virtual async Task<IActionResult> LoadPassengerAgeDistribution()
+    {
+        var passengers = await _passengerService.GetAllPassengersAsync(
+            recoveryNo: 0,
+            personName: null,
+            cityId: 0,
+            agencyId: 0,
+            clinicId: 0,
+            antiXId: 0,
+            guideNameAndLegionNo: null,
+            cardNo: null,
+            travelStartDateUtc: null,
+            travelEndDateUtc: null,
+            pageIndex: 0,
+            pageSize: int.MaxValue,
+            getOnlyTotalCount: false);
+
+        var pc = new System.Globalization.PersianCalendar();
+        var currentPersianYear = pc.GetYear(DateTime.Now);
+
+        var withAge = passengers
+            .Where(p => p.BirthYear.HasValue && p.BirthYear.Value >= 1300 && p.BirthYear.Value <= currentPersianYear)
+            .Select(p => currentPersianYear - p.BirthYear.Value)
+            .ToList();
+
+        var result = new[]
+        {
+            new { label = "18 تا 20 سال", count = withAge.Count(a => a >= 18 && a < 20) },
+            new { label = "20 تا 30 سال", count = withAge.Count(a => a >= 20 && a < 30) },
+            new { label = "30 تا 40 سال", count = withAge.Count(a => a >= 30 && a < 40) },
+            new { label = "40 تا 50 سال", count = withAge.Count(a => a >= 40 && a < 50) },
+            new { label = "50 تا 60 سال", count = withAge.Count(a => a >= 50 && a < 60) },
+            new { label = "بالاتر از 60 سال", count = withAge.Count(a => a >= 60) }
+        };
+
+        return Json(result);
+    }
+
+    /// <summary>
+    /// Load education level distribution statistics for dashboard bar chart
+    /// </summary>
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
+    public virtual async Task<IActionResult> LoadPassengerEducationDistribution()
+    {
+        var passengers = await _passengerService.GetAllPassengersAsync(
+            recoveryNo: 0,
+            personName: null,
+            cityId: 0,
+            agencyId: 0,
+            clinicId: 0,
+            antiXId: 0,
+            guideNameAndLegionNo: null,
+            cardNo: null,
+            travelStartDateUtc: null,
+            travelEndDateUtc: null,
+            pageIndex: 0,
+            pageSize: int.MaxValue,
+            getOnlyTotalCount: false);
+
+        var result = new List<object>();
+        foreach (EducationLevel level in Enum.GetValues(typeof(EducationLevel)))
+        {
+            var count = passengers.Count(p => p.Education == level);
+            var localizedName = await _localizationService.GetLocalizedEnumAsync(level);
+            result.Add(new { label = localizedName, count });
+        }
 
         return Json(result);
     }

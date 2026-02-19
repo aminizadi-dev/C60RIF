@@ -22,10 +22,6 @@ public partial class PassengerValidator : BaseNopValidator<PassengerModel>
             .NotEmpty()
             .WithMessageAwait(localizationService.GetResourceAsync("Admin.Passengers.Fields.GuideNameAndLegionNo.Required"));
 
-        RuleFor(x => x.CardNo)
-            .NotEmpty()
-            .WithMessageAwait(localizationService.GetResourceAsync("Admin.Passengers.Fields.CardNo.Required"));
-
         RuleFor(x => x.TravelStartDateUtc)
             .NotNull()
             .WithMessageAwait(localizationService.GetResourceAsync("Admin.Passengers.Fields.TravelStartDate.Required"));
@@ -42,9 +38,10 @@ public partial class PassengerValidator : BaseNopValidator<PassengerModel>
             .GreaterThan(0)
             .WithMessageAwait(localizationService.GetResourceAsync("Admin.Passengers.Fields.Agency.Required"));
 
-        RuleFor(x => x.ClinicId)
-            .GreaterThan(0)
-            .WithMessageAwait(localizationService.GetResourceAsync("Admin.Passengers.Fields.Clinic.Required"));
+        RuleFor(x => x.BirthYear)
+            .InclusiveBetween(1300, 1400)
+            .When(x => x.BirthYear.HasValue)
+            .WithMessageAwait(localizationService.GetResourceAsync("Admin.Passengers.Fields.BirthYear.Range"));
 
         SetDatabaseValidationRules<Passenger>();
     }

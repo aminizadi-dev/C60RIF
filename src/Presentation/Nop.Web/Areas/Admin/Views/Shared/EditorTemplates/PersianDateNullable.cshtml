@@ -17,20 +17,28 @@
 <style>
     .persian-date-wrapper {
         position: relative;
+        display: flex;
+        align-items: center;
     }
     .persian-date-wrapper .persian-date-input {
         direction: ltr;
         text-align: right;
         font-family: Vazirmatn, Arial, Helvetica, sans-serif;
+        padding-left: 2.2em;
     }
     .persian-date-wrapper .persian-date-icon {
         position: absolute;
-        left: 10px;
-        top: 50%;
-        transform: translateY(-50%);
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 2.2em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         color: #6c757d;
         cursor: pointer;
         z-index: 10;
+        pointer-events: auto;
     }
     .persian-date-wrapper .persian-date-icon:hover {
         color: #495057;

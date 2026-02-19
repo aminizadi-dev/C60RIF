@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -25,6 +25,9 @@ public partial class ExportManager : IExportManager
     #region Fields
 
     protected readonly SecuritySettings _securitySettings;
+    protected readonly IAgencyService _agencyService;
+    protected readonly IAntiXService _antiXService;
+    protected readonly IClinicService _clinicService;
     protected readonly ICustomerActivityService _customerActivityService;
     protected readonly CustomerSettings _customerSettings;
     protected readonly DateTimeSettings _dateTimeSettings;
@@ -39,6 +42,9 @@ public partial class ExportManager : IExportManager
     #region Ctor
 
     public ExportManager(SecuritySettings securitySettings,
+        IAgencyService agencyService,
+        IAntiXService antiXService,
+        IClinicService clinicService,
         CustomerSettings customerSettings,
         DateTimeSettings dateTimeSettings,
         ICountryService countryService,
@@ -49,6 +55,9 @@ public partial class ExportManager : IExportManager
         IStateProvinceService stateProvinceService)
     {
         _securitySettings = securitySettings;
+        _agencyService = agencyService;
+        _antiXService = antiXService;
+        _clinicService = clinicService;
         _customerSettings = customerSettings;
         _dateTimeSettings = dateTimeSettings;
         _countryService = countryService;
@@ -244,6 +253,100 @@ public partial class ExportManager : IExportManager
             string.Format(await _localizationService.GetResourceAsync("ActivityLog.ExportCustomers"), customers.Count));
 
         return stringWriter.ToString();
+    }
+
+    /// <summary>
+    /// Export passenger list to XLSX
+    /// </summary>
+    /// <param name="passengers">Passengers</param>
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task<byte[]> ExportPassengersToXlsxAsync(IList<Passenger> passengers)
+    {
+        //pre-load related entities for name resolution
+        var agencyIds = passengers.Select(p => p.AgencyId).Where(id => id > 0).Distinct().ToArray();
+        var clinicIds = passengers.Select(p => p.ClinicId).Where(id => id > 0).Distinct().ToArray();
+        var antiXIds = passengers
+            .SelectMany(p => new int?[] { p.AntiX1, p.AntiX2 })
+            .Where(id => id.HasValue && id.Value > 0)
+            .Select(id => id.Value)
+            .Distinct()
+            .ToArray();
+
+        var agencies = await _agencyService.GetAgenciesByIdsAsync(agencyIds);
+        var clinics = await _clinicService.GetClinicsByIdsAsync(clinicIds);
+        var antiXItems = await _antiXService.GetAntiXByIdsAsync(antiXIds);
+
+        var agencyNames = agencies.ToDictionary(a => a.Id, a => a.Name);
+        var clinicNames = clinics.ToDictionary(c => c.Id, c => c.Name);
+        var antiXNames = antiXItems.ToDictionary(a => a.Id, a => a.Name);
+
+        //pre-load localized header names and cell values
+        var headerRecoveryNo = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.RecoveryNo");
+        var headerPersonName = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.PersonName");
+        var headerGuideNameAndLegionNo = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.GuideNameAndLegionNo");
+        var headerAgency = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.Agency");
+        var headerClinic = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.Clinic");
+        var headerAntiX1 = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.AntiX1");
+        var headerAntiX2 = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.AntiX2");
+        var headerCardNo = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.CardNo");
+        var headerBirthYear = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.BirthYear");
+        var headerEducation = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.Education");
+        var headerIsMarried = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.IsMarried");
+        var headerIsEmployed = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.IsEmployed");
+        var headerHasCompanion = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.HasCompanion");
+        var headerTravelStartDate = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.TravelStartDate");
+        var headerTravelEndDate = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.TravelEndDate");
+        var headerCreatedOn = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.CreatedOn");
+
+        //pre-load localized cell values for boolean/enum fields
+        var marriedText = await _localizationService.GetResourceAsync("Admin.Reports.Passengers.MaritalStatusStatistics.Married");
+        var singleText = await _localizationService.GetResourceAsync("Admin.Reports.Passengers.MaritalStatusStatistics.Single");
+        var employedText = await _localizationService.GetResourceAsync("Admin.Reports.Passengers.EmploymentStatusStatistics.Employed");
+        var unemployedText = await _localizationService.GetResourceAsync("Admin.Reports.Passengers.EmploymentStatusStatistics.Unemployed");
+        var companionYes = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.HasCompanion.Yes");
+        var companionNo = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.HasCompanion.No");
+        var companionUnknown = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.HasCompanion.Unknown");
+
+        //pre-load localized education level names
+        var educationNames = new Dictionary<EducationLevel, string>();
+        foreach (EducationLevel e in Enum.GetValues(typeof(EducationLevel)))
+            educationNames[e] = await _localizationService.GetLocalizedEnumAsync(e);
+
+        var manager = new PropertyManager<Passenger>(new[]
+        {
+            new PropertyByName<Passenger>(headerRecoveryNo, (p, _) => p.RecoveryNo),
+            new PropertyByName<Passenger>(headerPersonName, (p, _) => p.PersonName),
+            new PropertyByName<Passenger>(headerGuideNameAndLegionNo, (p, _) => p.GuideNameAndLegionNo),
+            new PropertyByName<Passenger>(headerAgency, (p, _) =>
+                agencyNames.TryGetValue(p.AgencyId, out var name) ? name : string.Empty),
+            new PropertyByName<Passenger>(headerClinic, (p, _) =>
+                clinicNames.TryGetValue(p.ClinicId, out var name) ? name : string.Empty),
+            new PropertyByName<Passenger>(headerAntiX1, (p, _) =>
+                antiXNames.TryGetValue(p.AntiX1, out var name) ? name : string.Empty),
+            new PropertyByName<Passenger>(headerAntiX2, (p, _) =>
+                p.AntiX2.HasValue && antiXNames.TryGetValue(p.AntiX2.Value, out var name) ? name : string.Empty),
+            new PropertyByName<Passenger>(headerCardNo, (p, _) => p.CardNo),
+            new PropertyByName<Passenger>(headerBirthYear, (p, _) => p.BirthYear),
+            new PropertyByName<Passenger>(headerEducation, (p, _) =>
+                educationNames.TryGetValue(p.Education, out var eduName) ? eduName : p.Education.ToString()),
+            new PropertyByName<Passenger>(headerIsMarried, (p, _) =>
+                p.IsMarried ? marriedText : singleText),
+            new PropertyByName<Passenger>(headerIsEmployed, (p, _) =>
+                p.IsEmployed ? employedText : unemployedText),
+            new PropertyByName<Passenger>(headerHasCompanion, (p, _) =>
+                p.HasCompanion.HasValue ? (p.HasCompanion.Value ? companionYes : companionNo) : companionUnknown),
+            new PropertyByName<Passenger>(headerTravelStartDate, (p, _) =>
+                p.TravelStartDateUtc.HasValue
+                    ? new PersianDateTime(p.TravelStartDateUtc.Value) { EnglishNumber = true }.ToString("yyyy/MM/dd")
+                    : string.Empty),
+            new PropertyByName<Passenger>(headerTravelEndDate, (p, _) =>
+                p.TravelEndDateUtc.HasValue
+                    ? new PersianDateTime(p.TravelEndDateUtc.Value) { EnglishNumber = true }.ToString("yyyy/MM/dd")
+                    : string.Empty),
+            new PropertyByName<Passenger>(headerCreatedOn, (p, _) => p.CreatedOnUtc),
+        }, null);
+
+        return await manager.ExportToXlsxAsync(passengers);
     }
 
     #endregion

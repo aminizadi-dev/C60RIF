@@ -12,12 +12,46 @@
     var hideSearchBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideSearchBlockAttributeName);
 }
 
+<style>
+    #passengers-grid_wrapper th {
+        text-align: right !important;
+    }
+
+    .persian-date-hint {
+        display:none;
+    }
+
+</style>
 <form asp-controller="Passenger" asp-action="List" method="post">
     <div class="content-header clearfix">
         <h1 class="float-left">
             @T("Admin.Passengers.Passengers")
         </h1>
         <div class="float-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-success">
+                    <i class="fas fa-download"></i>
+                    @T("Admin.Common.Export")
+                </button>
+                <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">&nbsp;</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="dropdown-item">
+                        <button asp-action="ExportExcel" type="submit" name="exportexcel-all">
+                            <i class="far fa-file-excel"></i>
+                            @T("Admin.Common.ExportToExcel.All")
+                        </button>
+                    </li>
+                    <li class="dropdown-item">
+                        <button type="button" id="exportexcel-selected">
+                            <i class="far fa-file-excel"></i>
+                            @T("Admin.Common.ExportToExcel.Selected")
+                        </button>
+                    </li>
+                </ul>
+            </div>
             <a asp-action="Create" class="btn btn-primary">
                 <i class="fas fa-square-plus"></i>
                 @T("Admin.Common.AddNew")
@@ -139,6 +173,28 @@
                                     </div>
                                 </div>
                                 <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="SearchRecoveryYear" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-select asp-for="SearchRecoveryYear" asp-items="Model.AvailableRecoveryYears" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="SearchRecoveryMonth" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-select asp-for="SearchRecoveryMonth" asp-items="Model.AvailableRecoveryMonths" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="text-center col-12">
                                         <button type="button" id="search-passengers" class="btn btn-primary btn-search">
                                             <i class="fas fa-magnifying-glass"></i>
@@ -161,18 +217,20 @@
                                     Length = Model.PageSize,
                                     LengthMenu = Model.AvailablePageSizes,
                                     Filters = new List<FilterParameter>
-                                    {
-                                        new FilterParameter(nameof(Model.SearchRecoveryNo)),
-                                        new FilterParameter(nameof(Model.SearchPersonName)),
-                                        new FilterParameter(nameof(Model.SearchCityId)),
-                                        new FilterParameter(nameof(Model.SearchAgencyId)),
-                                        new FilterParameter(nameof(Model.SearchClinicId)),
-                                        new FilterParameter(nameof(Model.SearchAntiXId)),
-                                        new FilterParameter(nameof(Model.SearchGuideNameAndLegionNo)),
-                                        new FilterParameter(nameof(Model.SearchCardNo)),
-                                        new FilterParameter(nameof(Model.SearchTravelStartDateUtc)),
-                                        new FilterParameter(nameof(Model.SearchTravelEndDateUtc)),
-                                    }
+                                                        {
+                                                        new FilterParameter(nameof(Model.SearchRecoveryNo)),
+                                                        new FilterParameter(nameof(Model.SearchPersonName)),
+                                                        new FilterParameter(nameof(Model.SearchCityId)),
+                                                        new FilterParameter(nameof(Model.SearchAgencyId)),
+                                                        new FilterParameter(nameof(Model.SearchClinicId)),
+                                                        new FilterParameter(nameof(Model.SearchAntiXId)),
+                                                        new FilterParameter(nameof(Model.SearchGuideNameAndLegionNo)),
+                                                        new FilterParameter(nameof(Model.SearchCardNo)),
+                                                        new FilterParameter(nameof(Model.SearchTravelStartDateUtc)),
+                                                        new FilterParameter(nameof(Model.SearchTravelEndDateUtc)),
+                                                        new FilterParameter(nameof(Model.SearchRecoveryYear)),
+                                                        new FilterParameter(nameof(Model.SearchRecoveryMonth)),
+                                                        }
                                 };
 
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.Id))
@@ -182,33 +240,37 @@
                                     ClassName = NopColumnClassDefaults.CenterAll,
                                     Width = "30"
                                 });
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.RecoveryNo))
+                                {
+                                    Title = T("Admin.Passengers.Fields.RecoveryNo").Text
+                                });
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.PersonName))
                                 {
                                     Title = T("Admin.Passengers.Fields.PersonName").Text
-                                });
-                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.GuideNameAndLegionNo))
-                                {
-                                    Title = T("Admin.Passengers.Fields.GuideNameAndLegionNo").Text
-                                });
-                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.CardNo))
-                                {
-                                    Title = T("Admin.Passengers.Fields.CardNo").Text
                                 });
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.AgencyName))
                                 {
                                     Title = T("Admin.Passengers.Fields.Agency").Text
                                 });
-                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.AntiX1Name))
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.GuideNameAndLegionNo))
                                 {
-                                    Title = T("Admin.Passengers.Fields.AntiX1").Text
+                                    Title = T("Admin.Passengers.Fields.GuideNameAndLegionNo").Text
                                 });
-                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.AntiX2Name))
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.StartDateOnPersian))
                                 {
-                                    Title = T("Admin.Passengers.Fields.AntiX2").Text
+                                    Title = T("Admin.Passengers.Fields.TravelStartDate").Text
                                 });
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.EndDateOnPersian))
                                 {
-                                    Title = T("Admin.Passengers.Fields.CreatedOn").Text,
+                                    Title = T("Admin.Passengers.Fields.TravelEndDate").Text
+                                });
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.BirthYear))
+                                {
+                                    Title = T("Admin.Passengers.Fields.BirthYear").Text
+                                });
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.CardNo))
+                                {
+                                    Title = T("Admin.Passengers.Fields.CardNo").Text
                                 });
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.PictureUrl))
                                 {
@@ -221,14 +283,14 @@
                                 {
                                     Title = T("Admin.Passengers.Fields.IsMarried").Text,
                                     Width = "50",
-                                    ClassName = NopColumnClassDefaults.CenterAll,
+                                    ClassName = NopColumnClassDefaults.CenterAll + " passenger-grid-header-vertical",
                                     Render = new RenderBoolean()
                                 });
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.IsEmployed))
                                 {
                                     Title = T("Admin.Passengers.Fields.IsEmployed").Text,
                                     Width = "50",
-                                    ClassName = NopColumnClassDefaults.CenterAll,
+                                    ClassName = NopColumnClassDefaults.CenterAll + " passenger-grid-header-vertical",
                                     Render = new RenderBoolean()
                                 });
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.Id))
@@ -247,6 +309,30 @@
         </div>
     </section>
 </form>
+
+@*export selected (Excel). We don't use GET approach because it's limited to 2K-4K chars and won't work for large number of entities*@
+<form asp-controller="Passenger" asp-action="ExportExcelSelected" method="post" id="export-excel-selected-form">
+    <input type="hidden" id="selectedIds" name="selectedIds" value="" />
+</form>
+<script>
+    $(function() {
+        $('#exportexcel-selected').click(function (e) {
+            e.preventDefault();
+            var ids = selectedIds.join(",");
+            if (!ids) {
+                $('#exportExcelSelected-info').text("@T("Admin.Passengers.NoPassengers")");
+                $("#exportExcelSelected").trigger("click");
+            }
+            else {
+                $('#export-excel-selected-form #selectedIds').val(ids);
+                $('#export-excel-selected-form').submit();
+                updateTable('#passengers-grid');
+            }
+            return false;
+        });
+    });
+</script>
+<nop-alert asp-alert-id="exportExcelSelected" />
 
 <script>
     function renderPassengerPicture(data, type, row, meta) {
@@ -267,11 +353,22 @@
         var defaultClinicText = "@T("Admin.Common.Select")";
         var clinicSelect = $("#@Html.IdFor(model => model.SearchClinicId)");
 
+        var searchRecoveryNoInput = $("#@Html.IdFor(model => model.SearchRecoveryNo)");
+        if (searchRecoveryNoInput.val() === "0") {
+            searchRecoveryNoInput.val("");
+        }
+
+        //initialize select2 for searchable dropdowns
+        citySelect.select2({ dir: 'rtl', width: '100%' });
+        agencySelect.select2({ dir: 'rtl', width: '100%' });
+        clinicSelect.select2({ dir: 'rtl', width: '100%' });
+
         function loadAgencies(cityId, selectedAgencyId) {
             agencySelect.empty();
             agencySelect.append($("<option></option>").attr("value", "0").text(defaultAgencyText));
 
             if (!cityId || cityId === "0") {
+                agencySelect.trigger('change.select2');
                 return;
             }
 
@@ -283,6 +380,7 @@
                     }
                     agencySelect.append(option);
                 });
+                agencySelect.trigger('change.select2');
             });
         }
 
@@ -291,6 +389,7 @@
             clinicSelect.append($("<option></option>").attr("value", "0").text(defaultClinicText));
 
             if (!cityId || cityId === "0") {
+                clinicSelect.trigger('change.select2');
                 return;
             }
 
@@ -302,6 +401,7 @@
                     }
                     clinicSelect.append(option);
                 });
+                clinicSelect.trigger('change.select2');
             });
         }
 

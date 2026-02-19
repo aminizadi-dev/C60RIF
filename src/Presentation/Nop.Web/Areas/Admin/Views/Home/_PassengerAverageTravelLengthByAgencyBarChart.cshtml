@@ -56,6 +56,45 @@
             }
         });
 
+        var dataLabelsPlugin = {
+            id: 'dataLabelsPlugin',
+            afterDatasetsDraw: function(chart) {
+                var ctx = chart.ctx;
+                chart.data.datasets.forEach(function(dataset, i) {
+                    var meta = chart.getDatasetMeta(i);
+                    if (meta.hidden) return;
+                    meta.data.forEach(function(bar, index) {
+                        var rawData = dataset.data[index];
+                        var label = '';
+                        if (rawData && typeof rawData === 'object' && rawData.averageLabel) {
+                            label = rawData.averageLabel;
+                        } else {
+                            var val = (rawData && typeof rawData === 'object') ? rawData.y : rawData;
+                            label = val != null ? val.toString() : '';
+                        }
+                        if (!label || label === '0 ماه 0 روز') return;
+                        ctx.save();
+                        ctx.fillStyle = '#333';
+                        ctx.font = '11px Tahoma, Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        // split "X ماه Y روز" into two lines
+                        var parts = label.split(' ');
+                        // parts: ["X", "ماه", "Y", "روز"]
+                        if (parts.length === 4) {
+                            var line1 = parts[0] + ' ' + parts[1];
+                            var line2 = 'و ' + parts[2] + ' ' + parts[3];
+                            ctx.fillText(line1, bar.x, bar.y - 16);
+                            ctx.fillText(line2, bar.x, bar.y - 4);
+                        } else {
+                            ctx.fillText(label, bar.x, bar.y - 4);
+                        }
+                        ctx.restore();
+                    });
+                });
+            }
+        };
+
         var barConfig = {
             type: 'bar',
             data: {
@@ -68,9 +107,11 @@
                     borderWidth: 1
                 }]
             },
+            plugins: [dataLabelsPlugin],
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: { padding: { top: 35 } },
                 plugins: {
                     legend: {
                         display: false
@@ -82,7 +123,7 @@
                                 if (row.averageLabel) {
                                     return row.averageLabel;
                                 }
-                                return context.parsed.y + ' ' + '@T("Admin.Reports.Passengers.AverageTravelLengthByAgency.Days")';
+                                return context.parsed.y + ' ماه';
                             }
                         }
                     }
@@ -128,7 +169,7 @@
                             labels.push(data[i].agencyName);
                             values.push({
                                 x: data[i].agencyName,
-                                y: data[i].averageDays,
+                                y: data[i].averageMonths,
                                 averageLabel: data[i].averageLabel
                             });
                         }

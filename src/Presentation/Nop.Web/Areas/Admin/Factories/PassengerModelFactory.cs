@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core;
 using Nop.Core.Domain.Customers;
 using Nop.Services.Customers;
@@ -73,6 +73,12 @@ public partial class PassengerModelFactory : IPassengerModelFactory
         var cities = await _cityService.GetAllCitiesAsync(pageIndex: 0, pageSize: int.MaxValue);
         searchModel.AvailableCities.Add(new SelectListItem
         {
+            Value = "-1",
+            Text = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.City.ShowAllAgenciesClinics"),
+            Selected = searchModel.SearchCityId == -1
+        });
+        searchModel.AvailableCities.Add(new SelectListItem
+        {
             Value = "0",
             Text = await _localizationService.GetResourceAsync("Admin.Common.Select")
         });
@@ -140,6 +146,46 @@ public partial class PassengerModelFactory : IPassengerModelFactory
             });
         }
 
+        //prepare available recovery years (distinct Persian years from TravelEndDateUtc)
+        searchModel.AvailableRecoveryYears.Add(new SelectListItem
+        {
+            Value = "0",
+            Text = await _localizationService.GetResourceAsync("Admin.Common.Select")
+        });
+        var availableYears = await _passengerService.GetAvailableRecoveryYearsAsync();
+        foreach (var year in availableYears)
+        {
+            searchModel.AvailableRecoveryYears.Add(new SelectListItem
+            {
+                Value = year.ToString(),
+                Text = year.ToString(),
+                Selected = searchModel.SearchRecoveryYear.HasValue && searchModel.SearchRecoveryYear.Value == year
+            });
+        }
+
+        //prepare available recovery months (Persian months)
+        searchModel.AvailableRecoveryMonths.Add(new SelectListItem
+        {
+            Value = "0",
+            Text = await _localizationService.GetResourceAsync("Admin.Common.Select")
+        });
+        var persianMonthNames = new[]
+        {
+            "فروردین", "اردیبهشت", "خرداد",
+            "تیر", "مرداد", "شهریور",
+            "مهر", "آبان", "آذر",
+            "دی", "بهمن", "اسفند"
+        };
+        for (var i = 1; i <= 12; i++)
+        {
+            searchModel.AvailableRecoveryMonths.Add(new SelectListItem
+            {
+                Value = i.ToString(),
+                Text = persianMonthNames[i - 1],
+                Selected = searchModel.SearchRecoveryMonth.HasValue && searchModel.SearchRecoveryMonth.Value == i
+            });
+        }
+
         return searchModel;
     }
 
@@ -167,6 +213,8 @@ public partial class PassengerModelFactory : IPassengerModelFactory
             cardNo: searchModel.SearchCardNo,
             travelStartDateUtc: searchModel.SearchTravelStartDateUtc,
             travelEndDateUtc: searchModel.SearchTravelEndDateUtc,
+            recoveryYear: searchModel.SearchRecoveryYear,
+            recoveryMonth: searchModel.SearchRecoveryMonth,
             pageIndex: searchModel.Page - 1,
             pageSize: searchModel.PageSize);
 
@@ -204,6 +252,9 @@ public partial class PassengerModelFactory : IPassengerModelFactory
                 {
                     EnglishNumber = true
                 }.ToString("yyyy/MM/dd");
+                passengerModel.StartDateOnPersian = passengerModel.TravelStartDateUtc.HasValue
+                    ? new PersianDateTime(passengerModel.TravelStartDateUtc.Value) { EnglishNumber = true }.ToString("yyyy/MM/dd")
+                    : string.Empty;
 
                 if (passenger.PictureId > 0)
                 {
@@ -326,6 +377,12 @@ public partial class PassengerModelFactory : IPassengerModelFactory
 
         //prepare available cities
         var cities = await _cityService.GetAllCitiesAsync(pageIndex: 0, pageSize: int.MaxValue);
+        model.AvailableCities.Add(new SelectListItem
+        {
+            Value = "-1",
+            Text = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.City.ShowAllAgenciesClinics"),
+            Selected = model.CityId == -1
+        });
         model.AvailableCities.Add(new SelectListItem
         {
             Value = "0",

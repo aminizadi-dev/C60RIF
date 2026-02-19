@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core.Domain.Customers;
 using Nop.Web.Framework.Models;
@@ -55,7 +55,7 @@ public partial record PassengerModel : BaseNopEntityModel
     public bool? HasCompanion { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.Fields.CardNo")]
-    public long? CardNo { get; set; }
+    public string CardNo { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.Fields.AntiX1")]
     public int AntiX1 { get; set; }
@@ -85,6 +85,8 @@ public partial record PassengerModel : BaseNopEntityModel
     public string PictureFullSizeUrl { get; set; }
 
     public string EndDateOnPersian { get; set; }
+
+    public string StartDateOnPersian { get; set; }
 
     [UIHint("PersianDateNullable")]
     [PersianDate]

@@ -21,6 +21,16 @@
     var hidePictureBlock = await genericAttributeService.GetAttributeAsync<bool>(customer, hidePictureBlockAttributeName);
 }
 
+<style>
+
+    .select2-container
+    .select2-selection--single {
+        border: 1px solid #ced4da;
+        border-radius: 0;
+        height: 38px;
+    }
+</style>
+
 <section class="content">
     <div class="container-fluid">
         <div class="form-horizontal">
@@ -80,7 +90,7 @@
                                                 </label>
                                             </div>
                                             <div class="form-check">
-                                                <input type="radio" class="form-check-input" name="IsMarried" id="IsMarried_True" value="true" @(Model.IsMarried ? Html.Raw("checked") : null)>
+                                                <input type="radio" class="form-check-input" name="IsMarried" id="IsMarried_True" value="true" @(Model.IsMarried? Html.Raw("checked") : null)>
                                                 <label class="form-check-label" for="IsMarried_True">
                                                     @T("Admin.Passengers.Fields.IsMarried")
                                                 </label>
@@ -104,7 +114,7 @@
                                                 </label>
                                             </div>
                                             <div class="form-check">
-                                                <input type="radio" class="form-check-input" name="IsEmployed" id="IsEmployed_True" value="true" @(Model.IsEmployed ? Html.Raw("checked") : null)>
+                                                <input type="radio" class="form-check-input" name="IsEmployed" id="IsEmployed_True" value="true" @(Model.IsEmployed? Html.Raw("checked") : null)>
                                                 <label class="form-check-label" for="IsEmployed_True">
                                                     @T("Admin.Passengers.Fields.IsEmployed")
                                                 </label>
@@ -180,6 +190,8 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group row">
                                     <div class="col-md-3">
@@ -188,6 +200,17 @@
                                     <div class="col-md-9">
                                         <nop-select asp-for="AgencyId" asp-items="Model.AvailableAgencies" />
                                         <span asp-validation-for="AgencyId"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-label asp-for="ClinicId" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-select asp-for="ClinicId" asp-items="Model.AvailableClinics" />
+                                        <span asp-validation-for="ClinicId"></span>
                                     </div>
                                 </div>
                             </div>
@@ -201,19 +224,6 @@
                                     <div class="col-md-9">
                                         <nop-editor asp-for="GuideNameAndLegionNo" />
                                         <span asp-validation-for="GuideNameAndLegionNo"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <div class="col-md-3">
-                                        <nop-label asp-for="ClinicId" />
-                                    </div>
-                                    <div class="col-md-9">
-                                        <nop-select asp-for="ClinicId" asp-items="Model.AvailableClinics" />
-                                        <span asp-validation-for="ClinicId"></span>
                                     </div>
                                 </div>
                             </div>
@@ -335,23 +345,45 @@
         var defaultAgencyText = "@T("Admin.Common.Select")";
         var defaultClinicText = "@T("Admin.Common.Select")";
         var clinicSelect = $("#@Html.IdFor(model => model.ClinicId)");
+        var showAllMode = citySelect.val() === "-1";
+
+        var antiX1Select = $("#@Html.IdFor(model => model.AntiX1)");
+        var antiX2Select = $("#@Html.IdFor(model => model.AntiX2)");
+        var suppressCityChange = false;
+
+        var recoveryNoInput = $("#@Html.IdFor(model => model.RecoveryNo)");
+        if (recoveryNoInput.val() === "0") {
+            recoveryNoInput.val("");
+        }
+
+        //initialize select2 for searchable dropdowns
+        citySelect.select2({ dir: 'rtl', width: '100%' });
+        agencySelect.select2({ dir: 'rtl', width: '100%' });
+        clinicSelect.select2({ dir: 'rtl', width: '100%' });
+        antiX1Select.select2({ dir: 'rtl', width: '100%' });
+        antiX2Select.select2({ dir: 'rtl', width: '100%' });
 
         function loadAgencies(cityId, selectedAgencyId) {
             agencySelect.empty();
             agencySelect.append($("<option></option>").attr("value", "0").text(defaultAgencyText));
 
             if (!cityId || cityId === "0") {
+                agencySelect.trigger('change.select2');
                 return;
             }
 
             $.getJSON(agenciesUrl, { cityId: cityId }, function (data) {
                 $.each(data, function (index, item) {
                     var option = $("<option></option>").attr("value", item.id).text(item.name);
+                    if (item.cityId) {
+                        option.attr("data-city-id", item.cityId);
+                    }
                     if (selectedAgencyId && selectedAgencyId.toString() === item.id.toString()) {
                         option.attr("selected", "selected");
                     }
                     agencySelect.append(option);
                 });
+                agencySelect.trigger('change.select2');
             });
         }
 
@@ -360,23 +392,43 @@
             clinicSelect.append($("<option></option>").attr("value", "0").text(defaultClinicText));
 
             if (!cityId || cityId === "0") {
+                clinicSelect.trigger('change.select2');
                 return;
             }
 
             $.getJSON(clinicsUrl, { cityId: cityId }, function (data) {
                 $.each(data, function (index, item) {
                     var option = $("<option></option>").attr("value", item.id).text(item.name);
+                    if (item.cityId) {
+                        option.attr("data-city-id", item.cityId);
+                    }
                     if (selectedClinicId && selectedClinicId.toString() === item.id.toString()) {
                         option.attr("selected", "selected");
                     }
                     clinicSelect.append(option);
                 });
+                clinicSelect.trigger('change.select2');
             });
         }
 
         citySelect.on("change", function () {
+            if (suppressCityChange) return;
+            showAllMode = $(this).val() === "-1";
             loadAgencies($(this).val(), 0);
-            loadClinics($(this).val(), 0);
+            if (!showAllMode) {
+                loadClinics($(this).val(), 0);
+            }
+        });
+
+        agencySelect.on("change", function () {
+            if (!showAllMode) return;
+            var selectedOption = $(this).find("option:selected");
+            var selectedCityId = selectedOption.attr("data-city-id");
+            if (!selectedCityId) return;
+            suppressCityChange = true;
+            citySelect.val(selectedCityId).trigger('change.select2');
+            suppressCityChange = false;
+            loadClinics(selectedCityId, 0);
         });
 
         if (citySelect.val() && citySelect.val() !== "0") {

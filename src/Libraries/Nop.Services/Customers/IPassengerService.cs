@@ -27,8 +27,9 @@ public partial interface IPassengerService
     /// </returns>
     Task<IPagedList<Passenger>> GetAllPassengersAsync(int recoveryNo = 0,
         string personName = null, int cityId = 0, int agencyId = 0, int clinicId = 0, int antiXId = 0,
-        string guideNameAndLegionNo = null, long? cardNo = null,
+        string guideNameAndLegionNo = null, string cardNo = null,
         DateTime? travelStartDateUtc = null, DateTime? travelEndDateUtc = null,
+        int? recoveryYear = null, int? recoveryMonth = null,
         int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false);
 
     /// <summary>
@@ -71,6 +72,31 @@ public partial interface IPassengerService
     /// <param name="passenger">Passenger</param>
     /// <returns>A task that represents the asynchronous operation</returns>
     Task DeletePassengerAsync(Passenger passenger);
+
+    /// <summary>
+    /// Gets available recovery years (distinct Persian years from TravelEndDateUtc)
+    /// </summary>
+    /// <returns>
+    /// A task that represents the asynchronous operation
+    /// The task result contains the list of distinct Persian years (descending)
+    /// </returns>
+    Task<IList<int>> GetAvailableRecoveryYearsAsync();
+
+    /// <summary>
+    /// Checks whether a recovery number already exists
+    /// </summary>
+    /// <param name="recoveryNo">Recovery number</param>
+    /// <param name="exceptPassengerId">Exclude passenger identifier</param>
+    /// <returns>A task that represents the asynchronous operation</returns>
+    Task<bool> IsRecoveryNoExistsAsync(int recoveryNo, int? exceptPassengerId = null);
+
+    /// <summary>
+    /// Checks whether a card number already exists
+    /// </summary>
+    /// <param name="cardNo">Card number</param>
+    /// <param name="exceptPassengerId">Exclude passenger identifier</param>
+    /// <returns>A task that represents the asynchronous operation</returns>
+    Task<bool> IsCardNoExistsAsync(string cardNo, int? exceptPassengerId = null);
 
     #endregion
 }

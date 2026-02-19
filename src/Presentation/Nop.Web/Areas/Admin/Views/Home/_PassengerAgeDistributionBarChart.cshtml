@@ -1,6 +1,6 @@
 @{
-    const string prefix = "passenger-employment-status-bar-chart";
-    const string hideCardAttributeName = "Reports.HidePassengerEmploymentStatusBarChartCard";
+    const string prefix = "passenger-age-distribution-bar-chart";
+    const string hideCardAttributeName = "Reports.HidePassengerAgeDistributionBarChartCard";
     var hideCard = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideCardAttributeName);
 }
 
@@ -10,7 +10,7 @@
     <div class="card-header with-border">
         <h3 class="card-title">
             <i class="fas fa-chart-bar"></i>
-            @T("Admin.Reports.Passengers.EmploymentStatusStatistics")
+            @T("Admin.Reports.Passengers.AgeDistribution")
         </h3>
         <div class="card-tools float-right">
             <button type="button" class="btn btn-tool margin-l-10" data-card-widget="collapse">
@@ -38,8 +38,8 @@
             var collapsed = !$('#@(prefix)-card').hasClass('collapsed-card');
             saveUserPreferences('@(Url.Action("SavePreference", "Preferences"))', '@hideCardAttributeName', collapsed);
 
-            if (!collapsed && !window.passengerEmploymentStatusBarChart) {
-                loadEmploymentStatusChart();
+            if (!collapsed && !window.passengerAgeDistributionBarChart) {
+                loadAgeDistributionChart();
             }
         });
 
@@ -76,12 +76,20 @@
                 datasets: [{
                     data: [],
                     backgroundColor: [
+                        'rgba(255, 99, 132, 0.8)',
                         'rgba(54, 162, 235, 0.8)',
-                        'rgba(255, 99, 132, 0.8)'
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)',
+                        'rgba(255, 159, 64, 0.8)'
                     ],
                     borderColor: [
+                        'rgba(255, 99, 132, 1)',
                         'rgba(54, 162, 235, 1)',
-                        'rgba(255, 99, 132, 1)'
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
                     ],
                     borderWidth: 1
                 }]
@@ -108,6 +116,10 @@
                         display: true,
                         grid: {
                             display: false
+                        },
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 0
                         }
                     },
                     y: {
@@ -126,11 +138,11 @@
             }
         };
 
-        function loadEmploymentStatusChart() {
+        function loadAgeDistributionChart() {
             $.ajax({
                 cache: false,
                 type: "GET",
-                url: "@Url.Action("LoadPassengerEmploymentStatusStatistics", "Home")",
+                url: "@Url.Action("LoadPassengerAgeDistribution", "Home")",
                 success: function (data) {
                     var labels = [];
                     var values = [];
@@ -145,15 +157,15 @@
                     barConfig.data.labels = labels;
                     barConfig.data.datasets[0].data = values;
 
-                    if (!window.passengerEmploymentStatusBarChart) {
-                        window.passengerEmploymentStatusBarChart = new Chart(
+                    if (!window.passengerAgeDistributionBarChart) {
+                        window.passengerAgeDistributionBarChart = new Chart(
                             document.getElementById("@prefix-chart").getContext("2d"),
                             barConfig
                         );
                     } else {
-                        window.passengerEmploymentStatusBarChart.config.data.labels = labels;
-                        window.passengerEmploymentStatusBarChart.config.data.datasets[0].data = values;
-                        window.passengerEmploymentStatusBarChart.update();
+                        window.passengerAgeDistributionBarChart.config.data.labels = labels;
+                        window.passengerAgeDistributionBarChart.config.data.datasets[0].data = values;
+                        window.passengerAgeDistributionBarChart.update();
                     }
                 }
             });
@@ -162,7 +174,7 @@
         @if (!hideCard)
         {
             <text>
-                loadEmploymentStatusChart();
+                loadAgeDistributionChart();
             </text>
         }
     });

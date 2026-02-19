@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Language Name="English">
   <LocaleResource Name="Account.AccountActivation">
     <Value>Account activation</Value>
@@ -13271,6 +13271,12 @@
   <LocaleResource Name="Admin.Reports.Passengers.AverageTravelLengthByAgency.Days">
     <Value>days</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Passengers.AgeDistribution">
+    <Value>Age distribution</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Passengers.EducationDistribution">
+    <Value>Education distribution</Value>
+  </LocaleResource>
   <LocaleResource Name="Admin.Documentation.Reference.Acl">
     <Value><![CDATA[Learn more about <a target="_blank" href="{0}">access control list</a>]]></Value>
   </LocaleResource>
@@ -21557,6 +21563,9 @@
   <LocaleResource Name="Admin.Passengers.Fields.BirthYear">
     <Value>Birth year</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.BirthYear.Range">
+    <Value>Birth year must be between 1300 and 1400</Value>
+  </LocaleResource>
   <LocaleResource Name="Admin.Passengers.Fields.IsMarried">
     <Value>Married</Value>
   </LocaleResource>
@@ -21587,6 +21596,12 @@
   <LocaleResource Name="Admin.Passengers.Fields.RecoveryNo.Required">
     <Value>Recovery number is required</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.RecoveryNo.Duplicate">
+    <Value>Recovery number has already been registered</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.CardNo.DuplicateWarning">
+    <Value>Card number has already been registered</Value>
+  </LocaleResource>
   <LocaleResource Name="Admin.Passengers.Fields.GuideNameAndLegionNo.Required">
     <Value>Guide name and legion number are required</Value>
   </LocaleResource>
@@ -21607,6 +21622,9 @@
   </LocaleResource>
   <LocaleResource Name="Admin.Passengers.Fields.Clinic.Required">
     <Value>Clinic is required</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.NoPassengers">
+    <Value>No passengers selected</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Passengers.List.SearchRecoveryNo">
     <Value>Recovery number</Value>
@@ -21637,6 +21655,12 @@
   </LocaleResource>
   <LocaleResource Name="Admin.Passengers.List.SearchTravelEndDate">
     <Value>Travel end date</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.List.SearchRecoveryYear">
+    <Value>Recovery year</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.List.SearchRecoveryMonth">
+    <Value>Recovery month</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Passengers.List.SearchCity">
     <Value>City</Value>

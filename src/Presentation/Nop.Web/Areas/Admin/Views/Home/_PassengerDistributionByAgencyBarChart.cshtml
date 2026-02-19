@@ -1,6 +1,6 @@
 @{
-    const string prefix = "sales-by-category-bar-chart";
-    const string hideCardAttributeName = "Reports.HideSalesByCategoryBarChartCard";
+    const string prefix = "passenger-distribution-by-agency-bar-chart";
+    const string hideCardAttributeName = "Reports.HidePassengerDistributionByAgencyBarChartCard";
     var hideCard = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideCardAttributeName);
 }
 
@@ -56,6 +56,28 @@
             }
         });
 
+        var dataLabelsPlugin = {
+            id: 'dataLabelsPlugin',
+            afterDatasetsDraw: function(chart) {
+                var ctx = chart.ctx;
+                chart.data.datasets.forEach(function(dataset, i) {
+                    var meta = chart.getDatasetMeta(i);
+                    if (meta.hidden) return;
+                    meta.data.forEach(function(bar, index) {
+                        var val = dataset.data[index];
+                        if (!val) return;
+                        ctx.save();
+                        ctx.fillStyle = '#333';
+                        ctx.font = '11px Tahoma, Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        ctx.fillText(val.toString(), bar.x, bar.y - 4);
+                        ctx.restore();
+                    });
+                });
+            }
+        };
+
         var barConfig = {
             type: 'bar',
             data: {
@@ -68,9 +90,11 @@
                     borderWidth: 1
                 }]
             },
+            plugins: [dataLabelsPlugin],
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: { padding: { top: 25 } },
                 plugins: {
                     legend: {
                         display: false
@@ -132,34 +156,34 @@
                         values = [];
                     }
 
-                    if (!window.salesByCategoryBarChart) {
+                    if (!window.passengerDistributionByAgencyBarChart) {
                         barConfig.data.labels = labels;
                         barConfig.data.datasets[0].data = values;
-                        window.salesByCategoryBarChart = new Chart(
+                        window.passengerDistributionByAgencyBarChart = new Chart(
                             document.getElementById("@prefix-chart").getContext("2d"),
                             barConfig
                         );
                     } else {
-                        window.salesByCategoryBarChart.config.data.labels = labels;
-                        window.salesByCategoryBarChart.config.data.datasets[0].data = values;
-                        window.salesByCategoryBarChart.update();
+                        window.passengerDistributionByAgencyBarChart.config.data.labels = labels;
+                        window.passengerDistributionByAgencyBarChart.config.data.datasets[0].data = values;
+                        window.passengerDistributionByAgencyBarChart.update();
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     labels = [];
                     values = [];
                     
-                    if (!window.salesByCategoryBarChart) {
+                    if (!window.passengerDistributionByAgencyBarChart) {
                         barConfig.data.labels = labels;
                         barConfig.data.datasets[0].data = values;
-                        window.salesByCategoryBarChart = new Chart(
+                        window.passengerDistributionByAgencyBarChart = new Chart(
                             document.getElementById("@prefix-chart").getContext("2d"),
                             barConfig
                         );
                     } else {
-                        window.salesByCategoryBarChart.config.data.labels = labels;
-                        window.salesByCategoryBarChart.config.data.datasets[0].data = values;
-                        window.salesByCategoryBarChart.update();
+                        window.passengerDistributionByAgencyBarChart.config.data.labels = labels;
+                        window.passengerDistributionByAgencyBarChart.config.data.datasets[0].data = values;
+                        window.passengerDistributionByAgencyBarChart.update();
                     }
                 }
             });
@@ -198,10 +222,10 @@
             selectedCityId = cityId;
             if (cityId > 0) {
                 changeBarChartCity(cityId);
-            } else if (window.salesByCategoryBarChart) {
-                window.salesByCategoryBarChart.config.data.labels = [];
-                window.salesByCategoryBarChart.config.data.datasets[0].data = [];
-                window.salesByCategoryBarChart.update();
+            } else if (window.passengerDistributionByAgencyBarChart) {
+                window.passengerDistributionByAgencyBarChart.config.data.labels = [];
+                window.passengerDistributionByAgencyBarChart.config.data.datasets[0].data = [];
+                window.passengerDistributionByAgencyBarChart.update();
             }
         });
 

@@ -19,6 +19,8 @@ public partial record PassengerSearchModel : BaseSearchModel
         AvailableAgencies = new List<SelectListItem>();
         AvailableClinics = new List<SelectListItem>();
         AvailableAntiXItems = new List<SelectListItem>();
+        AvailableRecoveryMonths = new List<SelectListItem>();
+        AvailableRecoveryYears = new List<SelectListItem>();
     }
 
     #endregion
@@ -29,7 +31,7 @@ public partial record PassengerSearchModel : BaseSearchModel
     public int SearchRecoveryNo { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.List.SearchCardNo")]
-    public long? SearchCardNo { get; set; }
+    public string SearchCardNo { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.List.SearchCity")]
     public int SearchCityId { get; set; }
@@ -59,10 +61,18 @@ public partial record PassengerSearchModel : BaseSearchModel
     [NopResourceDisplayName("Admin.Passengers.List.SearchTravelEndDate")]
     public DateTime? SearchTravelEndDateUtc { get; set; }
 
+    [NopResourceDisplayName("Admin.Passengers.List.SearchRecoveryYear")]
+    public int? SearchRecoveryYear { get; set; }
+
+    [NopResourceDisplayName("Admin.Passengers.List.SearchRecoveryMonth")]
+    public int? SearchRecoveryMonth { get; set; }
+
     public IList<SelectListItem> AvailableCities { get; set; }
     public IList<SelectListItem> AvailableAgencies { get; set; }
     public IList<SelectListItem> AvailableClinics { get; set; }
     public IList<SelectListItem> AvailableAntiXItems { get; set; }
+    public IList<SelectListItem> AvailableRecoveryMonths { get; set; }
+    public IList<SelectListItem> AvailableRecoveryYears { get; set; }
 
     #endregion
 }

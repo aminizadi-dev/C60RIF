@@ -56,6 +56,28 @@
             }
         });
 
+        var dataLabelsPlugin = {
+            id: 'dataLabelsPlugin',
+            afterDatasetsDraw: function(chart) {
+                var ctx = chart.ctx;
+                chart.data.datasets.forEach(function(dataset, i) {
+                    var meta = chart.getDatasetMeta(i);
+                    if (meta.hidden) return;
+                    meta.data.forEach(function(bar, index) {
+                        var val = dataset.data[index];
+                        if (!val) return;
+                        ctx.save();
+                        ctx.fillStyle = '#333';
+                        ctx.font = '11px Tahoma, Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        ctx.fillText(val.toString(), bar.x, bar.y - 4);
+                        ctx.restore();
+                    });
+                });
+            }
+        };
+
         var barConfig = {
             type: 'bar',
             data: {
@@ -68,9 +90,11 @@
                     borderWidth: 1
                 }]
             },
+            plugins: [dataLabelsPlugin],
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: { padding: { top: 25 } },
                 plugins: {
                     legend: {
                         display: false

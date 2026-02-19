@@ -1,6 +1,8 @@
 ﻿@model CustomerModel
 
 @using Newtonsoft.Json
+
+
 @if (Model.CountryEnabled && Model.StateProvinceEnabled)
 {
     <script>
@@ -63,7 +65,7 @@
         </div>
         <div class="col-md-9">
             <div class="input-group">
-                <nop-editor asp-for="Password" html-attributes="@(new { autocomplete = "new-password" })"/>
+                <nop-editor asp-for="Password" html-attributes="@(new { autocomplete = "new-password" })" />
                 <div class="input-group-append">
                     @if (Model.Id > 0)
                     {
@@ -94,39 +96,6 @@
             <span asp-validation-for="LastName"></span>
         </div>
     </div>
-    @if (Model.GenderEnabled)
-    {
-        <div class="form-group row">
-            <div class="col-md-3">
-                <nop-label asp-for="Gender" />
-            </div>
-            <div class="col-md-9">
-                <div class="raw">
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" name="Gender" id="Gender_Male" value="M" @(Model.Gender == "M" ? Html.Raw("checked") : null)>
-                        <label class="form-check-label" for="Gender_Male">
-                            @T("Admin.Customers.Customers.Fields.Gender.Male")
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input type="radio" class="form-check-input" name="Gender" id="Gender_Female" value="F" @(Model.Gender == "F" ? Html.Raw("checked") : null)>
-                        <label class="form-check-label" for="Gender_Female">
-                            @T("Admin.Customers.Customers.Fields.Gender.Female")
-                        </label>
-                    </div>
-                    @if (Model.NeutralGenderEnabled)
-                    {
-                        <div class="form-check">
-                            <input type="radio" class="form-check-input" name="Gender" id="Gender_Neutral" value="N" @(Model.Gender == "N" ? Html.Raw("checked") : null)>
-                            <label class="form-check-label" for="Gender_Female">
-                                @T("Admin.Customers.Customers.Fields.Gender.Neutral")
-                            </label>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-    }
     @if (Model.DateOfBirthEnabled)
     {
         <div class="form-group row">
@@ -139,18 +108,7 @@
             </div>
         </div>
     }
-    @if (Model.CompanyEnabled)
-    {
-        <div class="form-group row">
-            <div class="col-md-3">
-                <nop-label asp-for="Company" />
-            </div>
-            <div class="col-md-9">
-                <nop-editor asp-for="Company" />
-                <span asp-validation-for="Company"></span>
-            </div>
-        </div>
-    }
+
     @if (Model.StreetAddressEnabled)
     {
         <div class="form-group row">
@@ -272,27 +230,6 @@
             <span asp-validation-for="IsTaxExempt"></span>
         </div>
     </div>
-    @if (Model.DisplayVatNumber)
-    {
-        <div class="form-group row">
-            <div class="col-md-3">
-                <nop-label asp-for="VatNumber" />
-            </div>
-            <div class="col-md-9">
-                <nop-editor asp-for="VatNumber" />
-                <div class="margin-t-5">
-                    (@string.Format(T("Admin.Customers.Customers.Fields.VatNumberStatus").Text, Model.VatNumberStatusNote))
-                    <button type="submit" name="markVatNumberAsValid" class="btn btn-primary">
-                        @T("Admin.Customers.Customers.Fields.VatNumber.MarkAsValid")
-                    </button>
-                    <button type="submit" name="markVatNumberAsInvalid" class="btn btn-danger">
-                        @T("Admin.Customers.Customers.Fields.VatNumber.MarkAsInvalid")
-                    </button>
-                </div>
-                <span asp-validation-for="VatNumber"></span>
-            </div>
-        </div>
-    }
     @if (Model.AllowCustomersToSetTimeZone)
     {
         <div class="form-group row">
@@ -310,7 +247,7 @@
             <nop-label asp-for="SelectedCustomerRoleIds" />
         </div>
 
-        <div class="col-md-9">            
+        <div class="col-md-9">
             <div class="input-group-append input-group-required">
                 <div class="input-group">
                     <nop-select asp-for="SelectedCustomerRoleIds" asp-items="Model.AvailableCustomerRoles" asp-multiple="true" />
@@ -325,10 +262,10 @@
                         closeOnSelect: false,
                         @if (!Model.AvailableCustomerRoles.Any())
                         {
-                        <text>
-                        disabled: true,
-                        placeholder: '@T("Admin.Customers.Customers.Fields.CustomerRoles.NoRoles")',
-                        </text>
+                            <text>
+                            disabled: true,
+                            placeholder: '@T("Admin.Customers.Customers.Fields.CustomerRoles.NoRoles")',
+                            </text>
                         }
                     });
                 });
@@ -366,7 +303,7 @@
             </div>
             <div class="col-md-9">
                 <div class="input-group">
-                    <nop-editor asp-for="MultiFactorAuthenticationProvider" html-attributes="@(new { disabled = true })"/>
+                    <nop-editor asp-for="MultiFactorAuthenticationProvider" html-attributes="@(new { disabled = true })" />
                     <div class="input-group-append">
                         @if (Model.Id > 0)
                         {
@@ -391,48 +328,39 @@
                 @await Html.PartialAsync("Table", new DataTablesModel
                 {
                     Name = "externalauthrecords-grid",
-                    Paging = false,
-                    ServerSide = false,
-                    Length = Model.CustomerAssociatedExternalAuthRecordsSearchModel.PageSize,
-                    LengthMenu = Model.CustomerAssociatedExternalAuthRecordsSearchModel.AvailablePageSizes,
-                    ColumnCollection = new List<ColumnProperty>
-                    {
+                        Paging = false,
+                        ServerSide = false,
+                        Length = Model.CustomerAssociatedExternalAuthRecordsSearchModel.PageSize,
+                        LengthMenu = Model.CustomerAssociatedExternalAuthRecordsSearchModel.AvailablePageSizes,
+                        ColumnCollection = new List<ColumnProperty>
+                        {
                         new ColumnProperty(nameof(CustomerAssociatedExternalAuthModel.AuthMethodName))
                         {
-                            Title = T("Admin.Customers.Customers.AssociatedExternalAuth.Fields.AuthMethodName").Text,
-                            Width = "100"
+                        Title = T("Admin.Customers.Customers.AssociatedExternalAuth.Fields.AuthMethodName").Text,
+                        Width = "100"
                         },
                         new ColumnProperty(nameof(CustomerAssociatedExternalAuthModel.Email))
                         {
-                            Title = T("Admin.Customers.Customers.AssociatedExternalAuth.Fields.Email").Text,
-                            Width = "100"
+                        Title = T("Admin.Customers.Customers.AssociatedExternalAuth.Fields.Email").Text,
+                        Width = "100"
                         },
                         new ColumnProperty(nameof(CustomerAssociatedExternalAuthModel.ExternalIdentifier))
                         {
-                            Title = T("Admin.Customers.Customers.AssociatedExternalAuth.Fields.ExternalIdentifier").Text,
-                            Width = "300"
+                        Title = T("Admin.Customers.Customers.AssociatedExternalAuth.Fields.ExternalIdentifier").Text,
+                        Width = "300"
                         }
-                    },
-                    Data = JsonConvert.SerializeObject(Model.CustomerAssociatedExternalAuthRecordsSearchModel.AssociatedExternalAuthRecords.Select(externalAuthRecord => new
-                    {
-                        //We must display this data encoded, since the data can contain Unicode characters or malicious exploits
-                        AuthMethodName = WebUtility.HtmlEncode(externalAuthRecord.AuthMethodName),
-                        Email = WebUtility.HtmlEncode(externalAuthRecord.Email),
-                        ExternalIdentifier = WebUtility.HtmlEncode(externalAuthRecord.ExternalIdentifier)
-                    }).ToList())
-                })
-            </div>
-        </div>
-    }
-    <div class="form-group row">
-        <div class="col-md-3">
-            <nop-label asp-for="MustChangePassword" />
-        </div>
-        <div class="col-md-9">
-            <nop-editor asp-for="MustChangePassword" />
-            <span asp-validation-for="MustChangePassword"></span>
+                        },
+                        Data = JsonConvert.SerializeObject(Model.CustomerAssociatedExternalAuthRecordsSearchModel.AssociatedExternalAuthRecords.Select(externalAuthRecord => new
+                        {
+                            //We must display this data encoded, since the data can contain Unicode characters or malicious exploits
+                            AuthMethodName = WebUtility.HtmlEncode(externalAuthRecord.AuthMethodName),
+                            Email = WebUtility.HtmlEncode(externalAuthRecord.Email),
+                            ExternalIdentifier = WebUtility.HtmlEncode(externalAuthRecord.ExternalIdentifier)
+                        }).ToList())
+                        })
         </div>
     </div>
+        }
     <div class="form-group row">
         <div class="col-md-3">
             <nop-label asp-for="AdminComment" />

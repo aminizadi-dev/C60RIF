@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Nop.Core.Domain.Customers;
 
@@ -27,7 +27,7 @@ public partial class Passenger : BaseEntity
 
     public bool? HasCompanion { get; set; }
 
-    public long? CardNo { get; set; }
+    public string CardNo { get; set; }
 
     public int AntiX1 { get; set; }
 
@@ -46,15 +46,16 @@ public partial class Passenger : BaseEntity
 
 public enum EducationLevel
 {
-    Unknown = 0,
-
-    Primary = 10,
-    MiddleSchool = 20,
-    HighSchool = 30,
-    Diploma = 40,
-    Associate = 50,
-    Bachelor = 60,
-    Master = 70,
-    Doctorate = 80
+    Unknown = 0,          // نامشخص (وضعیت کلی نامعلوم)
+    Illiterate = 20,      // بیسواد
+    Primary = 30,         // ابتدایی
+    MiddleSchool = 40,    // راهنمایی / سیکل
+    HighSchool = 50,      // دبیرستان
+    Diploma = 60,         // دیپلم
+    Associate = 70,       // کاردانی
+    Bachelor = 80,        // کارشناسی
+    Master = 90,          // کارشناسی ارشد
+    Doctorate = 100,      // دکتری
+    PostDoctorate = 110   // فوق دکتری
 }
 

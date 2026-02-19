@@ -16,7 +16,7 @@ BEGIN
         [IsMarried] [bit] NOT NULL,
         [IsEmployed] [bit] NOT NULL,
         [HasCompanion] [bit] NULL,
-        [CardNo] [bigint] NULL,
+        [CardNo] [nvarchar](50) NULL,
         [AntiX1] [int] NOT NULL,
         [AntiX2] [int] NULL,
         [TravelStartDateUtc] [datetime2](7) NULL,
