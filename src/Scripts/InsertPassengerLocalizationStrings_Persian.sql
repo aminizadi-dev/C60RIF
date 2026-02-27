@@ -387,6 +387,33 @@ IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Acti
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
     VALUES (@LanguageId, 'ActivityLog.DeletePassenger', N'مسافر با شناسه {0} حذف شد');
 
+-- =============================================
+-- Common Validation Messages (Persian overrides)
+-- =============================================
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Common.Validation.NotEmpty' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Common.Validation.NotEmpty', N'{0} الزامی است');
+ELSE
+    UPDATE [LocaleStringResource] SET [ResourceValue] = N'{0} الزامی است'
+    WHERE [ResourceName] = 'Admin.Common.Validation.NotEmpty' AND [LanguageId] = @LanguageId;
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Common.Validation.AttemptedValueIsInvalid' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Common.Validation.AttemptedValueIsInvalid', N'مقدار وارد شده برای {0} نامعتبر است');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Common.Validation.ValueIsInvalid' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Common.Validation.ValueIsInvalid', N'مقدار وارد شده برای {0} نامعتبر است');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Common.Validation.ValueMustBeANumber' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Common.Validation.ValueMustBeANumber', N'{0} باید یک عدد باشد');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Common.Validation.MissingRequiredField' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Common.Validation.MissingRequiredField', N'{0} الزامی است');
+
 GO
 
 PRINT 'Passenger localization strings inserted successfully for Persian language.';

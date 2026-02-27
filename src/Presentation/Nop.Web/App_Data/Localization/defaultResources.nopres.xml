@@ -4710,6 +4710,18 @@
   <LocaleResource Name="Admin.Common.Validation.NotEmpty">
     <Value>Please provide a {0}</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Common.Validation.AttemptedValueIsInvalid">
+    <Value>The value entered for {0} is invalid</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Common.Validation.ValueIsInvalid">
+    <Value>The value entered for {0} is invalid</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Common.Validation.ValueMustBeANumber">
+    <Value>{0} must be a number</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Common.Validation.MissingRequiredField">
+    <Value>{0} is required</Value>
+  </LocaleResource>
   <LocaleResource Name="Admin.Common.View">
     <Value>View</Value>
   </LocaleResource>

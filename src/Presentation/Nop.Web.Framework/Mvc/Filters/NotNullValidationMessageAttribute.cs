@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Nop.Core.Http.Extensions;
@@ -70,11 +70,20 @@ public sealed class NotNullValidationMessageAttribute : TypeFilterAttribute
             if (context.ModelState.ErrorCount == 0)
                 return;
 
-            var nullModelValues = context.ModelState
+            var localeMarkers = new[]
+            {
+                NopValidationDefaults.NotNullValidationLocaleName,
+                NopValidationDefaults.AttemptedValueIsInvalidLocaleName,
+                NopValidationDefaults.ValueIsInvalidLocaleName,
+                NopValidationDefaults.ValueMustBeANumberLocaleName,
+                NopValidationDefaults.MissingRequiredFieldLocaleName
+            };
+
+            var invalidModelValues = context.ModelState
                 .Where(modelState => modelState.Value.ValidationState == ModelValidationState.Invalid
-                                     && modelState.Value.Errors.Any(error => error.ErrorMessage.Equals(NopValidationDefaults.NotNullValidationLocaleName)))
+                                     && modelState.Value.Errors.Any(error => localeMarkers.Contains(error.ErrorMessage)))
                 .ToList();
-            if (!nullModelValues.Any())
+            if (!invalidModelValues.Any())
                 return;
 
             //get model passed to the action
@@ -85,8 +94,8 @@ public sealed class NotNullValidationMessageAttribute : TypeFilterAttribute
             //get model properties that failed validation
             var modelType = model.GetType();
             var properties = modelType.GetProperties();
-            var locale = await _localizationService.GetResourceAsync(NopValidationDefaults.NotNullValidationLocaleName);
-            foreach (var modelState in nullModelValues)
+
+            foreach (var modelState in invalidModelValues)
             {
                 if (modelState.Value == null)
                     continue;
@@ -104,11 +113,13 @@ public sealed class NotNullValidationMessageAttribute : TypeFilterAttribute
                 string resourceValue = null;
 
                 if (!string.IsNullOrEmpty(resourceName))
-                    //get locale resource value
                     resourceValue = await _localizationService.GetResourceAsync(resourceName);
 
                 if (resourceValue?.Equals(resourceName, StringComparison.InvariantCultureIgnoreCase) ?? false)
                     resourceValue = property.Name;
+
+                var errorLocaleKey = modelState.Value.Errors.First(e => localeMarkers.Contains(e.ErrorMessage)).ErrorMessage;
+                var locale = await _localizationService.GetResourceAsync(errorLocaleKey);
 
                 //set localized error message
                 modelState.Value.Errors.Clear();

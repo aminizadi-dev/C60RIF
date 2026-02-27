@@ -281,17 +281,17 @@
                                 });
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.IsMarried))
                                 {
-                                    Title = T("Admin.Passengers.Fields.IsMarried").Text,
+                                    Title = T("admin.reports.passengers.maritalstatusstatistics.married").Text,
                                     Width = "50",
                                     ClassName = NopColumnClassDefaults.CenterAll + " passenger-grid-header-vertical",
-                                    Render = new RenderBoolean()
+                                    Render = new RenderCustom("renderNullableBoolean")
                                 });
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.IsEmployed))
                                 {
-                                    Title = T("Admin.Passengers.Fields.IsEmployed").Text,
+                                    Title = T("admin.reports.passengers.employmentstatusstatistics.employed").Text,
                                     Width = "50",
                                     ClassName = NopColumnClassDefaults.CenterAll + " passenger-grid-header-vertical",
-                                    Render = new RenderBoolean()
+                                    Render = new RenderCustom("renderNullableBoolean")
                                 });
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.Id))
                                 {
@@ -335,6 +335,14 @@
 <nop-alert asp-alert-id="exportExcelSelected" />
 
 <script>
+    function renderNullableBoolean(data, type, row, meta) {
+        if (data === null || data === undefined)
+            return '<i class="fas fa-question" nop-value="null" style="color:#999"></i>';
+        return data
+            ? '<i class="fas fa-check true-icon" nop-value="true"></i>'
+            : '<i class="fas fa-times false-icon" nop-value="false"></i>';
+    }
+
     function renderPassengerPicture(data, type, row, meta) {
         if (!data) {
             return '';

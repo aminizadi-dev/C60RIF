@@ -1,4 +1,4 @@
-﻿using System.Threading.RateLimiting;
+using System.Threading.RateLimiting;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -328,6 +328,11 @@ public static class ServiceCollectionExtensions
             //in .NET model binding for a non-nullable property may fail with an error message "The value '' is invalid"
             //here we set the locale name as the message, we'll replace it with the actual one later when not-null validation failed
             options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(_ => NopValidationDefaults.NotNullValidationLocaleName);
+
+            options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((_, _) => NopValidationDefaults.AttemptedValueIsInvalidLocaleName);
+            options.ModelBindingMessageProvider.SetValueIsInvalidAccessor(_ => NopValidationDefaults.ValueIsInvalidLocaleName);
+            options.ModelBindingMessageProvider.SetValueMustBeANumberAccessor(_ => NopValidationDefaults.ValueMustBeANumberLocaleName);
+            options.ModelBindingMessageProvider.SetMissingBindRequiredValueAccessor(_ => NopValidationDefaults.MissingRequiredFieldLocaleName);
         });
 
         //add fluent validation

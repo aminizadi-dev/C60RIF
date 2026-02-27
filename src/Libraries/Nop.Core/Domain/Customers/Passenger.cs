@@ -21,9 +21,9 @@ public partial class Passenger : BaseEntity
 
     public EducationLevel Education { get; set; }
 
-    public bool IsMarried { get; set; }
+    public bool? IsMarried { get; set; }
 
-    public bool IsEmployed { get; set; }
+    public bool? IsEmployed { get; set; }
 
     public bool? HasCompanion { get; set; }
 

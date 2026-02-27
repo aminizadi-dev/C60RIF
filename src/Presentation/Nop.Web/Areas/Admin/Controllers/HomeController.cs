@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
@@ -144,7 +144,7 @@ public partial class HomeController : BaseAdminController
     /// <param name="period">Period: "year" for yearly, "month" for monthly</param>
     /// <param name="year">Persian year for monthly statistics</param>
     /// <returns>JSON result with date labels and counts</returns>
-    [CheckPermission(StandardPermission.Customers.CUSTOMERS_VIEW)]
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> LoadPassengerTreatmentStatistics(string period, int? year = null)
     {
         var result = new List<object>();
@@ -249,7 +249,7 @@ public partial class HomeController : BaseAdminController
     /// Load available Persian years for passenger treatment statistics
     /// </summary>
     /// <returns>JSON result with available years</returns>
-    [CheckPermission(StandardPermission.Customers.CUSTOMERS_VIEW)]
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> LoadPassengerTreatmentYears()
     {
         // Get all passengers with TravelEndDateUtc
@@ -276,7 +276,8 @@ public partial class HomeController : BaseAdminController
             .ToList();
 
         var currentPersianYear = new PersianDateTime(DateTime.Now).Year;
-        var selectedYear = years.FirstOrDefault();
+        var defaultYear = 1403;
+        var selectedYear = years.Contains(defaultYear) ? defaultYear : years.FirstOrDefault();
         if (selectedYear == 0)
             selectedYear = currentPersianYear;
 
@@ -291,7 +292,7 @@ public partial class HomeController : BaseAdminController
     /// Load cities for passenger distribution by agency chart
     /// </summary>
     /// <returns>JSON result with city list</returns>
-    [CheckPermission(StandardPermission.Configuration.MANAGE_CITIES)]
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> LoadPassengerDistributionCities()
     {
         var cities = await _cityService.GetAllCitiesAsync(pageIndex: 0, pageSize: int.MaxValue);
@@ -305,7 +306,7 @@ public partial class HomeController : BaseAdminController
     /// </summary>
     /// <param name="cityId">City identifier</param>
     /// <returns>JSON result with agency labels and counts</returns>
-    [CheckPermission(StandardPermission.Configuration.MANAGE_CITIES)]
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> LoadPassengerDistributionByAgency(int cityId)
     {
         if (cityId <= 0)
@@ -430,13 +431,15 @@ public partial class HomeController : BaseAdminController
             pageSize: int.MaxValue,
             getOnlyTotalCount: false);
 
-        var marriedCount = passengers.Count(p => p.IsMarried);
-        var singleCount = passengers.Count(p => !p.IsMarried);
+        var marriedCount = passengers.Count(p => p.IsMarried == true);
+        var singleCount = passengers.Count(p => p.IsMarried == false);
+        var unknownMaritalCount = passengers.Count(p => p.IsMarried == null);
 
         var result = new[]
         {
             new { label = await _localizationService.GetResourceAsync("Admin.Reports.Passengers.MaritalStatusStatistics.Married"), count = marriedCount },
-            new { label = await _localizationService.GetResourceAsync("Admin.Reports.Passengers.MaritalStatusStatistics.Single"), count = singleCount }
+            new { label = await _localizationService.GetResourceAsync("Admin.Reports.Passengers.MaritalStatusStatistics.Single"), count = singleCount },
+            new { label = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.HasCompanion.Unknown"), count = unknownMaritalCount }
         };
 
         return Json(result);
@@ -464,13 +467,15 @@ public partial class HomeController : BaseAdminController
             pageSize: int.MaxValue,
             getOnlyTotalCount: false);
 
-        var employedCount = passengers.Count(p => p.IsEmployed);
-        var unemployedCount = passengers.Count(p => !p.IsEmployed);
+        var employedCount = passengers.Count(p => p.IsEmployed == true);
+        var unemployedCount = passengers.Count(p => p.IsEmployed == false);
+        var unknownEmploymentCount = passengers.Count(p => p.IsEmployed == null);
 
         var result = new[]
         {
             new { label = await _localizationService.GetResourceAsync("Admin.Reports.Passengers.EmploymentStatusStatistics.Employed"), count = employedCount },
-            new { label = await _localizationService.GetResourceAsync("Admin.Reports.Passengers.EmploymentStatusStatistics.Unemployed"), count = unemployedCount }
+            new { label = await _localizationService.GetResourceAsync("Admin.Reports.Passengers.EmploymentStatusStatistics.Unemployed"), count = unemployedCount },
+            new { label = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.HasCompanion.Unknown"), count = unknownEmploymentCount }
         };
 
         return Json(result);
@@ -481,7 +486,7 @@ public partial class HomeController : BaseAdminController
     /// </summary>
     /// <param name="cityId">City identifier</param>
     /// <returns>JSON result with agency labels and averages</returns>
-    [CheckPermission(StandardPermission.Configuration.MANAGE_CITIES)]
+    [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> LoadPassengerAverageTravelLengthByAgency(int cityId)
     {
         if (cityId <= 0)

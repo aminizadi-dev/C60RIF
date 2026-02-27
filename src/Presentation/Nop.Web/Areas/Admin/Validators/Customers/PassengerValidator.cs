@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 using Nop.Core.Domain.Customers;
 using Nop.Services.Localization;
 using Nop.Web.Areas.Admin.Models.Customers;
@@ -15,7 +15,7 @@ public partial class PassengerValidator : BaseNopValidator<PassengerModel>
             .WithMessageAwait(localizationService.GetResourceAsync("Admin.Passengers.Fields.PersonName.Required"));
 
         RuleFor(x => x.RecoveryNo)
-            .GreaterThan(0)
+            .NotEmpty()
             .WithMessageAwait(localizationService.GetResourceAsync("Admin.Passengers.Fields.RecoveryNo.Required"));
 
         RuleFor(x => x.GuideNameAndLegionNo)
@@ -37,6 +37,7 @@ public partial class PassengerValidator : BaseNopValidator<PassengerModel>
         RuleFor(x => x.AgencyId)
             .GreaterThan(0)
             .WithMessageAwait(localizationService.GetResourceAsync("Admin.Passengers.Fields.Agency.Required"));
+
 
         RuleFor(x => x.BirthYear)
             .InclusiveBetween(1300, 1400)

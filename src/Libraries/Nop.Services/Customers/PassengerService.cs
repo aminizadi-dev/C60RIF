@@ -114,7 +114,8 @@ public partial class PassengerService : IPassengerService
             }
 
             query = query
-                .OrderByDescending(p => p.RecoveryNo);
+                .OrderByDescending(p => p.CreatedOnUtc)
+                .ThenByDescending(p => p.RecoveryNo);
 
             return query;
         }, pageIndex, pageSize, getOnlyTotalCount);

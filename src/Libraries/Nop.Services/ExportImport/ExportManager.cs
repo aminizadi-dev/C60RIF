@@ -303,9 +303,9 @@ public partial class ExportManager : IExportManager
         var singleText = await _localizationService.GetResourceAsync("Admin.Reports.Passengers.MaritalStatusStatistics.Single");
         var employedText = await _localizationService.GetResourceAsync("Admin.Reports.Passengers.EmploymentStatusStatistics.Employed");
         var unemployedText = await _localizationService.GetResourceAsync("Admin.Reports.Passengers.EmploymentStatusStatistics.Unemployed");
+        var unknownText = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.HasCompanion.Unknown");
         var companionYes = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.HasCompanion.Yes");
         var companionNo = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.HasCompanion.No");
-        var companionUnknown = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.HasCompanion.Unknown");
 
         //pre-load localized education level names
         var educationNames = new Dictionary<EducationLevel, string>();
@@ -330,11 +330,11 @@ public partial class ExportManager : IExportManager
             new PropertyByName<Passenger>(headerEducation, (p, _) =>
                 educationNames.TryGetValue(p.Education, out var eduName) ? eduName : p.Education.ToString()),
             new PropertyByName<Passenger>(headerIsMarried, (p, _) =>
-                p.IsMarried ? marriedText : singleText),
+                p.IsMarried.HasValue ? (p.IsMarried.Value ? marriedText : singleText) : unknownText),
             new PropertyByName<Passenger>(headerIsEmployed, (p, _) =>
-                p.IsEmployed ? employedText : unemployedText),
+                p.IsEmployed.HasValue ? (p.IsEmployed.Value ? employedText : unemployedText) : unknownText),
             new PropertyByName<Passenger>(headerHasCompanion, (p, _) =>
-                p.HasCompanion.HasValue ? (p.HasCompanion.Value ? companionYes : companionNo) : companionUnknown),
+                p.HasCompanion.HasValue ? (p.HasCompanion.Value ? companionYes : companionNo) : unknownText),
             new PropertyByName<Passenger>(headerTravelStartDate, (p, _) =>
                 p.TravelStartDateUtc.HasValue
                     ? new PersianDateTime(p.TravelStartDateUtc.Value) { EnglishNumber = true }.ToString("yyyy/MM/dd")

@@ -46,10 +46,10 @@ public partial record PassengerModel : BaseNopEntityModel
     public IList<SelectListItem> AvailableEducationLevels { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.Fields.IsMarried")]
-    public bool IsMarried { get; set; }
+    public bool? IsMarried { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.Fields.IsEmployed")]
-    public bool IsEmployed { get; set; }
+    public bool? IsEmployed { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.Fields.HasCompanion")]
     public bool? HasCompanion { get; set; }
