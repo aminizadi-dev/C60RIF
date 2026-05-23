@@ -201,16 +201,23 @@ public partial class PassengerModelFactory : IPassengerModelFactory
     {
         ArgumentNullException.ThrowIfNull(searchModel);
 
+        var searchRecoveryNo = string.IsNullOrWhiteSpace(searchModel.SearchRecoveryNo)
+            ? null
+            : _passengerService.NormalizeRecoveryNo(searchModel.SearchRecoveryNo, null);
+        var searchCardNo = string.IsNullOrWhiteSpace(searchModel.SearchCardNo)
+            ? null
+            : DigitHelper.ToEnglishDigits(searchModel.SearchCardNo.Trim());
+
         //get passengers
         var passengers = await _passengerService.GetAllPassengersAsync(
-            recoveryNo: searchModel.SearchRecoveryNo,
+            recoveryNo: searchRecoveryNo,
             personName: searchModel.SearchPersonName,
             cityId: searchModel.SearchCityId,
             agencyId: searchModel.SearchAgencyId,
             clinicId: searchModel.SearchClinicId,
             antiXId: searchModel.SearchAntiXId,
             guideNameAndLegionNo: searchModel.SearchGuideNameAndLegionNo,
-            cardNo: searchModel.SearchCardNo,
+            cardNo: searchCardNo,
             travelStartDateUtc: searchModel.SearchTravelStartDateUtc,
             travelEndDateUtc: searchModel.SearchTravelEndDateUtc,
             recoveryYear: searchModel.SearchRecoveryYear,

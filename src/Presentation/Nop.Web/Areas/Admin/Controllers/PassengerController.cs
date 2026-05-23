@@ -147,6 +147,8 @@ public partial class PassengerController : BaseAdminController
                     await _localizationService.GetResourceAsync("Admin.Passengers.Fields.RecoveryNo.Duplicate"));
             }
 
+            await ValidateTravelDurationAsync(model);
+
             if (!ModelState.IsValid)
                 return await RecreateModelAsync(model);
 
@@ -221,6 +223,8 @@ public partial class PassengerController : BaseAdminController
                         await _localizationService.GetResourceAsync("Admin.Passengers.Fields.RecoveryNo.Duplicate"));
                 }
 
+                await ValidateTravelDurationAsync(model);
+
                 if (!ModelState.IsValid)
                     return await RecreateModelAsync(model, passenger);
 
@@ -263,6 +267,9 @@ public partial class PassengerController : BaseAdminController
 
     private async Task ApplyRecoveryNoNormalizationAsync(PassengerModel model)
     {
+        if (!string.IsNullOrWhiteSpace(model.CardNo))
+            model.CardNo = DigitHelper.ToEnglishDigits(model.CardNo.Trim());
+
         model.RecoveryNo = _passengerService.NormalizeRecoveryNo(model.RecoveryNo, model.TravelEndDateUtc);
 
         if (model.RecoveryNo?.Length > PassengerRecoveryNoHelper.MaxRecoveryNoLength)
@@ -270,6 +277,19 @@ public partial class PassengerController : BaseAdminController
             ModelState.AddModelError(nameof(model.RecoveryNo),
                 await _localizationService.GetResourceAsync("Admin.Passengers.Fields.RecoveryNo.MaxLength"));
         }
+    }
+
+    private async Task ValidateTravelDurationAsync(PassengerModel model)
+    {
+        if (!model.TravelStartDateUtc.HasValue || !model.TravelEndDateUtc.HasValue)
+            return;
+
+        if (model.TravelEndDateUtc.Value <= model.TravelStartDateUtc.Value.AddYears(2))
+            return;
+
+        var message = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.TravelDuration.Warning");
+        ModelState.AddModelError(nameof(model.TravelEndDateUtc), message);
+        _notificationService.ErrorNotification(message);
     }
 
     private async Task<IActionResult> RecreateModelAsync(PassengerModel model, Passenger passenger = null)
@@ -314,14 +334,18 @@ public partial class PassengerController : BaseAdminController
     public virtual async Task<IActionResult> ExportExcelAll(PassengerSearchModel model)
     {
         var passengers = await _passengerService.GetAllPassengersAsync(
-            recoveryNo: model.SearchRecoveryNo,
+            recoveryNo: string.IsNullOrWhiteSpace(model.SearchRecoveryNo)
+                ? null
+                : _passengerService.NormalizeRecoveryNo(model.SearchRecoveryNo, null),
             personName: model.SearchPersonName,
             cityId: model.SearchCityId,
             agencyId: model.SearchAgencyId,
             clinicId: model.SearchClinicId,
             antiXId: model.SearchAntiXId,
             guideNameAndLegionNo: model.SearchGuideNameAndLegionNo,
-            cardNo: model.SearchCardNo,
+            cardNo: string.IsNullOrWhiteSpace(model.SearchCardNo)
+                ? null
+                : DigitHelper.ToEnglishDigits(model.SearchCardNo.Trim()),
             travelStartDateUtc: model.SearchTravelStartDateUtc,
             travelEndDateUtc: model.SearchTravelEndDateUtc,
             recoveryYear: model.SearchRecoveryYear,

@@ -21614,6 +21614,9 @@
   <LocaleResource Name="Admin.Passengers.Fields.RecoveryNo.MaxLength">
     <Value>Recovery number must not exceed 20 characters after the year prefix is applied</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.TravelDuration.Warning">
+    <Value>Please verify the travel start and end dates. The passenger travel duration exceeds the standard limit.</Value>
+  </LocaleResource>
   <LocaleResource Name="Admin.Passengers.Fields.CardNo.DuplicateWarning">
     <Value>Card number has already been registered</Value>
   </LocaleResource>

@@ -196,6 +196,10 @@ IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admi
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
     VALUES (@LanguageId, 'Admin.Passengers.Fields.RecoveryNo.MaxLength', N'شماره رهایی پس از اعمال پیشوند سال نباید بیش از ۲۰ کاراکتر باشد.');
 
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.TravelDuration.Warning' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Passengers.Fields.TravelDuration.Warning', N'تاریخ شروع سفر و تاریخ پایان سفر را مجدد چک کنید. طول مدت سفر رهجو بیشتر از استاندارد است.');
+
 IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.CardNo.DuplicateWarning' AND [LanguageId] = @LanguageId)
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
     VALUES (@LanguageId, 'Admin.Passengers.Fields.CardNo.DuplicateWarning', N'شماره کارت قبلا ثبت شده است');

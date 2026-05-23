@@ -2,7 +2,6 @@ using System;
 using System.Globalization;
 using Nop.Core;
 using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Customers;
 using Nop.Core.Events;
 using Nop.Data;
 
@@ -168,7 +167,7 @@ public partial class PassengerService : IPassengerService
     {
         ArgumentNullException.ThrowIfNull(passenger);
 
-        passenger.RecoveryNo = NormalizeRecoveryNo(passenger.RecoveryNo, passenger.TravelEndDateUtc);
+        NormalizePassengerIdentifiers(passenger);
 
         await _passengerRepository.InsertAsync(passenger);
     }
@@ -182,7 +181,7 @@ public partial class PassengerService : IPassengerService
     {
         ArgumentNullException.ThrowIfNull(passenger);
 
-        passenger.RecoveryNo = NormalizeRecoveryNo(passenger.RecoveryNo, passenger.TravelEndDateUtc);
+        NormalizePassengerIdentifiers(passenger);
 
         await _passengerRepository.UpdateAsync(passenger);
     }
@@ -231,6 +230,16 @@ public partial class PassengerService : IPassengerService
     public virtual string NormalizeRecoveryNo(string recoveryNo, DateTime? travelEndDateUtc)
     {
         return PassengerRecoveryNoHelper.Normalize(recoveryNo, travelEndDateUtc);
+    }
+
+    protected virtual void NormalizePassengerIdentifiers(Passenger passenger)
+    {
+        passenger.RecoveryNo = NormalizeRecoveryNo(passenger.RecoveryNo, passenger.TravelEndDateUtc);
+
+        if (!string.IsNullOrWhiteSpace(passenger.CardNo))
+            passenger.CardNo = DigitHelper.ToEnglishDigits(passenger.CardNo.Trim());
+        else
+            passenger.CardNo = null;
     }
 
     /// <summary>
