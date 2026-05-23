@@ -19,7 +19,7 @@ public partial class PassengerBuilder : NopEntityBuilder<Passenger>
     public override void MapEntity(CreateTableExpressionBuilder table)
     {
         table
-            .WithColumn(nameof(Passenger.RecoveryNo)).AsInt32().NotNullable()
+            .WithColumn(nameof(Passenger.RecoveryNo)).AsString(20).NotNullable()
             .WithColumn(nameof(Passenger.PersonName)).AsString(500).Nullable()
             .WithColumn(nameof(Passenger.GuideNameAndLegionNo)).AsString(500).NotNullable()
             .WithColumn(nameof(Passenger.ClinicId)).AsInt32().Nullable().ForeignKey<Clinic>()

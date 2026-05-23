@@ -151,7 +151,7 @@ public partial class HomeController : BaseAdminController
 
         // Get all passengers with TravelEndDateUtc
         var allPassengers = await _passengerService.GetAllPassengersAsync(
-            recoveryNo: 0,
+            recoveryNo: null,
             personName: null,
             cityId: 0,
             agencyId: 0,
@@ -254,7 +254,7 @@ public partial class HomeController : BaseAdminController
     {
         // Get all passengers with TravelEndDateUtc
         var allPassengers = await _passengerService.GetAllPassengersAsync(
-            recoveryNo: 0,
+            recoveryNo: null,
             personName: null,
             cityId: 0,
             agencyId: 0,
@@ -315,7 +315,7 @@ public partial class HomeController : BaseAdminController
         var agencies = await _agencyService.GetAgenciesByCityIdAsync(cityId, showHidden: true);
 
         var passengers = await _passengerService.GetAllPassengersAsync(
-            recoveryNo: 0,
+            recoveryNo: null,
             personName: null,
             cityId: cityId,
             agencyId: 0,
@@ -356,7 +356,7 @@ public partial class HomeController : BaseAdminController
     public virtual async Task<IActionResult> LoadAntiXConsumptionStatistics()
     {
         var passengers = await _passengerService.GetAllPassengersAsync(
-            recoveryNo: 0,
+            recoveryNo: null,
             personName: null,
             cityId: 0,
             agencyId: 0,
@@ -417,7 +417,7 @@ public partial class HomeController : BaseAdminController
     public virtual async Task<IActionResult> LoadPassengerMaritalStatusStatistics()
     {
         var passengers = await _passengerService.GetAllPassengersAsync(
-            recoveryNo: 0,
+            recoveryNo: null,
             personName: null,
             cityId: 0,
             agencyId: 0,
@@ -453,7 +453,7 @@ public partial class HomeController : BaseAdminController
     public virtual async Task<IActionResult> LoadPassengerEmploymentStatusStatistics()
     {
         var passengers = await _passengerService.GetAllPassengersAsync(
-            recoveryNo: 0,
+            recoveryNo: null,
             personName: null,
             cityId: 0,
             agencyId: 0,
@@ -495,7 +495,7 @@ public partial class HomeController : BaseAdminController
         var agencies = await _agencyService.GetAgenciesByCityIdAsync(cityId, showHidden: true);
 
         var passengers = await _passengerService.GetAllPassengersAsync(
-            recoveryNo: 0,
+            recoveryNo: null,
             personName: null,
             cityId: cityId,
             agencyId: 0,
@@ -557,7 +557,7 @@ public partial class HomeController : BaseAdminController
     public virtual async Task<IActionResult> LoadPassengerAgeDistribution()
     {
         var passengers = await _passengerService.GetAllPassengersAsync(
-            recoveryNo: 0,
+            recoveryNo: null,
             personName: null,
             cityId: 0,
             agencyId: 0,
@@ -599,7 +599,7 @@ public partial class HomeController : BaseAdminController
     public virtual async Task<IActionResult> LoadPassengerEducationDistribution()
     {
         var passengers = await _passengerService.GetAllPassengersAsync(
-            recoveryNo: 0,
+            recoveryNo: null,
             personName: null,
             cityId: 0,
             agencyId: 0,

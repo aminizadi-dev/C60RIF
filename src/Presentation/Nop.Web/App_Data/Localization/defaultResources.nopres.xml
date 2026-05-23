@@ -21611,6 +21611,9 @@
   <LocaleResource Name="Admin.Passengers.Fields.RecoveryNo.Duplicate">
     <Value>Recovery number has already been registered</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Passengers.Fields.RecoveryNo.MaxLength">
+    <Value>Recovery number must not exceed 20 characters after the year prefix is applied</Value>
+  </LocaleResource>
   <LocaleResource Name="Admin.Passengers.Fields.CardNo.DuplicateWarning">
     <Value>Card number has already been registered</Value>
   </LocaleResource>

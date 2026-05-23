@@ -16,7 +16,9 @@ public partial class PassengerValidator : BaseNopValidator<PassengerModel>
 
         RuleFor(x => x.RecoveryNo)
             .NotEmpty()
-            .WithMessageAwait(localizationService.GetResourceAsync("Admin.Passengers.Fields.RecoveryNo.Required"));
+            .WithMessageAwait(localizationService.GetResourceAsync("Admin.Passengers.Fields.RecoveryNo.Required"))
+            .MaximumLength(20)
+            .WithMessageAwait(localizationService.GetResourceAsync("Admin.Passengers.Fields.RecoveryNo.MaxLength"));
 
         RuleFor(x => x.GuideNameAndLegionNo)
             .NotEmpty()

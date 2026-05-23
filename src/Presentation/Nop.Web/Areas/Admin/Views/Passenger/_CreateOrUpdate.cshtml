@@ -353,11 +353,6 @@
         var antiX2Select = $("#@Html.IdFor(model => model.AntiX2)");
         var suppressCityChange = false;
 
-        var recoveryNoInput = $("#@Html.IdFor(model => model.RecoveryNo)");
-        if (recoveryNoInput.val() === "0") {
-            recoveryNoInput.val("");
-        }
-
         //initialize select2 for searchable dropdowns
         citySelect.select2({ dir: 'rtl', width: '100%' });
         agencySelect.select2({ dir: 'rtl', width: '100%' });

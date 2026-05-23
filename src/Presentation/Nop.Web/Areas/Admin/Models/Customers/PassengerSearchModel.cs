@@ -28,7 +28,7 @@ public partial record PassengerSearchModel : BaseSearchModel
     #region Properties
 
     [NopResourceDisplayName("Admin.Passengers.List.SearchRecoveryNo")]
-    public int SearchRecoveryNo { get; set; }
+    public string SearchRecoveryNo { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.List.SearchCardNo")]
     public string SearchCardNo { get; set; }

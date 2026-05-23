@@ -9,7 +9,7 @@ namespace Nop.Core.Domain.Customers;
 /// </summary>
 public partial class Passenger : BaseEntity
 {
-    public int RecoveryNo { get; set; }
+    public string RecoveryNo { get; set; }
 
     public string PersonName { get; set; }
 

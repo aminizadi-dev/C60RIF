@@ -192,6 +192,10 @@ IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admi
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
     VALUES (@LanguageId, 'Admin.Passengers.Fields.RecoveryNo.Duplicate', N'شماره رهایی قبلا ثبت شده است');
 
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.RecoveryNo.MaxLength' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Passengers.Fields.RecoveryNo.MaxLength', N'شماره رهایی پس از اعمال پیشوند سال نباید بیش از ۲۰ کاراکتر باشد.');
+
 IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Passengers.Fields.CardNo.DuplicateWarning' AND [LanguageId] = @LanguageId)
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
     VALUES (@LanguageId, 'Admin.Passengers.Fields.CardNo.DuplicateWarning', N'شماره کارت قبلا ثبت شده است');

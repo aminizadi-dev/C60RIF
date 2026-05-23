@@ -7,7 +7,7 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Pa
 BEGIN
     CREATE TABLE [dbo].[Passenger](
         [Id] [int] IDENTITY(1,1) NOT NULL,
-        [RecoveryNo] [int] NOT NULL,
+        [RecoveryNo] [nvarchar](20) NOT NULL,
         [PersonName] [nvarchar](500) NULL,
         [GuideNameAndLegionNo] [nvarchar](500) NULL,
         [ClinicId] [int] NOT NULL,

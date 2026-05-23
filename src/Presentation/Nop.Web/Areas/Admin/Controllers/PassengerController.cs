@@ -136,6 +136,11 @@ public partial class PassengerController : BaseAdminController
     {
         if (ModelState.IsValid)
         {
+            await ApplyRecoveryNoNormalizationAsync(model);
+
+            if (!ModelState.IsValid)
+                return await RecreateModelAsync(model);
+
             if (await _passengerService.IsRecoveryNoExistsAsync(model.RecoveryNo))
             {
                 ModelState.AddModelError(nameof(model.RecoveryNo),
@@ -205,6 +210,11 @@ public partial class PassengerController : BaseAdminController
         {
             try
             {
+                await ApplyRecoveryNoNormalizationAsync(model);
+
+                if (!ModelState.IsValid)
+                    return await RecreateModelAsync(model, passenger);
+
                 if (await _passengerService.IsRecoveryNoExistsAsync(model.RecoveryNo, passenger.Id))
                 {
                     ModelState.AddModelError(nameof(model.RecoveryNo),
@@ -249,6 +259,17 @@ public partial class PassengerController : BaseAdminController
         }
 
         return await RecreateModelAsync(model, passenger);
+    }
+
+    private async Task ApplyRecoveryNoNormalizationAsync(PassengerModel model)
+    {
+        model.RecoveryNo = _passengerService.NormalizeRecoveryNo(model.RecoveryNo, model.TravelEndDateUtc);
+
+        if (model.RecoveryNo?.Length > PassengerRecoveryNoHelper.MaxRecoveryNoLength)
+        {
+            ModelState.AddModelError(nameof(model.RecoveryNo),
+                await _localizationService.GetResourceAsync("Admin.Passengers.Fields.RecoveryNo.MaxLength"));
+        }
     }
 
     private async Task<IActionResult> RecreateModelAsync(PassengerModel model, Passenger passenger = null)

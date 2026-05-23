@@ -22,7 +22,7 @@
 جدول Passenger شامل فیلدهای زیر است:
 
 - **Id**: شناسه یکتا (Primary Key, Identity)
-- **RecoveryNo**: شماره بازیابی
+- **RecoveryNo**: شماره بازیابی (nvarchar، با امکان صفر ابتدایی مثل 0543)
 - **PersonName**: نام شخص
 - **GuideNameAndLegionNo**: نام راهنما و شماره لژیون
 - **ClinicId**: شناسه کلینیک (Foreign Key, الزامی)

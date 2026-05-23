@@ -13,7 +13,7 @@ public partial interface IPassengerService
     /// <summary>
     /// Gets all passengers
     /// </summary>
-    /// <param name="recoveryNo">Recovery number; 0 to load all passengers</param>
+    /// <param name="recoveryNo">Recovery number; null or empty to load all passengers</param>
     /// <param name="personName">Person name; null to load all passengers</param>
     /// <param name="cityId">City identifier; 0 to load all passengers</param>
     /// <param name="agencyId">Agency identifier; 0 to load all passengers</param>
@@ -25,7 +25,7 @@ public partial interface IPassengerService
     /// A task that represents the asynchronous operation
     /// The task result contains the passengers
     /// </returns>
-    Task<IPagedList<Passenger>> GetAllPassengersAsync(int recoveryNo = 0,
+    Task<IPagedList<Passenger>> GetAllPassengersAsync(string recoveryNo = null,
         string personName = null, int cityId = 0, int agencyId = 0, int clinicId = 0, int antiXId = 0,
         string guideNameAndLegionNo = null, string cardNo = null,
         DateTime? travelStartDateUtc = null, DateTime? travelEndDateUtc = null,
@@ -83,12 +83,20 @@ public partial interface IPassengerService
     Task<IList<int>> GetAvailableRecoveryYearsAsync();
 
     /// <summary>
+    /// Normalizes recovery number (e.g. prepends 05 for Persian year 1405)
+    /// </summary>
+    /// <param name="recoveryNo">Recovery number</param>
+    /// <param name="travelEndDateUtc">Travel end date (UTC)</param>
+    /// <returns>Normalized recovery number</returns>
+    string NormalizeRecoveryNo(string recoveryNo, DateTime? travelEndDateUtc);
+
+    /// <summary>
     /// Checks whether a recovery number already exists
     /// </summary>
     /// <param name="recoveryNo">Recovery number</param>
     /// <param name="exceptPassengerId">Exclude passenger identifier</param>
     /// <returns>A task that represents the asynchronous operation</returns>
-    Task<bool> IsRecoveryNoExistsAsync(int recoveryNo, int? exceptPassengerId = null);
+    Task<bool> IsRecoveryNoExistsAsync(string recoveryNo, int? exceptPassengerId = null);
 
     /// <summary>
     /// Checks whether a card number already exists

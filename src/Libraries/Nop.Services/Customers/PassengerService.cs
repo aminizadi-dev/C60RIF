@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using Nop.Core;
 using Nop.Core.Domain.Customers;
+using Nop.Core.Domain.Customers;
 using Nop.Core.Events;
 using Nop.Data;
 
@@ -39,7 +40,7 @@ public partial class PassengerService : IPassengerService
     /// <summary>
     /// Gets all passengers
     /// </summary>
-    /// <param name="recoveryNo">Recovery number; 0 to load all passengers</param>
+    /// <param name="recoveryNo">Recovery number; null or empty to load all passengers</param>
     /// <param name="personName">Person name; null to load all passengers</param>
     /// <param name="cityId">City identifier; 0 to load all passengers</param>
     /// <param name="agencyId">Agency identifier; 0 to load all passengers</param>
@@ -51,7 +52,7 @@ public partial class PassengerService : IPassengerService
     /// A task that represents the asynchronous operation
     /// The task result contains the passengers
     /// </returns>
-    public virtual async Task<IPagedList<Passenger>> GetAllPassengersAsync(int recoveryNo = 0,
+    public virtual async Task<IPagedList<Passenger>> GetAllPassengersAsync(string recoveryNo = null,
         string personName = null, int cityId = 0, int agencyId = 0, int clinicId = 0, int antiXId = 0,
         string guideNameAndLegionNo = null, string cardNo = null,
         DateTime? travelStartDateUtc = null, DateTime? travelEndDateUtc = null,
@@ -83,7 +84,7 @@ public partial class PassengerService : IPassengerService
 
         var passengers = await _passengerRepository.GetAllPagedAsync(query =>
         {
-            if (recoveryNo > 0)
+            if (!string.IsNullOrWhiteSpace(recoveryNo))
                 query = query.Where(p => p.RecoveryNo == recoveryNo);
             if (!string.IsNullOrWhiteSpace(personName))
                 query = query.Where(p => p.PersonName.Contains(personName));
@@ -167,6 +168,8 @@ public partial class PassengerService : IPassengerService
     {
         ArgumentNullException.ThrowIfNull(passenger);
 
+        passenger.RecoveryNo = NormalizeRecoveryNo(passenger.RecoveryNo, passenger.TravelEndDateUtc);
+
         await _passengerRepository.InsertAsync(passenger);
     }
 
@@ -178,6 +181,8 @@ public partial class PassengerService : IPassengerService
     public virtual async Task UpdatePassengerAsync(Passenger passenger)
     {
         ArgumentNullException.ThrowIfNull(passenger);
+
+        passenger.RecoveryNo = NormalizeRecoveryNo(passenger.RecoveryNo, passenger.TravelEndDateUtc);
 
         await _passengerRepository.UpdateAsync(passenger);
     }
@@ -218,14 +223,25 @@ public partial class PassengerService : IPassengerService
     }
 
     /// <summary>
+    /// Normalizes recovery number (e.g. prepends 05 for Persian year 1405)
+    /// </summary>
+    /// <param name="recoveryNo">Recovery number</param>
+    /// <param name="travelEndDateUtc">Travel end date (UTC)</param>
+    /// <returns>Normalized recovery number</returns>
+    public virtual string NormalizeRecoveryNo(string recoveryNo, DateTime? travelEndDateUtc)
+    {
+        return PassengerRecoveryNoHelper.Normalize(recoveryNo, travelEndDateUtc);
+    }
+
+    /// <summary>
     /// Checks whether a recovery number already exists
     /// </summary>
     /// <param name="recoveryNo">Recovery number</param>
     /// <param name="exceptPassengerId">Exclude passenger identifier</param>
     /// <returns>A task that represents the asynchronous operation</returns>
-    public virtual async Task<bool> IsRecoveryNoExistsAsync(int recoveryNo, int? exceptPassengerId = null)
+    public virtual async Task<bool> IsRecoveryNoExistsAsync(string recoveryNo, int? exceptPassengerId = null)
     {
-        if (recoveryNo <= 0)
+        if (string.IsNullOrWhiteSpace(recoveryNo))
             return false;
 
         var query = _passengerRepository.Table.Where(p => p.RecoveryNo == recoveryNo);

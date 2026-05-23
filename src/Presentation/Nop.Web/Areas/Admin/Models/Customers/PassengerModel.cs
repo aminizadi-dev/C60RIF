@@ -27,7 +27,7 @@ public partial record PassengerModel : BaseNopEntityModel
     #region Properties
 
     [NopResourceDisplayName("Admin.Passengers.Fields.RecoveryNo")]
-    public int RecoveryNo { get; set; }
+    public string RecoveryNo { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.Fields.PersonName")]
     public string PersonName { get; set; }

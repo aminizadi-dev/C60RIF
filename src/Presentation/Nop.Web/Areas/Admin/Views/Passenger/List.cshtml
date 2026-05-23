@@ -361,11 +361,6 @@
         var defaultClinicText = "@T("Admin.Common.Select")";
         var clinicSelect = $("#@Html.IdFor(model => model.SearchClinicId)");
 
-        var searchRecoveryNoInput = $("#@Html.IdFor(model => model.SearchRecoveryNo)");
-        if (searchRecoveryNoInput.val() === "0") {
-            searchRecoveryNoInput.val("");
-        }
-
         //initialize select2 for searchable dropdowns
         citySelect.select2({ dir: 'rtl', width: '100%' });
         agencySelect.select2({ dir: 'rtl', width: '100%' });
