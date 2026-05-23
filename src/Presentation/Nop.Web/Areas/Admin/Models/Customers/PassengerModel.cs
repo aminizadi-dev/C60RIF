@@ -36,7 +36,7 @@ public partial record PassengerModel : BaseNopEntityModel
     public string GuideNameAndLegionNo { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.Fields.Clinic")]
-    public int ClinicId { get; set; }
+    public int? ClinicId { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.Fields.BirthYear")]
     public int? BirthYear { get; set; }

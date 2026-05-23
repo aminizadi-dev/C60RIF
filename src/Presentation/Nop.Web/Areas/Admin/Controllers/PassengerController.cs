@@ -147,6 +147,8 @@ public partial class PassengerController : BaseAdminController
 
             if (model.AntiX2.GetValueOrDefault() <= 0)
                 model.AntiX2 = null;
+            if (model.ClinicId.GetValueOrDefault() <= 0)
+                model.ClinicId = null;
 
             //fill entity from model
             var passenger = model.ToEntity<Passenger>();
@@ -214,6 +216,8 @@ public partial class PassengerController : BaseAdminController
 
                 if (model.AntiX2.GetValueOrDefault() <= 0)
                     model.AntiX2 = null;
+                if (model.ClinicId.GetValueOrDefault() <= 0)
+                    model.ClinicId = null;
 
                 //fill entity from model
                 passenger = model.ToEntity(passenger);

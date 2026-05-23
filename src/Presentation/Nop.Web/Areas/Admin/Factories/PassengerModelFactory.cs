@@ -321,9 +321,9 @@ public partial class PassengerModelFactory : IPassengerModelFactory
                         model.CityId = agency.CityId;
                 }
 
-                if (model.CityId == 0 && model.ClinicId > 0)
+                if (model.CityId == 0 && model.ClinicId.GetValueOrDefault() > 0)
                 {
-                    var clinic = await _clinicService.GetClinicByIdAsync(model.ClinicId);
+                    var clinic = await _clinicService.GetClinicByIdAsync(model.ClinicId.Value);
                     if (clinic != null)
                         model.CityId = clinic.CityId;
                 }
@@ -339,9 +339,9 @@ public partial class PassengerModelFactory : IPassengerModelFactory
                 model.CityId = agency.CityId;
         }
 
-        if (model.CityId == 0 && model.ClinicId > 0)
+        if (model.CityId == 0 && model.ClinicId.GetValueOrDefault() > 0)
         {
-            var clinic = await _clinicService.GetClinicByIdAsync(model.ClinicId);
+            var clinic = await _clinicService.GetClinicByIdAsync(model.ClinicId.Value);
             if (clinic != null)
                 model.CityId = clinic.CityId;
         }

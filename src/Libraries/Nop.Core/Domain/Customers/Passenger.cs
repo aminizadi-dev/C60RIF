@@ -15,7 +15,7 @@ public partial class Passenger : BaseEntity
 
     public string GuideNameAndLegionNo { get; set; }
 
-    public int ClinicId { get; set; }
+    public int? ClinicId { get; set; }
 
     public int? BirthYear { get; set; }
 

@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Nop.Core.Domain.Customers;
 using Nop.Services.Localization;
 using Nop.Web.Areas.Admin.Models.Customers;

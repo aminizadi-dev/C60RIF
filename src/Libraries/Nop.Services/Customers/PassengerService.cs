@@ -94,7 +94,7 @@ public partial class PassengerService : IPassengerService
             if (agencyId > 0)
                 query = query.Where(p => p.AgencyId == agencyId);
             if (clinicId > 0)
-                query = query.Where(p => p.ClinicId == clinicId);
+                query = query.Where(p => p.ClinicId.HasValue && p.ClinicId.Value == clinicId);
             if (antiXId > 0)
                 query = query.Where(p => p.AntiX1 == antiXId || p.AntiX2 == antiXId);
             if (travelStartDateUtc.HasValue)

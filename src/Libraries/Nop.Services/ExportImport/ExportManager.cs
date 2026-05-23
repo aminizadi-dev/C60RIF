@@ -264,7 +264,7 @@ public partial class ExportManager : IExportManager
     {
         //pre-load related entities for name resolution
         var agencyIds = passengers.Select(p => p.AgencyId).Where(id => id > 0).Distinct().ToArray();
-        var clinicIds = passengers.Select(p => p.ClinicId).Where(id => id > 0).Distinct().ToArray();
+        var clinicIds = passengers.Select(p => p.ClinicId).Where(id => id.HasValue && id.Value > 0).Select(id => id.Value).Distinct().ToArray();
         var antiXIds = passengers
             .SelectMany(p => new int?[] { p.AntiX1, p.AntiX2 })
             .Where(id => id.HasValue && id.Value > 0)
@@ -320,7 +320,7 @@ public partial class ExportManager : IExportManager
             new PropertyByName<Passenger>(headerAgency, (p, _) =>
                 agencyNames.TryGetValue(p.AgencyId, out var name) ? name : string.Empty),
             new PropertyByName<Passenger>(headerClinic, (p, _) =>
-                clinicNames.TryGetValue(p.ClinicId, out var name) ? name : string.Empty),
+                p.ClinicId.HasValue && clinicNames.TryGetValue(p.ClinicId.Value, out var name) ? name : string.Empty),
             new PropertyByName<Passenger>(headerAntiX1, (p, _) =>
                 antiXNames.TryGetValue(p.AntiX1, out var name) ? name : string.Empty),
             new PropertyByName<Passenger>(headerAntiX2, (p, _) =>
