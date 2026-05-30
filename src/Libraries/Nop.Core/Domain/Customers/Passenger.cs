@@ -42,6 +42,11 @@ public partial class Passenger : BaseEntity
     public int AgencyId { get; set; }
 
     public DateTime CreatedOnUtc { get; set; }
+
+    /// <summary>
+    /// Gets or sets the customer identifier who created this record
+    /// </summary>
+    public int? CreatedByCustomerId { get; set; }
 }
 
 public enum EducationLevel

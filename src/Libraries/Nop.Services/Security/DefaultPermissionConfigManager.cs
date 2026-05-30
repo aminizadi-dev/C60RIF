@@ -13,7 +13,7 @@ public partial class DefaultPermissionConfigManager : IPermissionConfigManager
         #region Security
         
         new ("Security. Enable Multi-factor authentication", StandardPermission.Security.ENABLE_MULTI_FACTOR_AUTHENTICATION, nameof(StandardPermission.Security), NopCustomerDefaults.AdministratorsRoleName, NopCustomerDefaults.RegisteredRoleName),
-        new ("Access admin area", StandardPermission.Security.ACCESS_ADMIN_PANEL, nameof(StandardPermission.Security), NopCustomerDefaults.AdministratorsRoleName),
+        new ("Access admin area", StandardPermission.Security.ACCESS_ADMIN_PANEL, nameof(StandardPermission.Security), NopCustomerDefaults.AdministratorsRoleName, NopCustomerDefaults.ForumModeratorsRoleName),
 
         #endregion
 
@@ -35,8 +35,14 @@ public partial class DefaultPermissionConfigManager : IPermissionConfigManager
 
         #region Passengers
 
-        new ("Admin area. Passengers. View", StandardPermission.Passengers.PASSENGERS_VIEW, nameof(StandardPermission.Passengers), NopCustomerDefaults.AdministratorsRoleName),
-        new ("Admin area. Passengers. Create, edit, delete", StandardPermission.Passengers.PASSENGERS_CREATE_EDIT_DELETE, nameof(StandardPermission.Passengers), NopCustomerDefaults.AdministratorsRoleName),
+        new ("Admin area. Passengers. View", StandardPermission.Passengers.PASSENGERS_VIEW, nameof(StandardPermission.Passengers), NopCustomerDefaults.AdministratorsRoleName, NopCustomerDefaults.ForumModeratorsRoleName),
+        new ("Admin area. Passengers. Create, edit, delete", StandardPermission.Passengers.PASSENGERS_CREATE_EDIT_DELETE, nameof(StandardPermission.Passengers), NopCustomerDefaults.AdministratorsRoleName, NopCustomerDefaults.ForumModeratorsRoleName),
+
+        #endregion
+
+        #region Reports
+
+        new ("Admin area. Reports. Passenger performance", StandardPermission.Reports.PASSENGER_PERFORMANCE_VIEW, nameof(StandardPermission.Reports), NopCustomerDefaults.AdministratorsRoleName, NopCustomerDefaults.ForumModeratorsRoleName),
 
         #endregion
 

@@ -1,0 +1,165 @@
+@model PassengerPerformanceReportIndexModel
+
+@{
+    ViewBag.PageTitle = T("Admin.Reports.PassengerPerformance").Text;
+    NopHtml.SetActiveMenuItemSystemName("PassengerPerformanceReport");
+}
+
+<div class="content-header clearfix">
+    <h1 class="float-left">
+        @T("Admin.Reports.PassengerPerformance")
+    </h1>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="cards-group">
+                <div class="card card-default">
+                    <div class="card-header">
+                        @T("Admin.Reports.PassengerPerformance.Summary")
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-2 col-md-4 col-sm-6">
+                                <div class="small-box bg-info">
+                                    <div class="inner">
+                                        <h3>@Model.Summary.CountToday</h3>
+                                        <p>@T("Admin.Reports.PassengerPerformance.Fields.CountToday")</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-calendar-day"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-6">
+                                <div class="small-box bg-success">
+                                    <div class="inner">
+                                        <h3>@Model.Summary.CountThisWeek</h3>
+                                        <p>@T("Admin.Reports.PassengerPerformance.Fields.CountThisWeek")</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-calendar-week"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-6">
+                                <div class="small-box bg-warning">
+                                    <div class="inner">
+                                        <h3>@Model.Summary.CountThisMonth</h3>
+                                        <p>@T("Admin.Reports.PassengerPerformance.Fields.CountThisMonth")</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-6">
+                                <div class="small-box bg-danger">
+                                    <div class="inner">
+                                        <h3>@Model.Summary.CountThisYear</h3>
+                                        <p>@string.Format(T("Admin.Reports.PassengerPerformance.Fields.CountThisYear").Text, Model.Summary.CurrentPersianYear)</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-calendar"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-sm-6">
+                                <div class="small-box bg-secondary">
+                                    <div class="inner">
+                                        <h3>@Model.Summary.CountAllTime</h3>
+                                        <p>@T("Admin.Reports.PassengerPerformance.Fields.CountAllTime")</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fas fa-infinity"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (Model.Summary.CountUnattributed > 0)
+                            {
+                                <div class="col-lg-2 col-md-4 col-sm-6">
+                                    <div class="small-box bg-dark">
+                                        <div class="inner">
+                                            <h3>@Model.Summary.CountUnattributed</h3>
+                                            <p>@T("Admin.Reports.PassengerPerformance.Fields.CountUnattributed")</p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fas fa-question-circle"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-default">
+                    <div class="card-header">
+                        @T("Admin.Reports.PassengerPerformance.ByUser")
+                    </div>
+                    <div class="card-body">
+                        @await Html.PartialAsync("Table", new DataTablesModel
+                        {
+                            Name = "passenger-performance-grid",
+                            UrlRead = new DataUrl("ReportList", "PassengerPerformanceReport", null),
+                            Length = Model.SearchModel.PageSize,
+                            LengthMenu = Model.SearchModel.AvailablePageSizes,
+                            ColumnCollection = new List<ColumnProperty>
+                            {
+                                new ColumnProperty(nameof(PassengerPerformanceReportModel.UserDisplay))
+                                {
+                                    Title = T("Admin.Reports.PassengerPerformance.Fields.User").Text,
+                                    Render = new RenderCustom("renderUserDisplay")
+                                },
+                                new ColumnProperty(nameof(PassengerPerformanceReportModel.Email))
+                                {
+                                    Title = T("Admin.Reports.PassengerPerformance.Fields.Email").Text
+                                },
+                                new ColumnProperty(nameof(PassengerPerformanceReportModel.CountToday))
+                                {
+                                    Title = T("Admin.Reports.PassengerPerformance.Fields.CountToday").Text,
+                                    ClassName = NopColumnClassDefaults.CenterAll,
+                                    Width = "100"
+                                },
+                                new ColumnProperty(nameof(PassengerPerformanceReportModel.CountThisWeek))
+                                {
+                                    Title = T("Admin.Reports.PassengerPerformance.Fields.CountThisWeek").Text,
+                                    ClassName = NopColumnClassDefaults.CenterAll,
+                                    Width = "100"
+                                },
+                                new ColumnProperty(nameof(PassengerPerformanceReportModel.CountThisMonth))
+                                {
+                                    Title = T("Admin.Reports.PassengerPerformance.Fields.CountThisMonth").Text,
+                                    ClassName = NopColumnClassDefaults.CenterAll,
+                                    Width = "100"
+                                },
+                                new ColumnProperty(nameof(PassengerPerformanceReportModel.CountThisYear))
+                                {
+                                    Title = string.Format(T("Admin.Reports.PassengerPerformance.Fields.CountThisYear").Text, Model.Summary.CurrentPersianYear),
+                                    ClassName = NopColumnClassDefaults.CenterAll,
+                                    Width = "100"
+                                },
+                                new ColumnProperty(nameof(PassengerPerformanceReportModel.CountAllTime))
+                                {
+                                    Title = T("Admin.Reports.PassengerPerformance.Fields.CountAllTime").Text,
+                                    ClassName = NopColumnClassDefaults.CenterAll,
+                                    Width = "100"
+                                }
+                            }
+                        })
+
+                        <script>
+                            function renderUserDisplay(data, type, row, meta) {
+                                if (row.IsSystemTotal) {
+                                    return '<strong>' + escapeHtml(data) + '</strong>';
+                                }
+                                return escapeHtml(data);
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -35,7 +35,8 @@ public partial class PassengerBuilder : NopEntityBuilder<Passenger>
             .WithColumn(nameof(Passenger.TravelEndDateUtc)).AsDateTime2().Nullable()
             .WithColumn(nameof(Passenger.PictureId)).AsInt32().NotNullable()
             .WithColumn(nameof(Passenger.AgencyId)).AsInt32().NotNullable().ForeignKey<Agency>()
-            .WithColumn(nameof(Passenger.CreatedOnUtc)).AsDateTime2().NotNullable();
+            .WithColumn(nameof(Passenger.CreatedOnUtc)).AsDateTime2().NotNullable()
+            .WithColumn(nameof(Passenger.CreatedByCustomerId)).AsInt32().Nullable().ForeignKey<Customer>();
     }
 
     #endregion

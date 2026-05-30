@@ -432,5 +432,51 @@ public partial class PermissionService : IPermissionService
         }
     }
 
+    /// <inheritdoc />
+    public virtual async Task EnsureCustomerRolePermissionMappingsAsync(string customerRoleSystemName, params string[] permissionSystemNames)
+    {
+        if (string.IsNullOrEmpty(customerRoleSystemName) || permissionSystemNames == null || permissionSystemNames.Length == 0)
+            return;
+
+        var customerRole = await _customerService.GetCustomerRoleBySystemNameAsync(customerRoleSystemName);
+        if (customerRole == null)
+            return;
+
+        await EnsureCustomerRolePermissionMappingsByRoleIdAsync(customerRole.Id, permissionSystemNames);
+    }
+
+    /// <inheritdoc />
+    public virtual async Task EnsureCustomerRolePermissionMappingsByRoleIdAsync(int customerRoleId, params string[] permissionSystemNames)
+    {
+        if (customerRoleId <= 0 || permissionSystemNames == null || permissionSystemNames.Length == 0)
+            return;
+
+        foreach (var permissionSystemName in permissionSystemNames.Where(p => !string.IsNullOrWhiteSpace(p)).Distinct())
+        {
+            if (await AuthorizeAsync(permissionSystemName, customerRoleId))
+                continue;
+
+            await InsertPermissionMappingAsync(customerRoleId, permissionSystemName);
+        }
+    }
+
+    /// <inheritdoc />
+    public virtual async Task EnsurePermissionRecordsAsync(params string[] permissionSystemNames)
+    {
+        if (permissionSystemNames == null || permissionSystemNames.Length == 0)
+            return;
+
+        var permissionRecords = (await _permissionRecordRepository.GetAllAsync(query => query, getCacheKey: _ => null)).Distinct().ToList();
+        var exists = permissionRecords.Select(p => p.SystemName).ToHashSet(StringComparer.InvariantCultureIgnoreCase);
+
+        var configs = _typeFinder.FindClassesOfType<IPermissionConfigManager>()
+            .Select(configType => (IPermissionConfigManager)Activator.CreateInstance(configType))
+            .SelectMany(config => config?.AllConfigs ?? new List<PermissionConfig>())
+            .Where(c => permissionSystemNames.Contains(c.SystemName, StringComparer.InvariantCultureIgnoreCase) && !exists.Contains(c.SystemName))
+            .ToList();
+
+        await InstallPermissionsAsync(configs);
+    }
+
     #endregion
 }

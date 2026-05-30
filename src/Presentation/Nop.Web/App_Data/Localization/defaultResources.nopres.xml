@@ -13289,6 +13289,51 @@
   <LocaleResource Name="Admin.Reports.Passengers.EducationDistribution">
     <Value>Education distribution</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Reports.PassengerPerformance">
+    <Value>Performance report</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.PassengerPerformance.Summary">
+    <Value>System summary</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.PassengerPerformance.ByUser">
+    <Value>By user</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.PassengerPerformance.SystemTotal">
+    <Value>System total</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.PassengerPerformance.Fields.User">
+    <Value>User</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.PassengerPerformance.Fields.Email">
+    <Value>Email</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.PassengerPerformance.Fields.CountToday">
+    <Value>Today</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.PassengerPerformance.Fields.CountThisWeek">
+    <Value>This week</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.PassengerPerformance.Fields.CountThisMonth">
+    <Value>This month</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.PassengerPerformance.Fields.CountThisYear">
+    <Value>Year {0}</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.PassengerPerformance.Fields.CountAllTime">
+    <Value>All time</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.PassengerPerformance.Fields.CountUnattributed">
+    <Value>Without creator</Value>
+  </LocaleResource>
+  <LocaleResource Name="ActivityLog.AddNewPassenger">
+    <Value>New passenger added. ID = {0}</Value>
+  </LocaleResource>
+  <LocaleResource Name="ActivityLog.EditPassenger">
+    <Value>Passenger edited. ID = {0}</Value>
+  </LocaleResource>
+  <LocaleResource Name="ActivityLog.DeletePassenger">
+    <Value>Passenger deleted. ID = {0}</Value>
+  </LocaleResource>
   <LocaleResource Name="Admin.Documentation.Reference.Acl">
     <Value><![CDATA[Learn more about <a target="_blank" href="{0}">access control list</a>]]></Value>
   </LocaleResource>

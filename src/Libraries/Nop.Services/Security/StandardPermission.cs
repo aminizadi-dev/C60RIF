@@ -24,6 +24,11 @@ public partial class StandardPermission
         public const string PASSENGERS_CREATE_EDIT_DELETE = $"{nameof(Passengers)}.PassengersCreateEditDelete";
     }
 
+    public partial class Reports
+    {
+        public const string PASSENGER_PERFORMANCE_VIEW = $"{nameof(Reports)}.PassengerPerformanceView";
+    }
+
     //COMMERCE PERMISSIONS REMOVED - Phase B
     //Removed: Orders, Reports, Catalog, Promotions classes
 

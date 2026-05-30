@@ -75,6 +75,7 @@ public partial class AdminMenu : IAdminMenu
                 {
                     SystemName = "Dashboard",
                     Title = await _localizationService.GetResourceAsync("Admin.Dashboard"),
+                    PermissionNames = new List<string> { StandardPermission.Security.ACCESS_ADMIN_PANEL },
                     Url = GetMenuItemUrl("Home", "Index"),
                     IconClass = "fas fa-desktop"
                 },
@@ -85,6 +86,18 @@ public partial class AdminMenu : IAdminMenu
                     PermissionNames = new List<string> { StandardPermission.Passengers.PASSENGERS_VIEW },
                     Url = GetMenuItemUrl("Passenger", "List"),
                     IconClass = "far fa-id-card"
+                },
+                new()
+                {
+                    SystemName = "PassengerPerformanceReport",
+                    Title = await _localizationService.GetResourceAsync("Admin.Reports.PassengerPerformance"),
+                    PermissionNames = new List<string>
+                    {
+                        StandardPermission.Passengers.PASSENGERS_VIEW,
+                        StandardPermission.Reports.PASSENGER_PERFORMANCE_VIEW
+                    },
+                    Url = GetMenuItemUrl("PassengerPerformanceReport", "Index"),
+                    IconClass = "fas fa-chart-bar"
                 },
                 //customers
                 new()
@@ -507,7 +520,7 @@ public partial class AdminMenu : IAdminMenu
                 var permissions = (menuItem.PermissionNames.Any() ? menuItem.PermissionNames : (rootItem?.PermissionNames ?? new List<string>())).Distinct().Where(p => !string.IsNullOrEmpty(p)).ToList();
 
                 if (permissions.Any())
-                    menuItem.Visible = menuItem.ChildNodes.Any() ? await permissions.AnyAwaitAsync(authorizePermission) : await permissions.AllAwaitAsync(authorizePermission);
+                    menuItem.Visible = await permissions.AnyAwaitAsync(authorizePermission);
             }
 
             foreach (var childNode in menuItem.ChildNodes)

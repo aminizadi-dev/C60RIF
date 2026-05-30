@@ -146,4 +146,27 @@ public partial interface IPermissionService
     /// <param name="permissions">Permissions</param>
     /// <returns>A task that represents the asynchronous operation</returns>
     Task InsertPermissionMappingAsync(int customerRoleId, params string[] permissions);
+
+    /// <summary>
+    /// Ensures a customer role has the specified permission mappings (skips existing mappings)
+    /// </summary>
+    /// <param name="customerRoleSystemName">Customer role system name</param>
+    /// <param name="permissionSystemNames">Permission system names</param>
+    /// <returns>A task that represents the asynchronous operation</returns>
+    Task EnsureCustomerRolePermissionMappingsAsync(string customerRoleSystemName, params string[] permissionSystemNames);
+
+    /// <summary>
+    /// Ensures a customer role has the specified permission mappings by role identifier (skips existing mappings)
+    /// </summary>
+    /// <param name="customerRoleId">Customer role identifier</param>
+    /// <param name="permissionSystemNames">Permission system names</param>
+    /// <returns>A task that represents the asynchronous operation</returns>
+    Task EnsureCustomerRolePermissionMappingsByRoleIdAsync(int customerRoleId, params string[] permissionSystemNames);
+
+    /// <summary>
+    /// Inserts missing permission records from the default permission configuration
+    /// </summary>
+    /// <param name="permissionSystemNames">Permission system names</param>
+    /// <returns>A task that represents the asynchronous operation</returns>
+    Task EnsurePermissionRecordsAsync(params string[] permissionSystemNames);
 }

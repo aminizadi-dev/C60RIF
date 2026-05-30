@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Nop.Core.Domain.Customers;
 using Nop.Core.Events;
 using Nop.Data;
 using Nop.Data.Migrations;
@@ -69,6 +70,20 @@ public partial class AppStartedConsumer : IConsumer<AppStartedEvent>
 
         //insert new ACL permission if exists
         await _permissionService.InsertPermissionsAsync();
+
+        await _permissionService.EnsurePermissionRecordsAsync(StandardPermission.Reports.PASSENGER_PERFORMANCE_VIEW);
+
+        await _permissionService.EnsureCustomerRolePermissionMappingsByRoleIdAsync(
+            NopCustomerDefaults.PassengerPerformanceReportRoleId,
+            StandardPermission.Security.ACCESS_ADMIN_PANEL,
+            StandardPermission.Reports.PASSENGER_PERFORMANCE_VIEW,
+            StandardPermission.Passengers.PASSENGERS_VIEW);
+
+        await _permissionService.EnsureCustomerRolePermissionMappingsAsync(
+            NopCustomerDefaults.ForumModeratorsRoleName,
+            StandardPermission.Security.ACCESS_ADMIN_PANEL,
+            StandardPermission.Reports.PASSENGER_PERFORMANCE_VIEW,
+            StandardPermission.Passengers.PASSENGERS_VIEW);
 
         //update nopCommerce core and db
         var assembly = Assembly.GetAssembly(typeof(ApplicationBuilderExtensions));

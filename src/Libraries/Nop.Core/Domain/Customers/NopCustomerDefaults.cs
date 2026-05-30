@@ -18,6 +18,11 @@ public static partial class NopCustomerDefaults
     public static string ForumModeratorsRoleName => "ForumModerators";
 
     /// <summary>
+    /// Gets the customer role identifier for users listed in the passenger performance report
+    /// </summary>
+    public static int PassengerPerformanceReportRoleId => 2;
+
+    /// <summary>
     /// Gets a system name of 'registered' customer role
     /// </summary>
     public static string RegisteredRoleName => "Registered";

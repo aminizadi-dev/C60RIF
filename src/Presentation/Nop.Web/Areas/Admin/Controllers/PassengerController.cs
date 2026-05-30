@@ -31,6 +31,7 @@ public partial class PassengerController : BaseAdminController
     protected readonly IPassengerModelFactory _passengerModelFactory;
     protected readonly IPassengerService _passengerService;
     protected readonly IPermissionService _permissionService;
+    protected readonly IWorkContext _workContext;
 
     private static readonly char[] _separator = [','];
 
@@ -47,7 +48,8 @@ public partial class PassengerController : BaseAdminController
         INotificationService notificationService,
         IPassengerModelFactory passengerModelFactory,
         IPassengerService passengerService,
-        IPermissionService permissionService)
+        IPermissionService permissionService,
+        IWorkContext workContext)
     {
         _agencyService = agencyService;
         _clinicService = clinicService;
@@ -58,6 +60,7 @@ public partial class PassengerController : BaseAdminController
         _passengerModelFactory = passengerModelFactory;
         _passengerService = passengerService;
         _permissionService = permissionService;
+        _workContext = workContext;
     }
 
     #endregion
@@ -160,6 +163,12 @@ public partial class PassengerController : BaseAdminController
             //fill entity from model
             var passenger = model.ToEntity<Passenger>();
             passenger.CreatedOnUtc = DateTime.UtcNow;
+            var currentCustomer = await _workContext.GetCurrentCustomerAsync();
+            var isAdminUser = currentCustomer != null &&
+                await _permissionService.AuthorizeAsync(StandardPermission.Security.ACCESS_ADMIN_PANEL, currentCustomer);
+
+            if (isAdminUser)
+                passenger.CreatedByCustomerId = currentCustomer.Id;
 
             await _passengerService.InsertPassengerAsync(passenger);
 
@@ -170,9 +179,12 @@ public partial class PassengerController : BaseAdminController
                     await _localizationService.GetResourceAsync("Admin.Passengers.Fields.CardNo.DuplicateWarning"));
             }
 
-            //activity log
-            await _customerActivityService.InsertActivityAsync("AddNewPassenger",
-                string.Format(await _localizationService.GetResourceAsync("ActivityLog.AddNewPassenger"), passenger.Id), passenger);
+            //activity log for all admin panel users
+            if (isAdminUser)
+            {
+                await _customerActivityService.InsertActivityAsync(currentCustomer, "AddNewPassenger",
+                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.AddNewPassenger"), passenger.Id), passenger);
+            }
             _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Passengers.Passengers.Added"));
 
             if (!continueEditing)
