@@ -759,9 +759,13 @@ public partial class SettingModelFactory : ISettingModelFactory
         //load settings for a chosen store scope
         var storeId = await _storeContext.GetActiveStoreScopeConfigurationAsync();
         var mediaSettings = await _settingService.LoadSettingAsync<MediaSettings>(storeId);
+        var passengerPictureSettings = await _settingService.LoadSettingAsync<PassengerPictureSettings>(storeId);
 
         //fill in model values from the entity
         model ??= mediaSettings.ToSettingsModel<MediaSettingsModel>();
+        model.PassengerTargetUploadSizeKb = passengerPictureSettings.TargetUploadSizeKb > 0
+            ? passengerPictureSettings.TargetUploadSizeKb
+            : 300;
 
         //fill in additional values (not existing in the entity)
         model.ActiveStoreScopeConfiguration = storeId;
@@ -789,6 +793,7 @@ public partial class SettingModelFactory : ISettingModelFactory
         model.DefaultPictureZoomEnabled_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.DefaultPictureZoomEnabled, storeId);
         model.AllowSvgUploads_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.AllowSvgUploads, storeId);
         model.ProductDefaultImageId_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.ProductDefaultImageId, storeId);
+        model.PassengerTargetUploadSizeKb_OverrideForStore = await _settingService.SettingExistsAsync(passengerPictureSettings, x => x.TargetUploadSizeKb, storeId);
 
         return model;
     }

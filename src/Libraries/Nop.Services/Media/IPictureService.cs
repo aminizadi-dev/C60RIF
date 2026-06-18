@@ -231,6 +231,13 @@ public partial interface IPictureService
     Task<PictureBinary> GetPictureBinaryByPictureIdAsync(int pictureId);
 
     /// <summary>
+    /// Ensures picture payload is not stored in database when file-system storage is enabled
+    /// </summary>
+    /// <param name="pictureId">Picture identifier</param>
+    /// <returns>A task that represents the asynchronous operation</returns>
+    Task EnsurePictureBinaryNotStoredInDatabaseAsync(int pictureId);
+
+    /// <summary>
     /// Convert image from SVG format to PNG
     /// </summary>
     /// <param name="stream">Stream for SVG file</param>

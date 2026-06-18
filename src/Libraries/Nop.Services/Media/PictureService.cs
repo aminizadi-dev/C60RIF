@@ -176,6 +176,9 @@ public partial class PictureService : IPictureService
     {
         ArgumentNullException.ThrowIfNull(picture);
 
+        if (!await IsStoreInDbAsync())
+            binaryData = null;
+
         var pictureBinary = await GetPictureBinaryByPictureIdAsync(picture.Id);
 
         var isNew = pictureBinary == null;
@@ -521,15 +524,24 @@ public partial class PictureService : IPictureService
             if ((pictureBinary?.Length ?? 0) == 0)
                 return showDefaultPicture ? (await GetDefaultPictureUrlAsync(targetSize, defaultPictureType, storeLocation), picture) : (string.Empty, picture);
 
-            //we do not validate picture binary here to ensure that no exception ("Parameter is not valid") will be thrown
-            picture = await UpdatePictureAsync(picture.Id,
-                pictureBinary,
-                picture.MimeType,
-                picture.SeoFilename,
-                picture.AltAttribute,
-                picture.TitleAttribute,
-                false,
-                false);
+            if (await IsStoreInDbAsync())
+            {
+                //we do not validate picture binary here to ensure that no exception ("Parameter is not valid") will be thrown
+                picture = await UpdatePictureAsync(picture.Id,
+                    pictureBinary,
+                    picture.MimeType,
+                    picture.SeoFilename,
+                    picture.AltAttribute,
+                    picture.TitleAttribute,
+                    false,
+                    false);
+            }
+            else
+            {
+                picture.IsNew = false;
+                await _pictureRepository.UpdateAsync(picture);
+                await UpdatePictureBinaryAsync(picture, null);
+            }
         }
 
         var seoFileName = picture.SeoFilename; // = GetPictureSeName(picture.SeoFilename); //just for sure
@@ -752,10 +764,12 @@ public partial class PictureService : IPictureService
             TitleAttribute = titleAttribute,
             IsNew = isNew
         };
-        await _pictureRepository.InsertAsync(picture);
-        await UpdatePictureBinaryAsync(picture, await IsStoreInDbAsync() ? pictureBinary : Array.Empty<byte>());
+        var storeInDb = await IsStoreInDbAsync();
 
-        if (!await IsStoreInDbAsync())
+        await _pictureRepository.InsertAsync(picture);
+        await UpdatePictureBinaryAsync(picture, storeInDb ? pictureBinary : null);
+
+        if (!storeInDb)
             await SavePictureInFileAsync(picture.Id, pictureBinary, mimeType);
 
         return picture;
@@ -870,10 +884,12 @@ public partial class PictureService : IPictureService
         picture.TitleAttribute = titleAttribute;
         picture.IsNew = isNew;
 
-        await _pictureRepository.UpdateAsync(picture);
-        await UpdatePictureBinaryAsync(picture, await IsStoreInDbAsync() ? pictureBinary : Array.Empty<byte>());
+        var storeInDb = await IsStoreInDbAsync();
 
-        if (!await IsStoreInDbAsync())
+        await _pictureRepository.UpdateAsync(picture);
+        await UpdatePictureBinaryAsync(picture, storeInDb ? pictureBinary : null);
+
+        if (!storeInDb)
             await SavePictureInFileAsync(picture.Id, pictureBinary, mimeType);
 
         return picture;
@@ -899,13 +915,33 @@ public partial class PictureService : IPictureService
 
         picture.SeoFilename = seoFilename;
 
-        await _pictureRepository.UpdateAsync(picture);
-        await UpdatePictureBinaryAsync(picture, await IsStoreInDbAsync() ? (await GetPictureBinaryByPictureIdAsync(picture.Id)).BinaryData : Array.Empty<byte>());
+        var storeInDb = await IsStoreInDbAsync();
 
-        if (!await IsStoreInDbAsync())
-            await SavePictureInFileAsync(picture.Id, (await GetPictureBinaryByPictureIdAsync(picture.Id)).BinaryData, picture.MimeType);
+        await _pictureRepository.UpdateAsync(picture);
+
+        if (storeInDb)
+            await UpdatePictureBinaryAsync(picture, (await GetPictureBinaryByPictureIdAsync(picture.Id)).BinaryData);
+        else
+            await UpdatePictureBinaryAsync(picture, null);
 
         return picture;
+    }
+
+    /// <summary>
+    /// Ensures picture payload is not stored in database when file-system storage is enabled
+    /// </summary>
+    /// <param name="pictureId">Picture identifier</param>
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task EnsurePictureBinaryNotStoredInDatabaseAsync(int pictureId)
+    {
+        if (await IsStoreInDbAsync())
+            return;
+
+        var picture = await GetPictureByIdAsync(pictureId);
+        if (picture == null)
+            return;
+
+        await UpdatePictureBinaryAsync(picture, null);
     }
 
     /// <summary>
@@ -1053,7 +1089,7 @@ public partial class PictureService : IPictureService
                         //now on file system
                         await SavePictureInFileAsync(picture.Id, pictureBinary, picture.MimeType);
                     //update appropriate properties
-                    await UpdatePictureBinaryAsync(picture, isStoreInDb ? pictureBinary : Array.Empty<byte>());
+                    await UpdatePictureBinaryAsync(picture, isStoreInDb ? pictureBinary : null);
                     picture.IsNew = true;
                 }
 

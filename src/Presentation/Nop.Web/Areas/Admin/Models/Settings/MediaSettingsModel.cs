@@ -69,6 +69,11 @@ public partial record MediaSettingsModel : BaseNopModel, ISettingsModel
     public int MaximumImageSize { get; set; }
     public bool MaximumImageSize_OverrideForStore { get; set; }
 
+    [NopResourceDisplayName("Admin.Configuration.Settings.Media.PassengerTargetUploadSizeKb")]
+    [Range(1, int.MaxValue)]
+    public int PassengerTargetUploadSizeKb { get; set; }
+    public bool PassengerTargetUploadSizeKb_OverrideForStore { get; set; }
+
     [NopResourceDisplayName("Admin.Configuration.Settings.Media.MultipleThumbDirectories")]
     public bool MultipleThumbDirectories { get; set; }
     public bool MultipleThumbDirectories_OverrideForStore { get; set; }

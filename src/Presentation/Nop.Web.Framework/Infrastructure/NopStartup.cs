@@ -205,6 +205,7 @@ public partial class NopStartup : INopStartup
 
         //picture service
         services.AddScoped<IPictureService, PictureService>();
+        services.AddScoped<IPassengerPictureCompressionService, PassengerPictureCompressionService>();
 
         //roxy file manager
         services.AddScoped<IRoxyFilemanService, RoxyFilemanService>();

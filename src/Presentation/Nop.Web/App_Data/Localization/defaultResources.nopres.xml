@@ -8461,6 +8461,12 @@
   <LocaleResource Name="Admin.Configuration.Settings.Media.MaximumImageSize.Hint">
     <Value>The maximum image size (longest side) allowed for image uploads.</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Settings.Media.PassengerTargetUploadSizeKb">
+    <Value>Passenger upload target size (KB)</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Configuration.Settings.Media.PassengerTargetUploadSizeKb.Hint">
+    <Value>If a Passenger form image exceeds this size, it will be compressed after upload to approach this target.</Value>
+  </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Settings.Media.MiniCartThumbPictureSize">
     <Value>Mini-shopping cart thumbnail image size</Value>
   </LocaleResource>

@@ -204,7 +204,9 @@ public partial class SettingController : BaseAdminController
             //load settings for a chosen store scope
             var storeScope = await _storeContext.GetActiveStoreScopeConfigurationAsync();
             var mediaSettings = await _settingService.LoadSettingAsync<MediaSettings>(storeScope);
+            var passengerPictureSettings = await _settingService.LoadSettingAsync<PassengerPictureSettings>(storeScope);
             mediaSettings = model.ToSettings(mediaSettings);
+            passengerPictureSettings.TargetUploadSizeKb = model.PassengerTargetUploadSizeKb;
 
             //we do not clear cache after each setting update.
             //this behavior can increase performance because cached settings will not be cleared 
@@ -227,6 +229,7 @@ public partial class SettingController : BaseAdminController
             await _settingService.SaveSettingOverridablePerStoreAsync(mediaSettings, x => x.DefaultPictureZoomEnabled, model.DefaultPictureZoomEnabled_OverrideForStore, storeScope, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(mediaSettings, x => x.AllowSvgUploads, model.AllowSvgUploads_OverrideForStore, storeScope, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(mediaSettings, x => x.ProductDefaultImageId, model.ProductDefaultImageId_OverrideForStore, storeScope, false);
+            await _settingService.SaveSettingOverridablePerStoreAsync(passengerPictureSettings, x => x.TargetUploadSizeKb, model.PassengerTargetUploadSizeKb_OverrideForStore, storeScope, false);
 
             //now clear settings cache
             await _settingService.ClearCacheAsync();

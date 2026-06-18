@@ -67,6 +67,16 @@
     </div>
     <div class="form-group row advanced-setting">
         <div class="col-md-3">
+            <nop-override-store-checkbox asp-for="PassengerTargetUploadSizeKb_OverrideForStore" asp-input="PassengerTargetUploadSizeKb" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <nop-label asp-for="PassengerTargetUploadSizeKb" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="PassengerTargetUploadSizeKb" />
+            <span asp-validation-for="PassengerTargetUploadSizeKb"></span>
+        </div>
+    </div>
+    <div class="form-group row advanced-setting">
+        <div class="col-md-3">
             <nop-override-store-checkbox asp-for="MultipleThumbDirectories_OverrideForStore" asp-input="MultipleThumbDirectories" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
             <nop-label asp-for="MultipleThumbDirectories" />
         </div>
