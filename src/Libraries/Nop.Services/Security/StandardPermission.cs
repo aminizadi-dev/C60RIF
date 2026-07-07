@@ -24,6 +24,12 @@ public partial class StandardPermission
         public const string PASSENGERS_CREATE_EDIT_DELETE = $"{nameof(Passengers)}.PassengersCreateEditDelete";
     }
 
+    public partial class DisciplinaryForms
+    {
+        public const string DISCIPLINARY_FORMS_VIEW = $"{nameof(DisciplinaryForms)}.DisciplinaryFormsView";
+        public const string DISCIPLINARY_FORMS_CREATE_EDIT_DELETE = $"{nameof(DisciplinaryForms)}.DisciplinaryFormsCreateEditDelete";
+    }
+
     public partial class Reports
     {
         public const string PASSENGER_PERFORMANCE_VIEW = $"{nameof(Reports)}.PassengerPerformanceView";

@@ -126,6 +126,7 @@ public partial class NopStartup : INopStartup
         services.AddScoped<IAgencyService, AgencyService>();
         services.AddScoped<IClinicService, ClinicService>();
         services.AddScoped<IPassengerService, PassengerService>();
+        services.AddScoped<IDisciplinaryFormService, DisciplinaryFormService>();
         services.AddScoped<Nop.Services.Reports.IPassengerPerformanceReportService, Nop.Services.Reports.PassengerPerformanceReportService>();
         //COMMERCE SERVICE REMOVED - Phase C
         //Removed: services.AddScoped<ICustomerReportService, CustomerReportService>(); (commerce feature)

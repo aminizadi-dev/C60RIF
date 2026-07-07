@@ -177,6 +177,7 @@
             credits: false,
             allowMultiple: false,
             maxFiles: 1,
+            captureMethod: 'camera',
             allowDownloadByUrl: true,
             server: serverConfig,
             labelFileProcessingError: (err) => err.body,
@@ -185,6 +186,13 @@
             labelIdle: '@T("Common.FileUploader.DropFiles") / <span class="filepond--label-action">@T("Common.FileUploader.Browse")</span>',
             labelFileProcessing: '@T("Common.FileUploader.Processing")'
         });
+
+        // Add explicit capture hints for mobile browsers that honor input attributes.
+        const browserInput = filePondInstance.element.querySelector('input[type="file"]');
+        if (browserInput) {
+            browserInput.setAttribute('accept', 'image/*');
+            browserInput.setAttribute('capture', 'environment');
+        }
 
         $removeEl.on('click', function (e) {
             resetImageToDefault();

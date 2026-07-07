@@ -42,7 +42,6 @@ public partial class CustomerController : BaseAdminController
     protected readonly IGenericAttributeService _genericAttributeService;
     protected readonly IImportManager _importManager;
     protected readonly ILocalizationService _localizationService;
-    protected readonly INewsLetterSubscriptionService _newsLetterSubscriptionService;
     protected readonly INotificationService _notificationService;
     protected readonly IPermissionService _permissionService;
     protected readonly IQueuedEmailService _queuedEmailService;
@@ -68,7 +67,6 @@ public partial class CustomerController : BaseAdminController
         IGenericAttributeService genericAttributeService,
         IImportManager importManager,
         ILocalizationService localizationService,
-        INewsLetterSubscriptionService newsLetterSubscriptionService,
         INotificationService notificationService,
         IPermissionService permissionService,
         IQueuedEmailService queuedEmailService,
@@ -89,7 +87,6 @@ public partial class CustomerController : BaseAdminController
         _genericAttributeService = genericAttributeService;
         _importManager = importManager;
         _localizationService = localizationService;
-        _newsLetterSubscriptionService = newsLetterSubscriptionService;
         _notificationService = notificationService;
         _permissionService = permissionService;
         _queuedEmailService = queuedEmailService;
@@ -608,11 +605,6 @@ public partial class CustomerController : BaseAdminController
 
             //delete
             await _customerService.DeleteCustomerAsync(customer);
-
-            //remove newsletter subscriptions (if exist)
-            var subscriptions = await _newsLetterSubscriptionService.GetNewsLetterSubscriptionsByEmailAsync(customerEmail);
-            foreach (var subscription in subscriptions)
-                await _newsLetterSubscriptionService.DeleteNewsLetterSubscriptionAsync(subscription);
 
             //activity log
             await _customerActivityService.InsertActivityAsync("DeleteCustomer",

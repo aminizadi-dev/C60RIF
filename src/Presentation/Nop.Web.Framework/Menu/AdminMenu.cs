@@ -89,6 +89,14 @@ public partial class AdminMenu : IAdminMenu
                 },
                 new()
                 {
+                    SystemName = "DisciplinaryForms",
+                    Title = await _localizationService.GetResourceAsync("Admin.DisciplinaryForms.DisciplinaryForms"),
+                    PermissionNames = new List<string> { StandardPermission.DisciplinaryForms.DISCIPLINARY_FORMS_VIEW },
+                    Url = GetMenuItemUrl("DisciplinaryForm", "List"),
+                    IconClass = "fas fa-file-signature"
+                },
+                new()
+                {
                     SystemName = "PassengerPerformanceReport",
                     Title = await _localizationService.GetResourceAsync("Admin.Reports.PassengerPerformance"),
                     PermissionNames = new List<string>

@@ -264,20 +264,16 @@
                                 {
                                     Title = T("Admin.Passengers.Fields.TravelEndDate").Text
                                 });
-                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.BirthYear))
-                                {
-                                    Title = T("Admin.Passengers.Fields.BirthYear").Text
-                                });
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.CardNo))
                                 {
                                     Title = T("Admin.Passengers.Fields.CardNo").Text
                                 });
-                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.PictureUrl))
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.HasCompanion))
                                 {
-                                    Title = T("Admin.Passengers.Fields.PictureId").Text,
+                                    Title = T("admin.reports.passengers.companionstatusstatistics.companion").Text,
                                     Width = "50",
-                                    ClassName = NopColumnClassDefaults.CenterAll,
-                                    Render = new RenderCustom("renderPassengerPicture")
+                                    ClassName = NopColumnClassDefaults.CenterAll + " passenger-grid-header-vertical",
+                                    Render = new RenderCustom("renderNullableBoolean")
                                 });
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.IsMarried))
                                 {
@@ -292,6 +288,13 @@
                                     Width = "50",
                                     ClassName = NopColumnClassDefaults.CenterAll + " passenger-grid-header-vertical",
                                     Render = new RenderCustom("renderNullableBoolean")
+                                });
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.PictureUrl))
+                                {
+                                    Title = T("Admin.Passengers.Fields.PictureId").Text,
+                                    Width = "50",
+                                    ClassName = NopColumnClassDefaults.CenterAll,
+                                    Render = new RenderCustom("renderPassengerPicture")
                                 });
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PassengerModel.Id))
                                 {

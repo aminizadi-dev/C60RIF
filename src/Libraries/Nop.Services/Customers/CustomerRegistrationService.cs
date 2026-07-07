@@ -472,26 +472,6 @@ public partial class CustomerRegistrationService : ICustomerRegistrationService
 
             if (string.IsNullOrEmpty(oldEmail) || oldEmail.Equals(newEmail, StringComparison.InvariantCultureIgnoreCase))
                 return;
-
-            //copy active newsletter subscriptions and deactivate the old
-            var subscriptions = await _newsLetterSubscriptionService.GetNewsLetterSubscriptionsByEmailAsync(oldEmail, isActive: true);
-            var subscriptionGuid = Guid.NewGuid();
-            foreach (var subscription in subscriptions)
-            {
-                await _newsLetterSubscriptionService.InsertNewsLetterSubscriptionAsync(new()
-                {
-                    NewsLetterSubscriptionGuid = subscriptionGuid,
-                    Email = newEmail,
-                    Active = true,
-                    TypeId = subscription.TypeId,
-                    StoreId = subscription.StoreId,
-                    LanguageId = subscription.LanguageId,
-                    CreatedOnUtc = DateTime.UtcNow
-                });
-
-                subscription.Active = false;
-                await _newsLetterSubscriptionService.UpdateNewsLetterSubscriptionAsync(subscription);
-            }
         }
     }
 

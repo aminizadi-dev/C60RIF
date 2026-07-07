@@ -1,0 +1,14 @@
+@model (bool? Value, string FieldName)
+
+<div class="form-check form-check-inline">
+    <input type="radio" class="form-check-input" name="@Model.FieldName" id="@(Model.FieldName)_Unknown" value="" @(Model.Value == null ? "checked" : null)>
+    <label class="form-check-label" for="@(Model.FieldName)_Unknown">نامشخص</label>
+</div>
+<div class="form-check form-check-inline">
+    <input type="radio" class="form-check-input" name="@Model.FieldName" id="@(Model.FieldName)_True" value="true" @(Model.Value == true ? "checked" : null)>
+    <label class="form-check-label" for="@(Model.FieldName)_True">@T("Admin.Common.Yes")</label>
+</div>
+<div class="form-check form-check-inline">
+    <input type="radio" class="form-check-input" name="@Model.FieldName" id="@(Model.FieldName)_False" value="false" @(Model.Value == false ? "checked" : null)>
+    <label class="form-check-label" for="@(Model.FieldName)_False">@T("Admin.Common.No")</label>
+</div>

@@ -21740,4 +21740,307 @@
   <LocaleResource Name="Admin.Passengers.List.SearchAntiX">
     <Value>AntiX</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.DisciplinaryForms">
+    <Value>فرم‌های انضباطی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.AddNew">
+    <Value>افزودن فرم انضباطی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Edit">
+    <Value>ویرایش فرم انضباطی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.BackToList">
+    <Value>بازگشت به فهرست</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Added">
+    <Value>فرم انضباطی با موفقیت ثبت شد</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Updated">
+    <Value>فرم انضباطی با موفقیت به‌روزرسانی شد</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Deleted">
+    <Value>فرم انضباطی با موفقیت حذف شد</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.LookupPassenger">
+    <Value>جستجوی مسافر</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.PassengerNotFound">
+    <Value>مسافری با این شماره کارت یافت نشد</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.PassengerAlreadyHasForm">
+    <Value>برای این مسافر قبلاً فرم انضباطی ثبت شده است</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.List.SearchPersonName">
+    <Value>نام</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.List.SearchFamilyName">
+    <Value>نام خانوادگی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.List.SearchCardNo">
+    <Value>شماره کارت</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.List.SearchAgencyName">
+    <Value>نمایندگی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.List.SearchCreatedFrom">
+    <Value>تاریخ ثبت از</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.List.SearchCreatedTo">
+    <Value>تاریخ ثبت تا</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.PersonName">
+    <Value>نام</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.PersonName.Required">
+    <Value>نام الزامی است</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.FamilyName">
+    <Value>نام خانوادگی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.CardNo">
+    <Value>شماره کارت</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.PassengerId">
+    <Value>شناسه مسافر</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.Age">
+    <Value>سن</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.IsMarried">
+    <Value>وضعیت تأهل</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.IsEmployed">
+    <Value>وضعیت شغلی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.EducationLevel">
+    <Value>میزان تحصیلات</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.Agency">
+    <Value>نمایندگی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.AgencyName">
+    <Value>نمایندگی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.LegionNo">
+    <Value>شماره لژیون</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.PreviousSubstanceUseDetails">
+    <Value>نوع و میزان ماده مصرف قبلی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.CurrentSubstanceUseDetails">
+    <Value>نوع و میزان ماده مصرف فعلی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.CreatedOn">
+    <Value>تاریخ ثبت</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Sections.PersonalInfo">
+    <Value>اطلاعات هویتی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Sections.ReferralReasons">
+    <Value>علت ارجاع به لژیون انضباطی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Sections.LeftFirstTrip">
+    <Value>خروج از پروژه درمان در سفر اول</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Sections.Relapse">
+    <Value>برگشت به مصرف مواد</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Sections.Indiscipline">
+    <Value>بی‌انضباطی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.AbsenceDuration">
+    <Value>غیبت</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.AbsenceLessThanSixMonths">
+    <Value>کمتر از ۶ ماه</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.AbsenceMoreThanSixMonths">
+    <Value>بیشتر از ۶ ماه</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.RetravelLessThanOneCcOt">
+    <Value>سفر مجدد - مصرف کمتر از ۱ سی‌سی اوتی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.RelapseDuration">
+    <Value>زمان برگشت</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.RelapseLessThanOneYear">
+    <Value>کمتر از یکسال پس از رهایی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.RelapseMoreThanOneYear">
+    <Value>بیشتر از یکسال پس از رهایی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.WritingCd">
+    <Value>نوشتن سی‌دی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.Other">
+    <Value>سایر موارد</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.ReferralReasonOtherDetails">
+    <Value>توضیح سایر موارد</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Sections.TravelStatus">
+    <Value>وضعیت سفر</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.IsCurrentSubstanceUseBelowHalfGram">
+    <Value>مصرف فعلی کمتر از نیم گرم</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.HasSubstanceUseInAnotherBranch">
+    <Value>مصرف در شعبه دیگر</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Sections.CigaretteAndWeight">
+    <Value>وضعیت سیگار و اضافه وزن</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Sections.CigaretteUsage">
+    <Value>وضعیت سیگار</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.HasCigaretteUse">
+    <Value>آیا مصرف سیگار دارید؟</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.CigaretteTreatmentStatus">
+    <Value>سابقه لژیون ویلیام وایت</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.CigaretteNoAction">
+    <Value>برای درمان سیگار اقدام نکرده‌ام</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.CigaretteWilliamWhiteUnsuccessful">
+    <Value>سابقه حضور در لژیون ویلیام وایت ولی موفق به درمان نشده‌ام</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.CigaretteHasRelease">
+    <Value>دارای رهایی سیگار</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Sections.WeightStatus">
+    <Value>وضعیت اضافه وزن</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.HeightCm">
+    <Value>قد (سانتی‌متر)</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.WeightKg">
+    <Value>وزن (کیلوگرم)</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.HasOverOrUnderWeight">
+    <Value>اضافه یا کمبود وزن دارید؟</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.HadHealthyDietInPastYear">
+    <Value>عضو لژیون تغذیه سالم بوده‌اید؟</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.RelapsedDueToWeightIssue">
+    <Value>روش کاهش/افزایش وزن باعث سفر ناموفق شده؟</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.HadHealthyWeightBeforeRecovery">
+    <Value>قبل از رهایی وزن سالم داشتید؟</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Sections.EducationalResources">
+    <Value>استفاده از منابع آموزشی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.JahanbiniBooklet">
+    <Value>جزوه جهان‌بینی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.SixtyDegreeBook">
+    <Value>کتاب ۶۰ درجه</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.EshghBook">
+    <Value>کتاب عشق</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.TwelveArticles">
+    <Value>۱۴ مقاله</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.WroteOneCdPerWeek">
+    <Value>نوشتن هفتگی یک سی‌دی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.CompletedThirtyCdExam">
+    <Value>تکمیل فرم ۳۰ سی‌دی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.CompletedFortyCdExam">
+    <Value>تکمیل فرم ۴۰ سی‌دی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Sections.ParksAndSports">
+    <Value>حضور در پارک و انجام ورزش</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.AttendedParksDuringFirstSixMonths">
+    <Value>حضور در پارک‌های ورزشی در ۶ ماه اول سفر</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.ParticipatedInAtLeastOneSport">
+    <Value>فعالیت در یکی از رشته‌های ورزشی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.ParticipatedInSportsActivitiesOrCompetitions">
+    <Value>حضور در مسابقات و فعالیت‌های ورزشی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Sections.OrderAndDiscipline">
+    <Value>نظم و انضباط - نحوه حضور و فعالیت</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.HasRegularWorkshopAttendance">
+    <Value>حضور منظم در کارگاه‌های آموزشی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.HasRegularLegionAttendance">
+    <Value>حضور منظم در لژیون</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.HadWeeklyParticipationAndTravelDeclarationInFirstTrip">
+    <Value>مشارکت و اعلام سفر هفتگی در سفر اول</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.TookSecondTripExams">
+    <Value>شرکت در آزمون‌های سفر دوم</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.ServiceRoles">
+    <Value>جایگاه‌های خدمتی سفر دوم</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.ServiceRolePublications">
+    <Value>نشریات</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.ServiceRoleOt">
+    <Value>اوتی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.ServiceRoleSite">
+    <Value>سایت</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.ServiceRoleGuard">
+    <Value>نگهبان</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.ServiceRoleSecretary">
+    <Value>دبیر</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.ServiceRoleGuide">
+    <Value>راهنما</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.ServiceRoleNewcomer">
+    <Value>تازه‌واردین</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.ServiceRoleMarzban">
+    <Value>مرزبان</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Sections.FamilyRelapseFactors">
+    <Value>عامل برگشت به اعتیاد از دیدگاه فرد</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.FamilyRelapseCigaretteUse">
+    <Value>مصرف سیگار</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.FamilyRelapseSickness">
+    <Value>بیماری</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.FamilyRelapseFinancialAndMarital">
+    <Value>مسائل جنسی و زناشویی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.FamilyRelapseFamilyIssues">
+    <Value>مشکلات خانوادگی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.FamilyRelapseEconomicIssues">
+    <Value>مشکلات اقتصادی</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.FamilyRelapseOverweight">
+    <Value>اضافه وزن</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.FamilyRelapseFactorOtherDetails">
+    <Value>سایر موارد</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.DisciplinaryForms.Fields.MedicalConditionAndMedicationNotes">
+    <Value>بیماری خاص یا مصرف دارو</Value>
+  </LocaleResource>
+  <LocaleResource Name="ActivityLog.AddNewDisciplinaryForm">
+    <Value>فرم انضباطی جدید با شناسه {0} ثبت شد</Value>
+  </LocaleResource>
+  <LocaleResource Name="ActivityLog.EditDisciplinaryForm">
+    <Value>فرم انضباطی با شناسه {0} ویرایش شد</Value>
+  </LocaleResource>
+  <LocaleResource Name="ActivityLog.DeleteDisciplinaryForm">
+    <Value>فرم انضباطی با شناسه {0} حذف شد</Value>
+  </LocaleResource>
 </Language>

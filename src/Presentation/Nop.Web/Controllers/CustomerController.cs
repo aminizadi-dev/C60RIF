@@ -65,7 +65,6 @@ public partial class CustomerController : BasePublicController
     protected readonly IGenericAttributeService _genericAttributeService;
     protected readonly ILocalizationService _localizationService;
     protected readonly ILogger _logger;
-    protected readonly INewsLetterSubscriptionService _newsLetterSubscriptionService;
     protected readonly INotificationService _notificationService;
     protected readonly IPermissionService _permissionService;
     protected readonly IPictureService _pictureService;
@@ -104,7 +103,6 @@ public partial class CustomerController : BasePublicController
         //Removed: IGiftCardService giftCardService,
         ILocalizationService localizationService,
         ILogger logger,
-        INewsLetterSubscriptionService newsLetterSubscriptionService,
         INotificationService notificationService,
         IPermissionService permissionService,
         IPictureService pictureService,
@@ -134,7 +132,6 @@ public partial class CustomerController : BasePublicController
         _genericAttributeService = genericAttributeService;
         _localizationService = localizationService;
         _logger = logger;
-        _newsLetterSubscriptionService = newsLetterSubscriptionService;
         _notificationService = notificationService;
         _permissionService = permissionService;
         _pictureService = pictureService;
@@ -564,65 +561,6 @@ public partial class CustomerController : BasePublicController
                 //Removed: customer.CustomCustomerAttributesXML = customerAttributesXml;
                 await _customerService.UpdateCustomerAsync(customer);
 
-                //newsletter subscriptions
-                if (_customerSettings.NewsletterEnabled)
-                {
-                    var anyNewSubscriptions = false;
-                    var isNewsletterActive = _customerSettings.UserRegistrationType != UserRegistrationType.EmailValidation;
-                    var activeSubscriptions = model.NewsLetterSubscriptions.Where(subscriptionModel => subscriptionModel.IsActive);
-                    var currentSubscriptions = await _newsLetterSubscriptionService
-                        .GetNewsLetterSubscriptionsByEmailAsync(customerEmail, storeId: store.Id);
-                    if (currentSubscriptions.Any())
-                    {
-                        var subscriptionGuid = currentSubscriptions.FirstOrDefault().NewsLetterSubscriptionGuid;
-                        foreach (var activeSubscription in activeSubscriptions)
-                        {
-                            var existingSubscription = currentSubscriptions
-                                ?.FirstOrDefault(subscription => subscription.TypeId == activeSubscription.TypeId);
-                            if (existingSubscription is not null)
-                            {
-                                if (!existingSubscription.Active && isNewsletterActive)
-                                {
-                                    existingSubscription.Active = true;
-                                    existingSubscription.LanguageId = customer.LanguageId ?? language.Id;
-                                    await _newsLetterSubscriptionService.UpdateNewsLetterSubscriptionAsync(existingSubscription);
-                                }
-                            }
-                            else
-                            {
-                                await _newsLetterSubscriptionService.InsertNewsLetterSubscriptionAsync(new()
-                                {
-                                    NewsLetterSubscriptionGuid = subscriptionGuid,
-                                    Email = customer.Email,
-                                    Active = isNewsletterActive,
-                                    TypeId = activeSubscription.TypeId,
-                                    StoreId = store.Id,
-                                    LanguageId = customer.LanguageId ?? language.Id,
-                                    CreatedOnUtc = DateTime.UtcNow
-                                });
-                                anyNewSubscriptions = true;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        var subscriptionGuid = Guid.NewGuid();
-                        foreach (var activeSubscription in activeSubscriptions)
-                        {
-                            await _newsLetterSubscriptionService.InsertNewsLetterSubscriptionAsync(new()
-                            {
-                                NewsLetterSubscriptionGuid = subscriptionGuid,
-                                Email = customer.Email,
-                                Active = isNewsletterActive,
-                                TypeId = activeSubscription.TypeId,
-                                StoreId = store.Id,
-                                LanguageId = customer.LanguageId ?? language.Id,
-                                CreatedOnUtc = DateTime.UtcNow
-                            });
-                            anyNewSubscriptions = true;
-                        }
-                    }
-                }
 
                 //insert default address (if possible)
                 var defaultAddress = new Address
@@ -784,16 +722,6 @@ public partial class CustomerController : BasePublicController
         //authenticate customer after activation
         await _customerRegistrationService.SignInCustomerAsync(customer, null, true);
 
-        //activating newsletter subscriptions
-        var store = await _storeContext.GetCurrentStoreAsync();
-        var subscriptions = await _newsLetterSubscriptionService
-            .GetNewsLetterSubscriptionsByEmailAsync(customer.Email, storeId: store.Id, isActive: false);
-        foreach (var subscription in subscriptions)
-        {
-            subscription.Active = true;
-            await _newsLetterSubscriptionService.UpdateNewsLetterSubscriptionAsync(subscription);
-        }
-
         model.Result = await _localizationService.GetResourceAsync("Account.AccountActivation.Activated");
         return View(model);
     }
@@ -904,59 +832,6 @@ public partial class CustomerController : BasePublicController
 
                 customer.CustomCustomerAttributesXML = customerAttributesXml;
                 await _customerService.UpdateCustomerAsync(customer);
-
-                //newsletter subscriptions
-                if (_customerSettings.NewsletterEnabled)
-                {
-                    var currentSubscriptions = await _newsLetterSubscriptionService
-                        .GetNewsLetterSubscriptionsByEmailAsync(customer.Email, storeId: store.Id);
-                    if (currentSubscriptions.Any())
-                    {
-                        var subscriptionGuid = currentSubscriptions.FirstOrDefault().NewsLetterSubscriptionGuid;
-                        foreach (var newsLetterSubscriptionModel in model.NewsLetterSubscriptions)
-                        {
-                            var existingSubscription = currentSubscriptions
-                                .FirstOrDefault(subscription => subscription.TypeId == newsLetterSubscriptionModel.TypeId);
-                            if (existingSubscription is not null && existingSubscription.Active != newsLetterSubscriptionModel.IsActive)
-                            {
-                                existingSubscription.Active = newsLetterSubscriptionModel.IsActive;
-                                await _newsLetterSubscriptionService.UpdateNewsLetterSubscriptionAsync(existingSubscription);
-                            }
-
-                            if (existingSubscription is null && newsLetterSubscriptionModel.IsActive)
-                            {
-                                await _newsLetterSubscriptionService.InsertNewsLetterSubscriptionAsync(new()
-                                {
-                                    NewsLetterSubscriptionGuid = subscriptionGuid,
-                                    Email = customer.Email,
-                                    Active = true,
-                                    TypeId = newsLetterSubscriptionModel.TypeId,
-                                    StoreId = store.Id,
-                                    LanguageId = customer.LanguageId ?? language.Id,
-                                    CreatedOnUtc = DateTime.UtcNow
-                                });
-                            }
-                        }
-                    }
-                    else
-                    {
-                        var subscriptionGuid = Guid.NewGuid();
-                        var activeSubscriptions = model.NewsLetterSubscriptions.Where(subscriptionModel => subscriptionModel.IsActive);
-                        foreach (var activeSubscription in activeSubscriptions)
-                        {
-                            await _newsLetterSubscriptionService.InsertNewsLetterSubscriptionAsync(new()
-                            {
-                                NewsLetterSubscriptionGuid = subscriptionGuid,
-                                Email = customer.Email,
-                                Active = true,
-                                StoreId = store.Id,
-                                TypeId = activeSubscription.TypeId,
-                                LanguageId = customer.LanguageId ?? language.Id,
-                                CreatedOnUtc = DateTime.UtcNow
-                            });
-                        }
-                    }
-                }
 
                 //COMMERCE/ADDITIONAL FEATURES REMOVED - Phase C
                 //Removed: Forum signature handling

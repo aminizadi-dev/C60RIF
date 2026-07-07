@@ -1,0 +1,385 @@
+@model DisciplinaryFormModel
+@using Nop.Core.Domain.Customers
+
+<div asp-validation-summary="All"></div>
+<input asp-for="Id" type="hidden" />
+<input asp-for="PassengerId" type="hidden" />
+
+<style>
+    .disciplinary-paper-form {
+        direction: rtl;
+        text-align: right;
+        border: 2px solid #333;
+        padding: 0;
+        background: #fff;
+    }
+
+        .disciplinary-paper-form table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0;
+        }
+
+        .disciplinary-paper-form th,
+        .disciplinary-paper-form td {
+            border: 1px solid #333;
+            padding: 8px 10px;
+            vertical-align: middle;
+        }
+
+        .disciplinary-paper-form .section-title {
+            background: #f0f0f0;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .disciplinary-paper-form .subsection-title {
+            background: #fafafa;
+            font-weight: 600;
+            width: 18%;
+        }
+
+        .disciplinary-paper-form .inline-options label {
+            margin-left: 12px;
+            margin-right: 4px;
+            font-weight: normal;
+        }
+
+        .disciplinary-paper-form .form-control {
+            border-radius: 0;
+        }
+
+        .disciplinary-paper-form textarea.form-control {
+            min-height: 60px;
+        }
+
+        .disciplinary-paper-form .field-populated-blink {
+            animation: disciplinaryFieldBlink 0.7s ease-in-out 4;
+        }
+
+        @@keyframes disciplinaryFieldBlink {
+            0% { box-shadow: 0 0 0 0 rgba(40,167,69,0.0); background-color: #ffffff; }
+            50% { box-shadow: 0 0 0 3px rgba(40,167,69,0.35); background-color: #d4edda; }
+            100% { box-shadow: 0 0 0 0 rgba(40,167,69,0.0); background-color: #ffffff; }
+        }
+</style>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="disciplinary-paper-form">
+
+            @* اطلاعات هویتی *@
+            <table>
+                <tr>
+                    <th colspan="12" class="section-title">@T("Admin.DisciplinaryForms.Sections.PersonalInfo")</th>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.CardNo")</td>
+                    <td colspan="2">
+                        <div class="input-group">
+                            <nop-editor asp-for="CardNo" />
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-success" id="lookup-passenger-by-card">@T("Admin.DisciplinaryForms.LookupPassenger")</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.PersonName")</td>
+                    <td><nop-editor asp-for="PersonName" /></td>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.FamilyName")</td>
+                    <td><nop-editor asp-for="FamilyName" /></td>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.Age")</td>
+                    <td><nop-editor asp-for="Age" asp-template="Int32Nullable" /></td>
+                </tr>
+                <tr>
+
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.IsEmployed")</td>
+                    <td colspan="2" class="inline-options">
+                        @await Html.PartialAsync("_NullableBoolRadios", (Model.IsEmployed, "IsEmployed"))
+                    </td>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.IsMarried")</td>
+                    <td colspan="2" class="inline-options">
+                        @await Html.PartialAsync("_NullableBoolRadios", (Model.IsMarried, "IsMarried"))
+                    </td>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.Agency")</td>
+                    <td colspan="2"><nop-select asp-for="AgencyId" asp-items="Model.AvailableAgencies" /></td>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.LegionNo")</td>
+                    <td><nop-editor asp-for="LegionNo" /></td>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.PreviousSubstanceUseDetails")</td>
+                    <td colspan="2"><nop-editor asp-for="PreviousSubstanceUseDetails" /></td>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.EducationLevel")</td>
+                    <td><nop-select asp-for="EducationLevel" asp-items="Model.AvailableEducationLevels" /></td>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.CurrentSubstanceUseDetails")</td>
+                    <td colspan="4"><nop-editor asp-for="CurrentSubstanceUseDetails" /></td>
+                </tr>
+            </table>
+
+            @* علت ارجاع *@
+            <table>
+                <tr>
+                    <th colspan="3" class="section-title">@T("Admin.DisciplinaryForms.Sections.ReferralReasons")</th>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Sections.LeftFirstTrip")</td>
+                    <td>
+                        <div><strong>@T("Admin.DisciplinaryForms.Fields.AbsenceDuration")</strong></div>
+                        <div class="inline-options">
+                            <label><input type="radio" name="AbsenceDuration" value="0" @(Model.AbsenceDuration == 0 ? "checked" : null) /> —</label>
+                            <label><input type="radio" name="AbsenceDuration" value="1" @(Model.AbsenceDuration == 1 ? "checked" : null) /> @T("Admin.DisciplinaryForms.Fields.AbsenceLessThanSixMonths")</label>
+                            <label><input type="radio" name="AbsenceDuration" value="2" @(Model.AbsenceDuration == 2 ? "checked" : null) /> @T("Admin.DisciplinaryForms.Fields.AbsenceMoreThanSixMonths")</label>
+                        </div>
+                        <div class="mt-2">
+                            <label><input type="checkbox" asp-for="ReferralReasonRetravelConsumptionLessThanOneCcOt" /> @T("Admin.DisciplinaryForms.Fields.RetravelLessThanOneCcOt")</label>
+                        </div>
+                    </td>
+                    <td>
+                        <div><strong>@T("Admin.DisciplinaryForms.Sections.Relapse")</strong></div>
+                        <div class="inline-options">
+                            <label><input type="radio" name="RelapseDuration" value="0" @(Model.RelapseDuration == 0 ? "checked" : null) /> —</label>
+                            <label><input type="radio" name="RelapseDuration" value="1" @(Model.RelapseDuration == 1 ? "checked" : null) /> @T("Admin.DisciplinaryForms.Fields.RelapseLessThanOneYear")</label>
+                            <label><input type="radio" name="RelapseDuration" value="2" @(Model.RelapseDuration == 2 ? "checked" : null) /> @T("Admin.DisciplinaryForms.Fields.RelapseMoreThanOneYear")</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Sections.Indiscipline")</td>
+                    <td colspan="2">
+                        <label><input type="checkbox" asp-for="ReferralReasonWritingCd" /> @T("Admin.DisciplinaryForms.Fields.WritingCd")</label>
+                        <label class="ml-3"><input type="checkbox" asp-for="ReferralReasonOther" /> @T("Admin.DisciplinaryForms.Fields.Other")</label>
+                        <div class="mt-2">
+                            <nop-textarea asp-for="ReferralReasonOtherDetails" />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            @* وضعیت سفر *@
+            <table>
+                <tr>
+                    <th colspan="2" class="section-title">@T("Admin.DisciplinaryForms.Sections.TravelStatus")</th>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.IsCurrentSubstanceUseBelowHalfGram")</td>
+                    <td class="inline-options">@await Html.PartialAsync("_NullableBoolRadios", (Model.IsCurrentSubstanceUseBelowHalfGram, "IsCurrentSubstanceUseBelowHalfGram"))</td>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.HasSubstanceUseInAnotherBranch")</td>
+                    <td class="inline-options">@await Html.PartialAsync("_NullableBoolRadios", (Model.HasSubstanceUseInAnotherBranch, "HasSubstanceUseInAnotherBranch"))</td>
+                </tr>
+            </table>
+
+            @* سیگار و وزن *@
+            <table>
+                <tr>
+                    <th colspan="2" class="section-title">@T("Admin.DisciplinaryForms.Sections.CigaretteAndWeight")</th>
+                </tr>
+                <tr>
+                    <td style="width:50%; vertical-align:top;">
+                        <div><strong>@T("Admin.DisciplinaryForms.Sections.CigaretteUsage")</strong></div>
+                        <div class="mb-2">@T("Admin.DisciplinaryForms.Fields.HasCigaretteUse")</div>
+                        <div class="inline-options mb-3">@await Html.PartialAsync("_NullableBoolRadios", (Model.HasCigaretteUse, "HasCigaretteUse"))</div>
+                        <div class="inline-options">
+                            <label><input type="radio" name="CigaretteTreatmentStatus" value="0" @(Model.CigaretteTreatmentStatus == 0 ? "checked" : null) /> نامشخص</label><br />
+                            <label><input type="radio" name="CigaretteTreatmentStatus" value="1" @(Model.CigaretteTreatmentStatus == 1 ? "checked" : null) /> @T("Admin.DisciplinaryForms.Fields.CigaretteNoAction")</label><br />
+                            <label><input type="radio" name="CigaretteTreatmentStatus" value="2" @(Model.CigaretteTreatmentStatus == 2 ? "checked" : null) /> @T("Admin.DisciplinaryForms.Fields.CigaretteWilliamWhiteUnsuccessful")</label><br />
+                            <label><input type="radio" name="CigaretteTreatmentStatus" value="3" @(Model.CigaretteTreatmentStatus == 3 ? "checked" : null) /> @T("Admin.DisciplinaryForms.Fields.CigaretteHasRelease")</label>
+                        </div>
+                    </td>
+                    <td style="width:50%; vertical-align:top;">
+                        <div><strong>@T("Admin.DisciplinaryForms.Sections.WeightStatus")</strong></div>
+                        <div class="row mb-2">
+                            <div class="col-6">@T("Admin.DisciplinaryForms.Fields.HeightCm") <nop-editor asp-for="HeightCm" asp-template="Int32Nullable" /></div>
+                            <div class="col-6">@T("Admin.DisciplinaryForms.Fields.WeightKg") <nop-editor asp-for="WeightKg" /></div>
+                        </div>
+                        <div class="mb-2">@T("Admin.DisciplinaryForms.Fields.HasOverOrUnderWeight") @await Html.PartialAsync("_NullableBoolRadios", (Model.HasOverOrUnderWeight, "HasOverOrUnderWeight"))</div>
+                        <div class="mb-2">@T("Admin.DisciplinaryForms.Fields.HadHealthyDietInPastYear") @await Html.PartialAsync("_NullableBoolRadios", (Model.HadHealthyDietInPastYear, "HadHealthyDietInPastYear"))</div>
+                        <div class="mb-2">@T("Admin.DisciplinaryForms.Fields.RelapsedDueToWeightIssue") @await Html.PartialAsync("_NullableBoolRadios", (Model.RelapsedDueToWeightIssue, "RelapsedDueToWeightIssue"))</div>
+                        <div>@T("Admin.DisciplinaryForms.Fields.HadHealthyWeightBeforeRecovery") @await Html.PartialAsync("_NullableBoolRadios", (Model.HadHealthyWeightBeforeRecovery, "HadHealthyWeightBeforeRecovery"))</div>
+                    </td>
+                </tr>
+            </table>
+
+            @* منابع آموزشی *@
+            <table>
+                <tr>
+                    <th colspan="2" class="section-title">@T("Admin.DisciplinaryForms.Sections.EducationalResources")</th>
+                </tr>
+                <tr>
+                    <td colspan="2" class="inline-options">
+                        <label><input type="checkbox" asp-for="EducationalResourceJahanbiniBooklet" /> @T("Admin.DisciplinaryForms.Fields.JahanbiniBooklet")</label>
+                        <label><input type="checkbox" asp-for="EducationalResourceSixtyDegreeBook" /> @T("Admin.DisciplinaryForms.Fields.SixtyDegreeBook")</label>
+                        <label><input type="checkbox" asp-for="EducationalResourceEshghBook" /> @T("Admin.DisciplinaryForms.Fields.EshghBook")</label>
+                        <label><input type="checkbox" asp-for="EducationalResourceTwelveArticles" /> @T("Admin.DisciplinaryForms.Fields.TwelveArticles")</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.WroteOneCdPerWeek")</td>
+                    <td class="inline-options">@await Html.PartialAsync("_NullableBoolRadios", (Model.WroteOneCdPerWeek, "WroteOneCdPerWeek"))</td>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.CompletedThirtyCdExam")</td>
+                    <td class="inline-options">@await Html.PartialAsync("_NullableBoolRadios", (Model.CompletedThirtyCdExam, "CompletedThirtyCdExam"))</td>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.CompletedFortyCdExam")</td>
+                    <td class="inline-options">@await Html.PartialAsync("_NullableBoolRadios", (Model.CompletedFortyCdExam, "CompletedFortyCdExam"))</td>
+                </tr>
+            </table>
+
+            @* پارک و ورزش *@
+            <table>
+                <tr>
+                    <th colspan="2" class="section-title">@T("Admin.DisciplinaryForms.Sections.ParksAndSports")</th>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.AttendedParksDuringFirstSixMonths")</td>
+                    <td class="inline-options">@await Html.PartialAsync("_NullableBoolRadios", (Model.AttendedParksDuringFirstSixMonths, "AttendedParksDuringFirstSixMonths"))</td>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.ParticipatedInAtLeastOneSport")</td>
+                    <td class="inline-options">@await Html.PartialAsync("_NullableBoolRadios", (Model.ParticipatedInAtLeastOneSport, "ParticipatedInAtLeastOneSport"))</td>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.ParticipatedInSportsActivitiesOrCompetitions")</td>
+                    <td class="inline-options">@await Html.PartialAsync("_NullableBoolRadios", (Model.ParticipatedInSportsActivitiesOrCompetitions, "ParticipatedInSportsActivitiesOrCompetitions"))</td>
+                </tr>
+            </table>
+
+            @* نظم و انضباط *@
+            <table>
+                <tr>
+                    <th colspan="2" class="section-title">@T("Admin.DisciplinaryForms.Sections.OrderAndDiscipline")</th>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.HasRegularWorkshopAttendance")</td>
+                    <td class="inline-options">@await Html.PartialAsync("_NullableBoolRadios", (Model.HasRegularWorkshopAttendance, "HasRegularWorkshopAttendance"))</td>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.HasRegularLegionAttendance")</td>
+                    <td class="inline-options">@await Html.PartialAsync("_NullableBoolRadios", (Model.HasRegularLegionAttendance, "HasRegularLegionAttendance"))</td>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.HadWeeklyParticipationAndTravelDeclarationInFirstTrip")</td>
+                    <td class="inline-options">@await Html.PartialAsync("_NullableBoolRadios", (Model.HadWeeklyParticipationAndTravelDeclarationInFirstTrip, "HadWeeklyParticipationAndTravelDeclarationInFirstTrip"))</td>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.TookSecondTripExams")</td>
+                    <td class="inline-options">@await Html.PartialAsync("_NullableBoolRadios", (Model.TookSecondTripExams, "TookSecondTripExams"))</td>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.ServiceRoles")</td>
+                    <td class="inline-options">
+                        <label><input type="checkbox" asp-for="ServiceRolePublications" /> @T("Admin.DisciplinaryForms.Fields.ServiceRolePublications")</label>
+                        <label><input type="checkbox" asp-for="ServiceRoleOt" /> @T("Admin.DisciplinaryForms.Fields.ServiceRoleOt")</label>
+                        <label><input type="checkbox" asp-for="ServiceRoleSite" /> @T("Admin.DisciplinaryForms.Fields.ServiceRoleSite")</label>
+                        <label><input type="checkbox" asp-for="ServiceRoleGuard" /> @T("Admin.DisciplinaryForms.Fields.ServiceRoleGuard")</label>
+                        <label><input type="checkbox" asp-for="ServiceRoleSecretary" /> @T("Admin.DisciplinaryForms.Fields.ServiceRoleSecretary")</label>
+                        <label><input type="checkbox" asp-for="ServiceRoleGuide" /> @T("Admin.DisciplinaryForms.Fields.ServiceRoleGuide")</label>
+                        <label><input type="checkbox" asp-for="ServiceRoleNewcomer" /> @T("Admin.DisciplinaryForms.Fields.ServiceRoleNewcomer")</label>
+                        <label><input type="checkbox" asp-for="ServiceRoleMarzban" /> @T("Admin.DisciplinaryForms.Fields.ServiceRoleMarzban")</label>
+                    </td>
+                </tr>
+            </table>
+
+            @* عامل برگشت *@
+            <table>
+                <tr>
+                    <th colspan="2" class="section-title">@T("Admin.DisciplinaryForms.Sections.FamilyRelapseFactors")</th>
+                </tr>
+                <tr>
+                    <td colspan="2" class="inline-options">
+                        <label><input type="checkbox" asp-for="FamilyRelapseFactorCigaretteUse" /> @T("Admin.DisciplinaryForms.Fields.FamilyRelapseCigaretteUse")</label>
+                        <label><input type="checkbox" asp-for="FamilyRelapseFactorSickness" /> @T("Admin.DisciplinaryForms.Fields.FamilyRelapseSickness")</label>
+                        <label><input type="checkbox" asp-for="FamilyRelapseFactorFinancialAndMaritalIssues" /> @T("Admin.DisciplinaryForms.Fields.FamilyRelapseFinancialAndMarital")</label>
+                        <label><input type="checkbox" asp-for="FamilyRelapseFactorFamilyIssues" /> @T("Admin.DisciplinaryForms.Fields.FamilyRelapseFamilyIssues")</label>
+                        <label><input type="checkbox" asp-for="FamilyRelapseFactorEconomicIssues" /> @T("Admin.DisciplinaryForms.Fields.FamilyRelapseEconomicIssues")</label>
+                        <label><input type="checkbox" asp-for="FamilyRelapseFactorOverweight" /> @T("Admin.DisciplinaryForms.Fields.FamilyRelapseOverweight")</label>
+                        <label><input type="checkbox" asp-for="FamilyRelapseFactorOther" /> @T("Admin.DisciplinaryForms.Fields.Other")</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.FamilyRelapseFactorOtherDetails")</td>
+                    <td><nop-textarea asp-for="FamilyRelapseFactorOtherDetails" /></td>
+                </tr>
+                <tr>
+                    <td class="subsection-title">@T("Admin.DisciplinaryForms.Fields.MedicalConditionAndMedicationNotes")</td>
+                    <td><nop-textarea asp-for="MedicalConditionAndMedicationNotes" /></td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+</section>
+
+<script>
+    $(function () {
+        function setFieldIfChanged(selector, nextValue, changedSelectors) {
+            var $field = $(selector);
+            if (!$field.length || nextValue === null || nextValue === undefined || nextValue === '')
+                return;
+
+            var currentValue = $field.val();
+            var normalizedCurrent = (currentValue ?? '').toString().trim();
+            var normalizedNext = nextValue.toString().trim();
+
+            if (normalizedCurrent === normalizedNext)
+                return;
+
+            $field.val(nextValue).trigger('change');
+            changedSelectors.push(selector);
+        }
+
+        function blinkChangedFields(changedSelectors) {
+            changedSelectors.forEach(function (selector) {
+                var $field = $(selector);
+                if (!$field.length)
+                    return;
+
+                $field.removeClass('field-populated-blink');
+                // Force reflow for animation retrigger
+                void $field[0].offsetWidth;
+                $field.addClass('field-populated-blink');
+
+                setTimeout(function () {
+                    $field.removeClass('field-populated-blink');
+                }, 3000);
+            });
+        }
+
+        $('#lookup-passenger-by-card').on('click', function () {
+            var cardNo = $('#@Html.IdFor(m => m.CardNo)').val();
+            if (!cardNo) return;
+
+            $.getJSON('@Url.Action("GetPassengerByCardNo", "DisciplinaryForm")', { cardNo: cardNo }, function (data) {
+                if (!data.found) {
+                    alert('@T("Admin.DisciplinaryForms.PassengerNotFound")');
+                    return;
+                }
+
+                $('#@Html.IdFor(m => m.PassengerId)').val(data.passengerId);
+                var changedSelectors = [];
+                setFieldIfChanged('#@Html.IdFor(m => m.PersonName)', data.personName, changedSelectors);
+                setFieldIfChanged('#@Html.IdFor(m => m.CardNo)', data.cardNo, changedSelectors);
+                setFieldIfChanged('#@Html.IdFor(m => m.LegionNo)', data.legionNo, changedSelectors);
+                setFieldIfChanged('#@Html.IdFor(m => m.EducationLevel)', data.educationLevel, changedSelectors);
+                setFieldIfChanged('#@Html.IdFor(m => m.AgencyId)', data.agencyId, changedSelectors);
+                setFieldIfChanged('#@Html.IdFor(m => m.PreviousSubstanceUseDetails)', data.previousSubstanceUseDetails, changedSelectors);
+                setFieldIfChanged('#@Html.IdFor(m => m.CurrentSubstanceUseDetails)', data.currentSubstanceUseDetails, changedSelectors);
+                blinkChangedFields(changedSelectors);
+
+                if (data.hasExistingForm && data.existingFormId && data.existingFormId !== parseInt($('#@Html.IdFor(m => m.Id)').val() || '0')) {
+                    alert('@T("Admin.DisciplinaryForms.PassengerAlreadyHasForm")');
+                }
+            });
+        });
+    });
+</script>

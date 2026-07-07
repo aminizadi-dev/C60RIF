@@ -40,6 +40,13 @@ public partial class DefaultPermissionConfigManager : IPermissionConfigManager
 
         #endregion
 
+        #region Disciplinary forms
+
+        new ("Admin area. Disciplinary forms. View", StandardPermission.DisciplinaryForms.DISCIPLINARY_FORMS_VIEW, nameof(StandardPermission.DisciplinaryForms), NopCustomerDefaults.AdministratorsRoleName, NopCustomerDefaults.ForumModeratorsRoleName),
+        new ("Admin area. Disciplinary forms. Create, edit, delete", StandardPermission.DisciplinaryForms.DISCIPLINARY_FORMS_CREATE_EDIT_DELETE, nameof(StandardPermission.DisciplinaryForms), NopCustomerDefaults.AdministratorsRoleName, NopCustomerDefaults.ForumModeratorsRoleName),
+
+        #endregion
+
         #region Reports
 
         new ("Admin area. Reports. Passenger performance", StandardPermission.Reports.PASSENGER_PERFORMANCE_VIEW, nameof(StandardPermission.Reports), NopCustomerDefaults.AdministratorsRoleName, NopCustomerDefaults.ForumModeratorsRoleName),
