@@ -5,19 +5,16 @@ namespace Nop.Core.Domain.Customers;
 
 
 /// <summary>
-/// Represents a recovery form record
+/// Represents a recovery form record (فرم رهایی از مواد مخدر).
+/// Identity fields (name, card number, birth year) live on the linked <see cref="Person"/>.
 /// </summary>
-public partial class Passenger : BaseEntity
+public partial class RecoveryForm : PersonFormBase
 {
     public string RecoveryNo { get; set; }
-
-    public string PersonName { get; set; }
 
     public string GuideNameAndLegionNo { get; set; }
 
     public int? ClinicId { get; set; }
-
-    public int? BirthYear { get; set; }
 
     public EducationLevel Education { get; set; }
 
@@ -26,8 +23,6 @@ public partial class Passenger : BaseEntity
     public bool? IsEmployed { get; set; }
 
     public bool? HasCompanion { get; set; }
-
-    public string CardNo { get; set; }
 
     public int AntiX1 { get; set; }
 
@@ -40,13 +35,6 @@ public partial class Passenger : BaseEntity
     public int PictureId { get; set; }
 
     public int AgencyId { get; set; }
-
-    public DateTime CreatedOnUtc { get; set; }
-
-    /// <summary>
-    /// Gets or sets the customer identifier who created this record
-    /// </summary>
-    public int? CreatedByCustomerId { get; set; }
 }
 
 public enum EducationLevel
@@ -63,4 +51,3 @@ public enum EducationLevel
     Doctorate = 100,      // دکتری
     PostDoctorate = 110   // فوق دکتری
 }
-

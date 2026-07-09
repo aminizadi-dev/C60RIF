@@ -10,9 +10,20 @@ public class AddPassengerCreatedByCustomerIdMigration : ForwardOnlyMigration
 {
     public override void Up()
     {
-        var passengerTableName = NameCompatibilityManager.GetTableName(typeof(Passenger));
+        //this migration predates the Passenger -> RecoveryForm rename (2026/07/07), so on databases
+        //that have not been renamed yet the physical table is still called "Passenger". Resolve
+        //whichever name currently exists so it works on both legacy and already-renamed databases.
+        var passengerTableName = Schema.Table("RecoveryForm").Exists()
+            ? "RecoveryForm"
+            : Schema.Table("Passenger").Exists()
+                ? "Passenger"
+                : null;
+
+        if (passengerTableName == null)
+            return;
+
         var customerTableName = NameCompatibilityManager.GetTableName(typeof(Customer));
-        var columnName = nameof(Passenger.CreatedByCustomerId);
+        var columnName = nameof(RecoveryForm.CreatedByCustomerId);
 
         if (!Schema.Table(passengerTableName).Column(columnName).Exists())
         {

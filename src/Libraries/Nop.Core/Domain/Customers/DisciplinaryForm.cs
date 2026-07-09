@@ -3,32 +3,12 @@
 namespace Nop.Core.Domain.Customers;
 
 /// <summary>
-/// Represents disciplinary form data for a passenger.
+/// Represents disciplinary form data (فرم انضباطی).
+/// Identity fields (name, family name, card number) live on the linked <see cref="Person"/>.
 /// </summary>
-public partial class DisciplinaryForm : BaseEntity
+public partial class DisciplinaryForm : PersonFormBase
 {
-    #region Passenger link
-
-    /// <summary>
-    /// Gets or sets the related passenger identifier (optional one-to-one link).
-    /// </summary>
-    public int? PassengerId { get; set; }
-
-    #endregion
-
     #region Personal info
-
-    /// <summary>
-    /// Gets or sets the form snapshot of person name.
-    /// </summary>
-    public string PersonName { get; set; }
-
-    /// <summary>
-    /// Gets or sets the form snapshot of card number.
-    /// </summary>
-    public string CardNo { get; set; }
-
-    public string FamilyName { get; set; }
 
     public int? Age { get; set; }
 
@@ -180,17 +160,6 @@ public partial class DisciplinaryForm : BaseEntity
     /// Gets or sets notes about diseases and medications.
     /// </summary>
     public string MedicalConditionAndMedicationNotes { get; set; }
-
-    #endregion
-
-    #region Audit
-
-    public DateTime CreatedOnUtc { get; set; }
-
-    /// <summary>
-    /// Gets or sets the customer identifier who created this record.
-    /// </summary>
-    public int? CreatedByCustomerId { get; set; }
 
     #endregion
 }

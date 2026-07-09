@@ -18,7 +18,8 @@ public partial class DisciplinaryFormService : IDisciplinaryFormService
     protected readonly IEventPublisher _eventPublisher;
     protected readonly IRepository<AntiX> _antiXRepository;
     protected readonly IRepository<DisciplinaryForm> _disciplinaryFormRepository;
-    protected readonly IRepository<Passenger> _passengerRepository;
+    protected readonly IRepository<RecoveryForm> _recoveryFormRepository;
+    protected readonly IRepository<Person> _personRepository;
 
     #endregion
 
@@ -28,12 +29,14 @@ public partial class DisciplinaryFormService : IDisciplinaryFormService
         IEventPublisher eventPublisher,
         IRepository<AntiX> antiXRepository,
         IRepository<DisciplinaryForm> disciplinaryFormRepository,
-        IRepository<Passenger> passengerRepository)
+        IRepository<RecoveryForm> recoveryFormRepository,
+        IRepository<Person> personRepository)
     {
         _eventPublisher = eventPublisher;
         _antiXRepository = antiXRepository;
         _disciplinaryFormRepository = disciplinaryFormRepository;
-        _passengerRepository = passengerRepository;
+        _recoveryFormRepository = recoveryFormRepository;
+        _personRepository = personRepository;
     }
 
     #endregion
@@ -44,20 +47,35 @@ public partial class DisciplinaryFormService : IDisciplinaryFormService
     /// Gets all disciplinary forms
     /// </summary>
     public virtual async Task<IPagedList<DisciplinaryForm>> GetAllDisciplinaryFormsAsync(string personName = null,
-        string familyName = null, string cardNo = null, int passengerId = 0, string agencyName = null,
+        string familyName = null, string cardNo = null, int personId = 0, string agencyName = null,
         DateTime? createdFromUtc = null, DateTime? createdToUtc = null,
         int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false)
     {
         var forms = await _disciplinaryFormRepository.GetAllPagedAsync(query =>
         {
             if (!string.IsNullOrWhiteSpace(personName))
-                query = query.Where(f => f.PersonName.Contains(personName));
+            {
+                query = from form in query
+                        join person in _personRepository.Table on form.PersonId equals person.Id
+                        where person.FirstName != null && person.FirstName.Contains(personName)
+                        select form;
+            }
             if (!string.IsNullOrWhiteSpace(familyName))
-                query = query.Where(f => f.FamilyName.Contains(familyName));
+            {
+                query = from form in query
+                        join person in _personRepository.Table on form.PersonId equals person.Id
+                        where person.LastName != null && person.LastName.Contains(familyName)
+                        select form;
+            }
             if (!string.IsNullOrWhiteSpace(cardNo))
-                query = query.Where(f => f.CardNo == cardNo);
-            if (passengerId > 0)
-                query = query.Where(f => f.PassengerId.HasValue && f.PassengerId.Value == passengerId);
+            {
+                query = from form in query
+                        join person in _personRepository.Table on form.PersonId equals person.Id
+                        where person.CardNo == cardNo
+                        select form;
+            }
+            if (personId > 0)
+                query = query.Where(f => f.PersonId == personId);
             if (!string.IsNullOrWhiteSpace(agencyName))
                 query = query.Where(f => f.AgencyName.Contains(agencyName));
             if (createdFromUtc.HasValue)
@@ -101,16 +119,17 @@ public partial class DisciplinaryFormService : IDisciplinaryFormService
     }
 
     /// <summary>
-    /// Gets a disciplinary form by passenger identifier
+    /// Gets disciplinary forms linked to a person
     /// </summary>
-    public virtual async Task<DisciplinaryForm> GetDisciplinaryFormByPassengerIdAsync(int passengerId)
+    public virtual async Task<IList<DisciplinaryForm>> GetDisciplinaryFormsByPersonIdAsync(int personId)
     {
-        if (passengerId <= 0)
-            return null;
+        if (personId <= 0)
+            return new List<DisciplinaryForm>();
 
         return await _disciplinaryFormRepository.Table
-            .Where(f => f.PassengerId == passengerId)
-            .FirstOrDefaultAsync();
+            .Where(f => f.PersonId == personId)
+            .OrderByDescending(f => f.CreatedOnUtc)
+            .ToListAsync();
     }
 
     /// <summary>
@@ -150,22 +169,6 @@ public partial class DisciplinaryFormService : IDisciplinaryFormService
         await _eventPublisher.EntityDeletedAsync(disciplinaryForm);
     }
 
-    /// <summary>
-    /// Checks whether a passenger is already linked to a disciplinary form
-    /// </summary>
-    public virtual async Task<bool> IsPassengerLinkedAsync(int passengerId, int? exceptFormId = null)
-    {
-        if (passengerId <= 0)
-            return false;
-
-        var query = _disciplinaryFormRepository.Table.Where(f => f.PassengerId == passengerId);
-
-        if (exceptFormId.HasValue && exceptFormId.Value > 0)
-            query = query.Where(f => f.Id != exceptFormId.Value);
-
-        return await query.AnyAsync();
-    }
-
     #endregion
 
     #region Utilities
@@ -177,36 +180,31 @@ public partial class DisciplinaryFormService : IDisciplinaryFormService
         if (isNew && disciplinaryForm.CreatedOnUtc == default)
             disciplinaryForm.CreatedOnUtc = DateTime.UtcNow;
 
-        if (!disciplinaryForm.PassengerId.HasValue || disciplinaryForm.PassengerId.Value <= 0)
+        if (disciplinaryForm.PersonId <= 0)
             return;
 
-        var passengerId = disciplinaryForm.PassengerId.Value;
+        //prefill agency and substance details from the person's recovery form (if any)
+        var recoveryForm = await _recoveryFormRepository.Table
+            .Where(p => p.PersonId == disciplinaryForm.PersonId)
+            .OrderByDescending(p => p.CreatedOnUtc)
+            .FirstOrDefaultAsync();
 
-        if (await IsPassengerLinkedAsync(passengerId, isNew ? null : disciplinaryForm.Id))
-            throw new NopException($"Passenger with id {passengerId} is already linked to a disciplinary form.");
-
-        var passenger = await _passengerRepository.GetByIdAsync(passengerId)
-            ?? throw new NopException($"Passenger with id {passengerId} was not found.");
-
-        if (string.IsNullOrWhiteSpace(disciplinaryForm.PersonName))
-            disciplinaryForm.PersonName = passenger.PersonName;
-
-        if (string.IsNullOrWhiteSpace(disciplinaryForm.CardNo))
-            disciplinaryForm.CardNo = passenger.CardNo;
+        if (recoveryForm == null)
+            return;
 
         if (!disciplinaryForm.AgencyId.HasValue || disciplinaryForm.AgencyId.Value <= 0)
-            disciplinaryForm.AgencyId = passenger.AgencyId;
+            disciplinaryForm.AgencyId = recoveryForm.AgencyId;
 
         if (string.IsNullOrWhiteSpace(disciplinaryForm.PreviousSubstanceUseDetails))
         {
-            var antiX = await _antiXRepository.GetByIdAsync(passenger.AntiX1);
+            var antiX = await _antiXRepository.GetByIdAsync(recoveryForm.AntiX1);
             if (antiX != null)
                 disciplinaryForm.PreviousSubstanceUseDetails = antiX.Name;
         }
 
-        if (string.IsNullOrWhiteSpace(disciplinaryForm.CurrentSubstanceUseDetails) && passenger.AntiX2.HasValue)
+        if (string.IsNullOrWhiteSpace(disciplinaryForm.CurrentSubstanceUseDetails) && recoveryForm.AntiX2.HasValue)
         {
-            var antiX = await _antiXRepository.GetByIdAsync(passenger.AntiX2.Value);
+            var antiX = await _antiXRepository.GetByIdAsync(recoveryForm.AntiX2.Value);
             if (antiX != null)
                 disciplinaryForm.CurrentSubstanceUseDetails = antiX.Name;
         }
@@ -214,9 +212,6 @@ public partial class DisciplinaryFormService : IDisciplinaryFormService
 
     protected virtual void NormalizeDisciplinaryFormIdentifiers(DisciplinaryForm disciplinaryForm)
     {
-        disciplinaryForm.PersonName = disciplinaryForm.PersonName?.Trim();
-        disciplinaryForm.CardNo = disciplinaryForm.CardNo?.Trim();
-        disciplinaryForm.FamilyName = disciplinaryForm.FamilyName?.Trim();
         if (disciplinaryForm.AgencyId.GetValueOrDefault() <= 0)
             disciplinaryForm.AgencyId = null;
         disciplinaryForm.AgencyName = disciplinaryForm.AgencyName?.Trim();

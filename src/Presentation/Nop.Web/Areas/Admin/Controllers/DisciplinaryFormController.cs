@@ -27,7 +27,8 @@ public partial class DisciplinaryFormController : BaseAdminController
     protected readonly IDisciplinaryFormService _disciplinaryFormService;
     protected readonly ILocalizationService _localizationService;
     protected readonly INotificationService _notificationService;
-    protected readonly IPassengerService _passengerService;
+    protected readonly IRecoveryFormService _recoveryFormService;
+    protected readonly IPersonService _personService;
     protected readonly IPermissionService _permissionService;
     protected readonly IWorkContext _workContext;
 
@@ -42,7 +43,8 @@ public partial class DisciplinaryFormController : BaseAdminController
         IDisciplinaryFormService disciplinaryFormService,
         ILocalizationService localizationService,
         INotificationService notificationService,
-        IPassengerService passengerService,
+        IRecoveryFormService recoveryFormService,
+        IPersonService personService,
         IPermissionService permissionService,
         IWorkContext workContext)
     {
@@ -52,7 +54,8 @@ public partial class DisciplinaryFormController : BaseAdminController
         _disciplinaryFormService = disciplinaryFormService;
         _localizationService = localizationService;
         _notificationService = notificationService;
-        _passengerService = passengerService;
+        _recoveryFormService = recoveryFormService;
+        _personService = personService;
         _permissionService = permissionService;
         _workContext = workContext;
     }
@@ -80,30 +83,40 @@ public partial class DisciplinaryFormController : BaseAdminController
 
     [HttpGet]
     [CheckPermission(StandardPermission.DisciplinaryForms.DISCIPLINARY_FORMS_VIEW)]
-    public virtual async Task<IActionResult> GetPassengerByCardNo(string cardNo)
+    public virtual async Task<IActionResult> GetRecoveryFormByCardNo(string cardNo)
     {
         if (string.IsNullOrWhiteSpace(cardNo))
             return Json(new { found = false });
 
         cardNo = DigitHelper.ToEnglishDigits(cardNo.Trim());
-        var passengers = await _passengerService.GetAllPassengersAsync(cardNo: cardNo, pageSize: 1);
-        var passenger = passengers.FirstOrDefault();
-        if (passenger == null)
+
+        var person = (await _personService.GetPersonsByCardNoAsync(cardNo)).FirstOrDefault();
+        if (person == null)
             return Json(new { found = false });
 
-        var existingForm = await _disciplinaryFormService.GetDisciplinaryFormByPassengerIdAsync(passenger.Id);
-        var antiX = await _antiXService.GetAntiXByIdAsync(passenger.AntiX1);
-        var antiX2 = passenger.AntiX2.HasValue ? await _antiXService.GetAntiXByIdAsync(passenger.AntiX2.Value) : null;
+        //find the person's recovery form (if any) to prefill form-specific values
+        var recoveryForm = await _recoveryFormService.GetRecoveryFormByPersonIdAsync(person.Id);
+        var existingForm = (await _disciplinaryFormService.GetDisciplinaryFormsByPersonIdAsync(person.Id)).FirstOrDefault();
+
+        AntiX antiX = null;
+        AntiX antiX2 = null;
+        if (recoveryForm != null)
+        {
+            antiX = await _antiXService.GetAntiXByIdAsync(recoveryForm.AntiX1);
+            antiX2 = recoveryForm.AntiX2.HasValue ? await _antiXService.GetAntiXByIdAsync(recoveryForm.AntiX2.Value) : null;
+        }
 
         return Json(new
         {
             found = true,
-            passengerId = passenger.Id,
-            personName = passenger.PersonName,
-            cardNo = passenger.CardNo,
-            legionNo = passenger.GuideNameAndLegionNo,
-            educationLevel = (int)passenger.Education,
-            agencyId = passenger.AgencyId,
+            personId = person.Id,
+            recoveryFormId = recoveryForm?.Id,
+            personName = person.FirstName,
+            familyName = person.LastName,
+            cardNo = person.CardNo,
+            legionNo = recoveryForm?.GuideNameAndLegionNo,
+            educationLevel = recoveryForm != null ? (int?)recoveryForm.Education : null,
+            agencyId = recoveryForm?.AgencyId,
             previousSubstanceUseDetails = antiX?.Name,
             currentSubstanceUseDetails = antiX2?.Name,
             hasExistingForm = existingForm != null,
@@ -131,6 +144,7 @@ public partial class DisciplinaryFormController : BaseAdminController
                 var form = model.ToEntity<DisciplinaryForm>();
                 _disciplinaryFormModelFactory.ApplyModelFlagsToEntity(model, form);
                 await SetCreatedByCustomerAsync(form);
+                form.PersonId = await ResolvePersonIdAsync(model, null);
 
                 await _disciplinaryFormService.InsertDisciplinaryFormAsync(form);
 
@@ -178,8 +192,10 @@ public partial class DisciplinaryFormController : BaseAdminController
             try
             {
                 NormalizeModel(model);
+                var loadedPersonId = form.PersonId;
                 form = model.ToEntity(form);
                 _disciplinaryFormModelFactory.ApplyModelFlagsToEntity(model, form);
+                form.PersonId = await ResolvePersonIdAsync(model, loadedPersonId);
 
                 await _disciplinaryFormService.UpdateDisciplinaryFormAsync(form);
 
@@ -228,11 +244,61 @@ public partial class DisciplinaryFormController : BaseAdminController
         if (!string.IsNullOrWhiteSpace(model.CardNo))
             model.CardNo = DigitHelper.ToEnglishDigits(model.CardNo.Trim());
 
-        if (model.PassengerId <= 0)
-            model.PassengerId = null;
+        if (model.RecoveryFormId <= 0)
+            model.RecoveryFormId = null;
 
         if (model.AgencyId <= 0)
             model.AgencyId = null;
+    }
+
+    /// <summary>
+    /// Resolves the person the disciplinary form should be linked to.
+    /// Priority: (1) update the already linked person when editing, (2) reuse the person of a matched recovery form,
+    /// (3) create a new person from the form's identity fields.
+    /// </summary>
+    protected virtual async Task<int> ResolvePersonIdAsync(DisciplinaryFormModel model, int? existingPersonId)
+    {
+        //editing: update the identity of the already linked person
+        if (existingPersonId.HasValue && existingPersonId.Value > 0)
+        {
+            var person = await _personService.GetPersonByIdAsync(existingPersonId.Value);
+            if (person != null)
+            {
+                person.FirstName = model.PersonName;
+                person.LastName = model.FamilyName;
+                person.MobileNumber = model.MobileNumber;
+                person.CardNo = model.CardNo;
+                await _personService.UpdatePersonAsync(person);
+                return person.Id;
+            }
+        }
+
+        //link to the person of an existing recovery form when provided
+        if (model.RecoveryFormId.HasValue && model.RecoveryFormId.Value > 0)
+        {
+            var recoveryForm = await _recoveryFormService.GetRecoveryFormByIdAsync(model.RecoveryFormId.Value);
+            if (recoveryForm != null && recoveryForm.PersonId > 0)
+                return recoveryForm.PersonId;
+        }
+
+        //otherwise create a new person
+        var currentCustomer = await _workContext.GetCurrentCustomerAsync();
+        var createdByCustomerId = currentCustomer != null &&
+            await _permissionService.AuthorizeAsync(StandardPermission.Security.ACCESS_ADMIN_PANEL, currentCustomer)
+            ? (int?)currentCustomer.Id
+            : null;
+
+        var newPerson = new Person
+        {
+            FirstName = model.PersonName,
+            LastName = model.FamilyName,
+            MobileNumber = model.MobileNumber,
+            CardNo = model.CardNo,
+            CreatedOnUtc = DateTime.UtcNow,
+            CreatedByCustomerId = createdByCustomerId
+        };
+        await _personService.InsertPersonAsync(newPerson);
+        return newPerson.Id;
     }
 
     protected virtual async Task SetCreatedByCustomerAsync(DisciplinaryForm form)

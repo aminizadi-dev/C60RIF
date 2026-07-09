@@ -21,6 +21,7 @@ public partial class DisciplinaryFormModelFactory : IDisciplinaryFormModelFactor
     protected readonly IDateTimeHelper _dateTimeHelper;
     protected readonly IDisciplinaryFormService _disciplinaryFormService;
     protected readonly ILocalizationService _localizationService;
+    protected readonly IPersonService _personService;
 
     #endregion
 
@@ -30,12 +31,14 @@ public partial class DisciplinaryFormModelFactory : IDisciplinaryFormModelFactor
         IAgencyService agencyService,
         IDateTimeHelper dateTimeHelper,
         IDisciplinaryFormService disciplinaryFormService,
-        ILocalizationService localizationService)
+        ILocalizationService localizationService,
+        IPersonService personService)
     {
         _agencyService = agencyService;
         _dateTimeHelper = dateTimeHelper;
         _disciplinaryFormService = disciplinaryFormService;
         _localizationService = localizationService;
+        _personService = personService;
     }
 
     #endregion
@@ -72,8 +75,12 @@ public partial class DisciplinaryFormModelFactory : IDisciplinaryFormModelFactor
             .Select(form => form.AgencyId!.Value)
             .Distinct()
             .ToArray();
+        var personIds = forms.Select(form => form.PersonId).Where(id => id > 0).Distinct().ToArray();
+
         var agencies = await _agencyService.GetAgenciesByIdsAsync(agencyIds);
         var agencyNames = agencies.ToDictionary(agency => agency.Id, agency => agency.Name);
+        var persons = await _personService.GetPersonsByIdsAsync(personIds);
+        var personsById = persons.ToDictionary(person => person.Id);
 
         var model = await new DisciplinaryFormListModel().PrepareToGridAsync(searchModel, forms, () =>
         {
@@ -81,6 +88,16 @@ public partial class DisciplinaryFormModelFactory : IDisciplinaryFormModelFactor
             {
                 var formModel = form.ToModel<DisciplinaryFormModel>();
                 ApplyEntityFlagsToModel(form, formModel);
+
+                //fill identity values from the linked person
+                if (personsById.TryGetValue(form.PersonId, out var person))
+                {
+                    formModel.PersonName = person.FirstName;
+                    formModel.FamilyName = person.LastName;
+                    formModel.CardNo = person.CardNo;
+                    formModel.MobileNumber = person.MobileNumber;
+                }
+
                 formModel.AgencyName = form.AgencyId.HasValue &&
                     agencyNames.TryGetValue(form.AgencyId.Value, out var agencyName)
                     ? agencyName
@@ -106,6 +123,16 @@ public partial class DisciplinaryFormModelFactory : IDisciplinaryFormModelFactor
             {
                 model = disciplinaryForm.ToModel(model);
                 ApplyEntityFlagsToModel(disciplinaryForm, model);
+
+                //fill identity values from the linked person
+                var person = await _personService.GetPersonByIdAsync(disciplinaryForm.PersonId);
+                if (person != null)
+                {
+                    model.PersonName = person.FirstName;
+                    model.FamilyName = person.LastName;
+                    model.CardNo = person.CardNo;
+                    model.MobileNumber = person.MobileNumber;
+                }
             }
 
             model.Id = disciplinaryForm.Id;

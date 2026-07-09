@@ -64,7 +64,7 @@ public partial class CommonModelFactory : ICommonModelFactory
     protected readonly IAgencyService _agencyService;
     protected readonly ICityService _cityService;
     protected readonly IClinicService _clinicService;
-    protected readonly IPassengerService _passengerService;
+    protected readonly IRecoveryFormService _recoveryFormService;
     protected readonly IDateTimeHelper _dateTimeHelper;
     protected readonly IEventPublisher _eventPublisher;
     protected readonly IHttpContextAccessor _httpContextAccessor;
@@ -110,7 +110,7 @@ public partial class CommonModelFactory : ICommonModelFactory
         IAgencyService agencyService,
         ICityService cityService,
         IClinicService clinicService,
-        IPassengerService passengerService,
+        IRecoveryFormService recoveryFormService,
         IDateTimeHelper dateTimeHelper,
         IEventPublisher eventPublisher,
         IHttpContextAccessor httpContextAccessor,
@@ -152,7 +152,7 @@ public partial class CommonModelFactory : ICommonModelFactory
         _agencyService = agencyService;
         _cityService = cityService;
         _clinicService = clinicService;
-        _passengerService = passengerService;
+        _recoveryFormService = recoveryFormService;
         _eventPublisher = eventPublisher;
         _dataProvider = dataProvider;
         _dateTimeHelper = dateTimeHelper;
@@ -942,7 +942,7 @@ public partial class CommonModelFactory : ICommonModelFactory
     {
         var model = new CommonStatisticsModel();
 
-        model.NumberOfPassengers = (await _passengerService.GetAllPassengersAsync(
+        model.NumberOfPassengers = (await _recoveryFormService.GetAllRecoveryFormsAsync(
             pageIndex: 0, pageSize: 1, getOnlyTotalCount: true)).TotalCount;
 
         model.NumberOfCities = (await _cityService.GetAllCitiesAsync(

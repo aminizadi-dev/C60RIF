@@ -4,28 +4,28 @@ using Nop.Core.Domain.Customers;
 namespace Nop.Services.Customers;
 
 /// <summary>
-/// Passenger service interface
+/// Recovery form service interface
 /// </summary>
-public partial interface IPassengerService
+public partial interface IRecoveryFormService
 {
-    #region Passengers
+    #region Recovery forms
 
     /// <summary>
-    /// Gets all passengers
+    /// Gets all recovery forms
     /// </summary>
-    /// <param name="recoveryNo">Recovery number; null or empty to load all passengers</param>
-    /// <param name="personName">Person name; null to load all passengers</param>
-    /// <param name="cityId">City identifier; 0 to load all passengers</param>
-    /// <param name="agencyId">Agency identifier; 0 to load all passengers</param>
-    /// <param name="antiXId">AntiX identifier; 0 to load all passengers</param>
+    /// <param name="recoveryNo">Recovery number; null or empty to load all recovery forms</param>
+    /// <param name="personName">Person name; null to load all recovery forms</param>
+    /// <param name="cityId">City identifier; 0 to load all recovery forms</param>
+    /// <param name="agencyId">Agency identifier; 0 to load all recovery forms</param>
+    /// <param name="antiXId">AntiX identifier; 0 to load all recovery forms</param>
     /// <param name="pageIndex">Page index</param>
     /// <param name="pageSize">Page size</param>
     /// <param name="getOnlyTotalCount">A value indicating whether you want to load only total number of records. Set to "true" if you don't want to load data from database</param>
     /// <returns>
     /// A task that represents the asynchronous operation
-    /// The task result contains the passengers
+    /// The task result contains the recovery forms
     /// </returns>
-    Task<IPagedList<Passenger>> GetAllPassengersAsync(string recoveryNo = null,
+    Task<IPagedList<RecoveryForm>> GetAllRecoveryFormsAsync(string recoveryNo = null,
         string personName = null, int cityId = 0, int agencyId = 0, int clinicId = 0, int antiXId = 0,
         string guideNameAndLegionNo = null, string cardNo = null,
         DateTime? travelStartDateUtc = null, DateTime? travelEndDateUtc = null,
@@ -33,45 +33,55 @@ public partial interface IPassengerService
         int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false);
 
     /// <summary>
-    /// Gets a passenger
+    /// Gets a recovery form
     /// </summary>
-    /// <param name="passengerId">Passenger identifier</param>
+    /// <param name="recoveryFormId">Recovery form identifier</param>
     /// <returns>
     /// A task that represents the asynchronous operation
-    /// The task result contains the passenger
+    /// The task result contains the recovery form
     /// </returns>
-    Task<Passenger> GetPassengerByIdAsync(int passengerId);
+    Task<RecoveryForm> GetRecoveryFormByIdAsync(int recoveryFormId);
 
     /// <summary>
-    /// Gets passengers by identifiers
+    /// Gets recovery forms by identifiers
     /// </summary>
-    /// <param name="passengerIds">Passenger identifiers</param>
+    /// <param name="recoveryFormIds">Recovery form identifiers</param>
     /// <returns>
     /// A task that represents the asynchronous operation
-    /// The task result contains the passengers
+    /// The task result contains the recovery forms
     /// </returns>
-    Task<IList<Passenger>> GetPassengersByIdsAsync(int[] passengerIds);
+    Task<IList<RecoveryForm>> GetRecoveryFormsByIdsAsync(int[] recoveryFormIds);
 
     /// <summary>
-    /// Inserts a passenger
+    /// Gets the recovery form linked to a person
     /// </summary>
-    /// <param name="passenger">Passenger</param>
-    /// <returns>A task that represents the asynchronous operation</returns>
-    Task InsertPassengerAsync(Passenger passenger);
+    /// <param name="personId">Person identifier</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation
+    /// The task result contains the recovery form (or null)
+    /// </returns>
+    Task<RecoveryForm> GetRecoveryFormByPersonIdAsync(int personId);
 
     /// <summary>
-    /// Updates the passenger
+    /// Inserts a recovery form
     /// </summary>
-    /// <param name="passenger">Passenger</param>
+    /// <param name="recoveryForm">Recovery form</param>
     /// <returns>A task that represents the asynchronous operation</returns>
-    Task UpdatePassengerAsync(Passenger passenger);
+    Task InsertRecoveryFormAsync(RecoveryForm recoveryForm);
 
     /// <summary>
-    /// Delete a passenger
+    /// Updates the recovery form
     /// </summary>
-    /// <param name="passenger">Passenger</param>
+    /// <param name="recoveryForm">Recovery form</param>
     /// <returns>A task that represents the asynchronous operation</returns>
-    Task DeletePassengerAsync(Passenger passenger);
+    Task UpdateRecoveryFormAsync(RecoveryForm recoveryForm);
+
+    /// <summary>
+    /// Delete a recovery form
+    /// </summary>
+    /// <param name="recoveryForm">Recovery form</param>
+    /// <returns>A task that represents the asynchronous operation</returns>
+    Task DeleteRecoveryFormAsync(RecoveryForm recoveryForm);
 
     /// <summary>
     /// Gets available recovery years (distinct Persian years from TravelEndDateUtc)
@@ -94,18 +104,9 @@ public partial interface IPassengerService
     /// Checks whether a recovery number already exists
     /// </summary>
     /// <param name="recoveryNo">Recovery number</param>
-    /// <param name="exceptPassengerId">Exclude passenger identifier</param>
+    /// <param name="exceptRecoveryFormId">Exclude recovery form identifier</param>
     /// <returns>A task that represents the asynchronous operation</returns>
-    Task<bool> IsRecoveryNoExistsAsync(string recoveryNo, int? exceptPassengerId = null);
-
-    /// <summary>
-    /// Checks whether a card number already exists
-    /// </summary>
-    /// <param name="cardNo">Card number</param>
-    /// <param name="exceptPassengerId">Exclude passenger identifier</param>
-    /// <returns>A task that represents the asynchronous operation</returns>
-    Task<bool> IsCardNoExistsAsync(string cardNo, int? exceptPassengerId = null);
+    Task<bool> IsRecoveryNoExistsAsync(string recoveryNo, int? exceptRecoveryFormId = null);
 
     #endregion
 }
-

@@ -16,10 +16,12 @@ public partial record DisciplinaryFormModel : BaseNopEntityModel
         AvailableAgencies = new List<SelectListItem>();
     }
 
-    #region Passenger link
+    #region Person link
 
     [NopResourceDisplayName("Admin.DisciplinaryForms.Fields.PassengerId")]
-    public int? PassengerId { get; set; }
+    public int? RecoveryFormId { get; set; }
+
+    public int PersonId { get; set; }
 
     #endregion
 
@@ -27,6 +29,9 @@ public partial record DisciplinaryFormModel : BaseNopEntityModel
 
     [NopResourceDisplayName("Admin.DisciplinaryForms.Fields.PersonName")]
     public string PersonName { get; set; }
+
+    [NopResourceDisplayName("Admin.DisciplinaryForms.Fields.MobileNumber")]
+    public string MobileNumber { get; set; }
 
     [NopResourceDisplayName("Admin.DisciplinaryForms.Fields.FamilyName")]
     public string FamilyName { get; set; }

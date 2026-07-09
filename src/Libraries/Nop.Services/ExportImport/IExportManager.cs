@@ -27,8 +27,8 @@ public partial interface IExportManager
     /// <summary>
     /// Export passenger list to XLSX
     /// </summary>
-    /// <param name="passengers">Passengers</param>
+    /// <param name="recoveryForms">Recovery forms</param>
     /// <returns>A task that represents the asynchronous operation</returns>
-    Task<byte[]> ExportPassengersToXlsxAsync(IList<Passenger> passengers);
+    Task<byte[]> ExportRecoveryFormsToXlsxAsync(IList<RecoveryForm> recoveryForms);
 
 }

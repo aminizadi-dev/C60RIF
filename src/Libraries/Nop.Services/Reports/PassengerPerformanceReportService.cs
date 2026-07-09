@@ -11,11 +11,11 @@ namespace Nop.Services.Reports;
 public partial class PassengerPerformanceReportService : IPassengerPerformanceReportService
 {
     protected readonly ICustomerService _customerService;
-    protected readonly IRepository<Passenger> _passengerRepository;
+    protected readonly IRepository<RecoveryForm> _passengerRepository;
 
     public PassengerPerformanceReportService(
         ICustomerService customerService,
-        IRepository<Passenger> passengerRepository)
+        IRepository<RecoveryForm> passengerRepository)
     {
         _customerService = customerService;
         _passengerRepository = passengerRepository;
@@ -111,7 +111,7 @@ public partial class PassengerPerformanceReportService : IPassengerPerformanceRe
     }
 
     protected virtual async Task<Dictionary<int, int>> CountGroupedByCreatorAsync(
-        IQueryable<Passenger> query,
+        IQueryable<RecoveryForm> query,
         DateTime? rangeStartUtc,
         DateTime? rangeEndUtc)
     {
@@ -127,15 +127,15 @@ public partial class PassengerPerformanceReportService : IPassengerPerformanceRe
     }
 
     protected virtual async Task<int> CountInRangeAsync(
-        IQueryable<Passenger> query,
+        IQueryable<RecoveryForm> query,
         DateTime rangeStartUtc,
         DateTime rangeEndUtc)
     {
         return await ApplyRange(query, rangeStartUtc, rangeEndUtc).CountAsync();
     }
 
-    protected static IQueryable<Passenger> ApplyRange(
-        IQueryable<Passenger> query,
+    protected static IQueryable<RecoveryForm> ApplyRange(
+        IQueryable<RecoveryForm> query,
         DateTime? rangeStartUtc,
         DateTime? rangeEndUtc)
     {

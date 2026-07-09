@@ -12,31 +12,29 @@ public class AddDisciplinaryFormTableMigration : ForwardOnlyMigration
     public override void Up()
     {
         var tableName = NameCompatibilityManager.GetTableName(typeof(DisciplinaryForm));
+        var personTableName = NameCompatibilityManager.GetTableName(typeof(Person));
+
+        //the disciplinary form references the Person aggregate via a foreign key.
+        //on databases that predate the Person table (which is otherwise created later by
+        //AddPersonAggregateMigration) we must create it here first, otherwise
+        //Create.TableFor<DisciplinaryForm> fails while building the FK to a missing table.
+        if (!Schema.Table(personTableName).Exists())
+            Create.TableFor<Person>();
 
         if (Schema.Table(tableName).Exists())
             return;
 
         Create.TableFor<DisciplinaryForm>();
 
-        var passengerIdColumn = nameof(DisciplinaryForm.PassengerId);
-        var passengerIdIndexName = "IX_DisciplinaryForm_PassengerId";
+        var personIdColumn = nameof(DisciplinaryForm.PersonId);
+        var personIdIndexName = "IX_DisciplinaryForm_PersonId";
 
-        if (Schema.Table(tableName).Column(passengerIdColumn).Exists() &&
-            !Schema.Table(tableName).Index(passengerIdIndexName).Exists())
+        if (Schema.Table(tableName).Column(personIdColumn).Exists() &&
+            !Schema.Table(tableName).Index(personIdIndexName).Exists())
         {
-            Create.Index(passengerIdIndexName)
+            Create.Index(personIdIndexName)
                 .OnTable(tableName)
-                .OnColumn(passengerIdColumn).Ascending()
-                .WithOptions().Unique();
-        }
-
-        var cardNoIndexName = "IX_DisciplinaryForm_CardNo";
-        if (Schema.Table(tableName).Column(nameof(DisciplinaryForm.CardNo)).Exists() &&
-            !Schema.Table(tableName).Index(cardNoIndexName).Exists())
-        {
-            Create.Index(cardNoIndexName)
-                .OnTable(tableName)
-                .OnColumn(nameof(DisciplinaryForm.CardNo)).Ascending();
+                .OnColumn(personIdColumn).Ascending();
         }
 
         var createdOnIndexName = "IX_DisciplinaryForm_CreatedOnUtc";

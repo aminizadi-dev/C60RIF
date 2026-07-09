@@ -7,13 +7,13 @@ using Nop.Web.Framework.Mvc.ModelBinding;
 namespace Nop.Web.Areas.Admin.Models.Customers;
 
 /// <summary>
-/// Represents a passenger search model
+/// Represents a recovery form search model
 /// </summary>
-public partial record PassengerSearchModel : BaseSearchModel
+public partial record RecoveryFormSearchModel : BaseSearchModel
 {
     #region Ctor
 
-    public PassengerSearchModel()
+    public RecoveryFormSearchModel()
     {
         AvailableCities = new List<SelectListItem>();
         AvailableAgencies = new List<SelectListItem>();
@@ -76,4 +76,3 @@ public partial record PassengerSearchModel : BaseSearchModel
 
     #endregion
 }
-

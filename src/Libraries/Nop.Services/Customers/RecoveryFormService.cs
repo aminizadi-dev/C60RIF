@@ -8,28 +8,31 @@ using Nop.Data;
 namespace Nop.Services.Customers;
 
 /// <summary>
-/// Passenger service
+/// Recovery form service
 /// </summary>
-public partial class PassengerService : IPassengerService
+public partial class RecoveryFormService : IRecoveryFormService
 {
     #region Fields
 
     protected readonly IEventPublisher _eventPublisher;
     protected readonly IRepository<Agency> _agencyRepository;
-    protected readonly IRepository<Passenger> _passengerRepository;
+    protected readonly IRepository<RecoveryForm> _recoveryFormRepository;
+    protected readonly IRepository<Person> _personRepository;
 
     #endregion
 
     #region Ctor
 
-    public PassengerService(
+    public RecoveryFormService(
         IEventPublisher eventPublisher,
         IRepository<Agency> agencyRepository,
-        IRepository<Passenger> passengerRepository)
+        IRepository<RecoveryForm> recoveryFormRepository,
+        IRepository<Person> personRepository)
     {
         _eventPublisher = eventPublisher;
         _agencyRepository = agencyRepository;
-        _passengerRepository = passengerRepository;
+        _recoveryFormRepository = recoveryFormRepository;
+        _personRepository = personRepository;
     }
 
     #endregion
@@ -37,21 +40,21 @@ public partial class PassengerService : IPassengerService
     #region Methods
 
     /// <summary>
-    /// Gets all passengers
+    /// Gets all recovery forms
     /// </summary>
-    /// <param name="recoveryNo">Recovery number; null or empty to load all passengers</param>
-    /// <param name="personName">Person name; null to load all passengers</param>
-    /// <param name="cityId">City identifier; 0 to load all passengers</param>
-    /// <param name="agencyId">Agency identifier; 0 to load all passengers</param>
-    /// <param name="antiXId">AntiX identifier; 0 to load all passengers</param>
+    /// <param name="recoveryNo">Recovery number; null or empty to load all recovery forms</param>
+    /// <param name="personName">Person name; null to load all recovery forms</param>
+    /// <param name="cityId">City identifier; 0 to load all recovery forms</param>
+    /// <param name="agencyId">Agency identifier; 0 to load all recovery forms</param>
+    /// <param name="antiXId">AntiX identifier; 0 to load all recovery forms</param>
     /// <param name="pageIndex">Page index</param>
     /// <param name="pageSize">Page size</param>
     /// <param name="getOnlyTotalCount">A value indicating whether you want to load only total number of records. Set to "true" if you don't want to load data from database</param>
     /// <returns>
     /// A task that represents the asynchronous operation
-    /// The task result contains the passengers
+    /// The task result contains the recovery forms
     /// </returns>
-    public virtual async Task<IPagedList<Passenger>> GetAllPassengersAsync(string recoveryNo = null,
+    public virtual async Task<IPagedList<RecoveryForm>> GetAllRecoveryFormsAsync(string recoveryNo = null,
         string personName = null, int cityId = 0, int agencyId = 0, int clinicId = 0, int antiXId = 0,
         string guideNameAndLegionNo = null, string cardNo = null,
         DateTime? travelStartDateUtc = null, DateTime? travelEndDateUtc = null,
@@ -81,16 +84,27 @@ public partial class PassengerService : IPassengerService
             }
         }
 
-        var passengers = await _passengerRepository.GetAllPagedAsync(query =>
+        var recoveryForms = await _recoveryFormRepository.GetAllPagedAsync(query =>
         {
             if (!string.IsNullOrWhiteSpace(recoveryNo))
                 query = query.Where(p => p.RecoveryNo == recoveryNo);
             if (!string.IsNullOrWhiteSpace(personName))
-                query = query.Where(p => p.PersonName.Contains(personName));
+            {
+                query = from recoveryForm in query
+                        join person in _personRepository.Table on recoveryForm.PersonId equals person.Id
+                        where (person.FirstName != null && person.FirstName.Contains(personName)) ||
+                              (person.LastName != null && person.LastName.Contains(personName))
+                        select recoveryForm;
+            }
             if (!string.IsNullOrWhiteSpace(guideNameAndLegionNo))
                 query = query.Where(p => p.GuideNameAndLegionNo.Contains(guideNameAndLegionNo));
             if (!string.IsNullOrWhiteSpace(cardNo))
-                query = query.Where(p => p.CardNo == cardNo);
+            {
+                query = from recoveryForm in query
+                        join person in _personRepository.Table on recoveryForm.PersonId equals person.Id
+                        where person.CardNo == cardNo
+                        select recoveryForm;
+            }
             if (agencyId > 0)
                 query = query.Where(p => p.AgencyId == agencyId);
             if (clinicId > 0)
@@ -107,10 +121,10 @@ public partial class PassengerService : IPassengerService
                     p.TravelEndDateUtc.Value < recoveryRangeEnd.Value);
             if (cityId > 0)
             {
-                query = from passenger in query
-                        join agency in _agencyRepository.Table on passenger.AgencyId equals agency.Id
+                query = from recoveryForm in query
+                        join agency in _agencyRepository.Table on recoveryForm.AgencyId equals agency.Id
                         where agency.CityId == cityId
-                        select passenger;
+                        select recoveryForm;
             }
 
             query = query
@@ -120,38 +134,38 @@ public partial class PassengerService : IPassengerService
             return query;
         }, pageIndex, pageSize, getOnlyTotalCount);
 
-        return passengers;
+        return recoveryForms;
     }
 
     /// <summary>
-    /// Gets a passenger
+    /// Gets a recovery form
     /// </summary>
-    /// <param name="passengerId">Passenger identifier</param>
+    /// <param name="recoveryFormId">Recovery form identifier</param>
     /// <returns>
     /// A task that represents the asynchronous operation
-    /// The task result contains the passenger
+    /// The task result contains the recovery form
     /// </returns>
-    public virtual async Task<Passenger> GetPassengerByIdAsync(int passengerId)
+    public virtual async Task<RecoveryForm> GetRecoveryFormByIdAsync(int recoveryFormId)
     {
-        return await _passengerRepository.GetByIdAsync(passengerId);
+        return await _recoveryFormRepository.GetByIdAsync(recoveryFormId);
     }
 
     /// <summary>
-    /// Gets passengers by identifiers
+    /// Gets recovery forms by identifiers
     /// </summary>
-    /// <param name="passengerIds">Passenger identifiers</param>
+    /// <param name="recoveryFormIds">Recovery form identifiers</param>
     /// <returns>
     /// A task that represents the asynchronous operation
-    /// The task result contains the passengers
+    /// The task result contains the recovery forms
     /// </returns>
-    public virtual async Task<IList<Passenger>> GetPassengersByIdsAsync(int[] passengerIds)
+    public virtual async Task<IList<RecoveryForm>> GetRecoveryFormsByIdsAsync(int[] recoveryFormIds)
     {
-        if (passengerIds == null || passengerIds.Length == 0)
-            return new List<Passenger>();
+        if (recoveryFormIds == null || recoveryFormIds.Length == 0)
+            return new List<RecoveryForm>();
 
-        var query = await _passengerRepository.GetAllAsync(query =>
+        var query = await _recoveryFormRepository.GetAllAsync(query =>
         {
-            query = query.Where(p => passengerIds.Contains(p.Id));
+            query = query.Where(p => recoveryFormIds.Contains(p.Id));
             return query;
         });
 
@@ -159,43 +173,62 @@ public partial class PassengerService : IPassengerService
     }
 
     /// <summary>
-    /// Inserts a passenger
+    /// Gets the recovery form linked to a person
     /// </summary>
-    /// <param name="passenger">Passenger</param>
-    /// <returns>A task that represents the asynchronous operation</returns>
-    public virtual async Task InsertPassengerAsync(Passenger passenger)
+    /// <param name="personId">Person identifier</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation
+    /// The task result contains the recovery form (or null)
+    /// </returns>
+    public virtual async Task<RecoveryForm> GetRecoveryFormByPersonIdAsync(int personId)
     {
-        ArgumentNullException.ThrowIfNull(passenger);
+        if (personId <= 0)
+            return null;
 
-        NormalizePassengerIdentifiers(passenger);
-
-        await _passengerRepository.InsertAsync(passenger);
+        return await _recoveryFormRepository.Table
+            .Where(p => p.PersonId == personId)
+            .OrderByDescending(p => p.CreatedOnUtc)
+            .FirstOrDefaultAsync();
     }
 
     /// <summary>
-    /// Updates the passenger
+    /// Inserts a recovery form
     /// </summary>
-    /// <param name="passenger">Passenger</param>
+    /// <param name="recoveryForm">Recovery form</param>
     /// <returns>A task that represents the asynchronous operation</returns>
-    public virtual async Task UpdatePassengerAsync(Passenger passenger)
+    public virtual async Task InsertRecoveryFormAsync(RecoveryForm recoveryForm)
     {
-        ArgumentNullException.ThrowIfNull(passenger);
+        ArgumentNullException.ThrowIfNull(recoveryForm);
 
-        NormalizePassengerIdentifiers(passenger);
+        NormalizeRecoveryNumber(recoveryForm);
 
-        await _passengerRepository.UpdateAsync(passenger);
+        await _recoveryFormRepository.InsertAsync(recoveryForm);
     }
 
     /// <summary>
-    /// Delete a passenger
+    /// Updates the recovery form
     /// </summary>
-    /// <param name="passenger">Passenger</param>
+    /// <param name="recoveryForm">Recovery form</param>
     /// <returns>A task that represents the asynchronous operation</returns>
-    public virtual async Task DeletePassengerAsync(Passenger passenger)
+    public virtual async Task UpdateRecoveryFormAsync(RecoveryForm recoveryForm)
     {
-        ArgumentNullException.ThrowIfNull(passenger);
+        ArgumentNullException.ThrowIfNull(recoveryForm);
 
-        await _passengerRepository.DeleteAsync(passenger);
+        NormalizeRecoveryNumber(recoveryForm);
+
+        await _recoveryFormRepository.UpdateAsync(recoveryForm);
+    }
+
+    /// <summary>
+    /// Delete a recovery form
+    /// </summary>
+    /// <param name="recoveryForm">Recovery form</param>
+    /// <returns>A task that represents the asynchronous operation</returns>
+    public virtual async Task DeleteRecoveryFormAsync(RecoveryForm recoveryForm)
+    {
+        ArgumentNullException.ThrowIfNull(recoveryForm);
+
+        await _recoveryFormRepository.DeleteAsync(recoveryForm);
     }
 
     /// <summary>
@@ -209,10 +242,10 @@ public partial class PassengerService : IPassengerService
     {
         var pc = new PersianCalendar();
 
-        var passengers = await _passengerRepository.GetAllAsync(query =>
+        var recoveryForms = await _recoveryFormRepository.GetAllAsync(query =>
             query.Where(p => p.TravelEndDateUtc.HasValue));
 
-        var years = passengers
+        var years = recoveryForms
             .Select(p => pc.GetYear(p.TravelEndDateUtc!.Value))
             .Distinct()
             .OrderByDescending(y => y)
@@ -229,57 +262,32 @@ public partial class PassengerService : IPassengerService
     /// <returns>Normalized recovery number</returns>
     public virtual string NormalizeRecoveryNo(string recoveryNo, DateTime? travelEndDateUtc)
     {
-        return PassengerRecoveryNoHelper.Normalize(recoveryNo, travelEndDateUtc);
+        return RecoveryNoHelper.Normalize(recoveryNo, travelEndDateUtc);
     }
 
-    protected virtual void NormalizePassengerIdentifiers(Passenger passenger)
+    protected virtual void NormalizeRecoveryNumber(RecoveryForm recoveryForm)
     {
-        passenger.RecoveryNo = NormalizeRecoveryNo(passenger.RecoveryNo, passenger.TravelEndDateUtc);
-
-        if (!string.IsNullOrWhiteSpace(passenger.CardNo))
-            passenger.CardNo = DigitHelper.ToEnglishDigits(passenger.CardNo.Trim());
-        else
-            passenger.CardNo = null;
+        recoveryForm.RecoveryNo = NormalizeRecoveryNo(recoveryForm.RecoveryNo, recoveryForm.TravelEndDateUtc);
     }
 
     /// <summary>
     /// Checks whether a recovery number already exists
     /// </summary>
     /// <param name="recoveryNo">Recovery number</param>
-    /// <param name="exceptPassengerId">Exclude passenger identifier</param>
+    /// <param name="exceptRecoveryFormId">Exclude recovery form identifier</param>
     /// <returns>A task that represents the asynchronous operation</returns>
-    public virtual async Task<bool> IsRecoveryNoExistsAsync(string recoveryNo, int? exceptPassengerId = null)
+    public virtual async Task<bool> IsRecoveryNoExistsAsync(string recoveryNo, int? exceptRecoveryFormId = null)
     {
         if (string.IsNullOrWhiteSpace(recoveryNo))
             return false;
 
-        var query = _passengerRepository.Table.Where(p => p.RecoveryNo == recoveryNo);
+        var query = _recoveryFormRepository.Table.Where(p => p.RecoveryNo == recoveryNo);
 
-        if (exceptPassengerId.HasValue)
-            query = query.Where(p => p.Id != exceptPassengerId.Value);
-
-        return await query.AnyAsync();
-    }
-
-    /// <summary>
-    /// Checks whether a card number already exists
-    /// </summary>
-    /// <param name="cardNo">Card number</param>
-    /// <param name="exceptPassengerId">Exclude passenger identifier</param>
-    /// <returns>A task that represents the asynchronous operation</returns>
-    public virtual async Task<bool> IsCardNoExistsAsync(string cardNo, int? exceptPassengerId = null)
-    {
-        if (string.IsNullOrWhiteSpace(cardNo))
-            return false;
-
-        var query = _passengerRepository.Table.Where(p => p.CardNo == cardNo);
-
-        if (exceptPassengerId.HasValue)
-            query = query.Where(p => p.Id != exceptPassengerId.Value);
+        if (exceptRecoveryFormId.HasValue)
+            query = query.Where(p => p.Id != exceptRecoveryFormId.Value);
 
         return await query.AnyAsync();
     }
 
     #endregion
 }
-

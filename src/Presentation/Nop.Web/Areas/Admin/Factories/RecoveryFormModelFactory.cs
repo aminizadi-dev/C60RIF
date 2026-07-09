@@ -12,9 +12,9 @@ using Nop.Web.Framework.Models.Extensions;
 namespace Nop.Web.Areas.Admin.Factories;
 
 /// <summary>
-/// Represents the passenger model factory implementation
+/// Represents the recovery form model factory implementation
 /// </summary>
-public partial class PassengerModelFactory : IPassengerModelFactory
+public partial class RecoveryFormModelFactory : IRecoveryFormModelFactory
 {
     #region Fields
 
@@ -24,21 +24,23 @@ public partial class PassengerModelFactory : IPassengerModelFactory
     protected readonly ICityService _cityService;
     protected readonly IDateTimeHelper _dateTimeHelper;
     protected readonly ILocalizationService _localizationService;
-    protected readonly IPassengerService _passengerService;
+    protected readonly IRecoveryFormService _recoveryFormService;
+    protected readonly IPersonService _personService;
     protected readonly IPictureService _pictureService;
 
     #endregion
 
     #region Ctor
 
-    public PassengerModelFactory(
+    public RecoveryFormModelFactory(
         IAgencyService agencyService,
         IAntiXService antiXService,
         IClinicService clinicService,
         ICityService cityService,
         IDateTimeHelper dateTimeHelper,
         ILocalizationService localizationService,
-        IPassengerService passengerService,
+        IRecoveryFormService recoveryFormService,
+        IPersonService personService,
         IPictureService pictureService)
     {
         _agencyService = agencyService;
@@ -47,7 +49,8 @@ public partial class PassengerModelFactory : IPassengerModelFactory
         _cityService = cityService;
         _dateTimeHelper = dateTimeHelper;
         _localizationService = localizationService;
-        _passengerService = passengerService;
+        _recoveryFormService = recoveryFormService;
+        _personService = personService;
         _pictureService = pictureService;
     }
 
@@ -56,14 +59,14 @@ public partial class PassengerModelFactory : IPassengerModelFactory
     #region Methods
 
     /// <summary>
-    /// Prepare passenger search model
+    /// Prepare recovery form search model
     /// </summary>
-    /// <param name="searchModel">Passenger search model</param>
+    /// <param name="searchModel">Recovery form search model</param>
     /// <returns>
     /// A task that represents the asynchronous operation
-    /// The task result contains the passenger search model
+    /// The task result contains the recovery form search model
     /// </returns>
-    public virtual async Task<PassengerSearchModel> PreparePassengerSearchModelAsync(PassengerSearchModel searchModel)
+    public virtual async Task<RecoveryFormSearchModel> PrepareRecoveryFormSearchModelAsync(RecoveryFormSearchModel searchModel)
     {
         ArgumentNullException.ThrowIfNull(searchModel);
 
@@ -152,7 +155,7 @@ public partial class PassengerModelFactory : IPassengerModelFactory
             Value = "0",
             Text = await _localizationService.GetResourceAsync("Admin.Common.Select")
         });
-        var availableYears = await _passengerService.GetAvailableRecoveryYearsAsync();
+        var availableYears = await _recoveryFormService.GetAvailableRecoveryYearsAsync();
         foreach (var year in availableYears)
         {
             searchModel.AvailableRecoveryYears.Add(new SelectListItem
@@ -190,26 +193,26 @@ public partial class PassengerModelFactory : IPassengerModelFactory
     }
 
     /// <summary>
-    /// Prepare paged passenger list model
+    /// Prepare paged recovery form list model
     /// </summary>
-    /// <param name="searchModel">Passenger search model</param>
+    /// <param name="searchModel">Recovery form search model</param>
     /// <returns>
     /// A task that represents the asynchronous operation
-    /// The task result contains the passenger list model
+    /// The task result contains the recovery form list model
     /// </returns>
-    public virtual async Task<PassengerListModel> PreparePassengerListModelAsync(PassengerSearchModel searchModel)
+    public virtual async Task<RecoveryFormListModel> PrepareRecoveryFormListModelAsync(RecoveryFormSearchModel searchModel)
     {
         ArgumentNullException.ThrowIfNull(searchModel);
 
         var searchRecoveryNo = string.IsNullOrWhiteSpace(searchModel.SearchRecoveryNo)
             ? null
-            : _passengerService.NormalizeRecoveryNo(searchModel.SearchRecoveryNo, null);
+            : _recoveryFormService.NormalizeRecoveryNo(searchModel.SearchRecoveryNo, null);
         var searchCardNo = string.IsNullOrWhiteSpace(searchModel.SearchCardNo)
             ? null
             : DigitHelper.ToEnglishDigits(searchModel.SearchCardNo.Trim());
 
-        //get passengers
-        var passengers = await _passengerService.GetAllPassengersAsync(
+        //get recovery forms
+        var recoveryForms = await _recoveryFormService.GetAllRecoveryFormsAsync(
             recoveryNo: searchRecoveryNo,
             personName: searchModel.SearchPersonName,
             cityId: searchModel.SearchCityId,
@@ -225,68 +228,84 @@ public partial class PassengerModelFactory : IPassengerModelFactory
             pageIndex: searchModel.Page - 1,
             pageSize: searchModel.PageSize);
 
-        var agencyIds = passengers.Select(passenger => passenger.AgencyId)
+        var agencyIds = recoveryForms.Select(recoveryForm => recoveryForm.AgencyId)
             .Distinct()
             .Where(id => id > 0)
             .ToArray();
-        var antiXIds = passengers.SelectMany(passenger => new int?[] { passenger.AntiX1, passenger.AntiX2 })
+        var antiXIds = recoveryForms.SelectMany(recoveryForm => new int?[] { recoveryForm.AntiX1, recoveryForm.AntiX2 })
             .Where(id => id.HasValue && id.Value > 0)
             .Select(id => id.Value)
             .Distinct()
             .ToArray();
 
+        var personIds = recoveryForms.Select(recoveryForm => recoveryForm.PersonId)
+            .Where(id => id > 0)
+            .Distinct()
+            .ToArray();
+
         var agencies = await _agencyService.GetAgenciesByIdsAsync(agencyIds);
         var antiXItems = await _antiXService.GetAntiXByIdsAsync(antiXIds);
+        var persons = await _personService.GetPersonsByIdsAsync(personIds);
         var agencyNames = agencies.ToDictionary(agency => agency.Id, agency => agency.Name);
         var antiXNames = antiXItems.ToDictionary(item => item.Id, item => item.Name);
+        var personsById = persons.ToDictionary(person => person.Id);
 
         //prepare list model
-        var model = await new PassengerListModel().PrepareToGridAsync(searchModel, passengers, () =>
+        var model = await new RecoveryFormListModel().PrepareToGridAsync(searchModel, recoveryForms, () =>
         {
-            return passengers.SelectAwait(async passenger =>
+            return recoveryForms.SelectAwait(async recoveryForm =>
             {
                 //fill in model values from the entity
-                var passengerModel = passenger.ToModel<PassengerModel>();
+                var recoveryFormModel = recoveryForm.ToModel<RecoveryFormModel>();
+
+                //fill identity values from the linked person
+                if (personsById.TryGetValue(recoveryForm.PersonId, out var person))
+                {
+                    recoveryFormModel.PersonName = person.FirstName;
+                    recoveryFormModel.CardNo = person.CardNo;
+                    recoveryFormModel.BirthYear = person.BirthYear;
+                    recoveryFormModel.MobileNumber = person.MobileNumber;
+                }
 
                 //convert dates to the user time
-                passengerModel.CreatedOnUtc = await _dateTimeHelper.ConvertToUserTimeAsync(passenger.CreatedOnUtc, DateTimeKind.Utc);
-                if (passenger.TravelStartDateUtc.HasValue)
-                    passengerModel.TravelStartDateUtc = await _dateTimeHelper.ConvertToUserTimeAsync(passenger.TravelStartDateUtc.Value, DateTimeKind.Utc);
-                if (passenger.TravelEndDateUtc.HasValue)
-                    passengerModel.TravelEndDateUtc = await _dateTimeHelper.ConvertToUserTimeAsync(passenger.TravelEndDateUtc.Value, DateTimeKind.Utc);
+                recoveryFormModel.CreatedOnUtc = await _dateTimeHelper.ConvertToUserTimeAsync(recoveryForm.CreatedOnUtc, DateTimeKind.Utc);
+                if (recoveryForm.TravelStartDateUtc.HasValue)
+                    recoveryFormModel.TravelStartDateUtc = await _dateTimeHelper.ConvertToUserTimeAsync(recoveryForm.TravelStartDateUtc.Value, DateTimeKind.Utc);
+                if (recoveryForm.TravelEndDateUtc.HasValue)
+                    recoveryFormModel.TravelEndDateUtc = await _dateTimeHelper.ConvertToUserTimeAsync(recoveryForm.TravelEndDateUtc.Value, DateTimeKind.Utc);
 
-                passengerModel.EndDateOnPersian = new PersianDateTime(passengerModel.TravelEndDateUtc)
+                recoveryFormModel.EndDateOnPersian = new PersianDateTime(recoveryFormModel.TravelEndDateUtc)
                 {
                     EnglishNumber = true
                 }.ToString("yyyy/MM/dd");
-                passengerModel.StartDateOnPersian = passengerModel.TravelStartDateUtc.HasValue
-                    ? new PersianDateTime(passengerModel.TravelStartDateUtc.Value) { EnglishNumber = true }.ToString("yyyy/MM/dd")
+                recoveryFormModel.StartDateOnPersian = recoveryFormModel.TravelStartDateUtc.HasValue
+                    ? new PersianDateTime(recoveryFormModel.TravelStartDateUtc.Value) { EnglishNumber = true }.ToString("yyyy/MM/dd")
                     : string.Empty;
 
-                if (passenger.PictureId > 0)
+                if (recoveryForm.PictureId > 0)
                 {
-                    passengerModel.PictureUrl = await _pictureService.GetPictureUrlAsync(
-                        passenger.PictureId,
+                    recoveryFormModel.PictureUrl = await _pictureService.GetPictureUrlAsync(
+                        recoveryForm.PictureId,
                         targetSize: 60,
                         showDefaultPicture: false);
-                    passengerModel.PictureFullSizeUrl = await _pictureService.GetPictureUrlAsync(
-                        passenger.PictureId,
+                    recoveryFormModel.PictureFullSizeUrl = await _pictureService.GetPictureUrlAsync(
+                        recoveryForm.PictureId,
                         targetSize: 0,
                         showDefaultPicture: false);
                 }
 
-                passengerModel.AgencyName = agencyNames.TryGetValue(passenger.AgencyId, out var agencyName)
+                recoveryFormModel.AgencyName = agencyNames.TryGetValue(recoveryForm.AgencyId, out var agencyName)
                     ? agencyName
                     : string.Empty;
-                passengerModel.AntiX1Name = antiXNames.TryGetValue(passenger.AntiX1, out var antiX1Name)
+                recoveryFormModel.AntiX1Name = antiXNames.TryGetValue(recoveryForm.AntiX1, out var antiX1Name)
                     ? antiX1Name
                     : string.Empty;
-                passengerModel.AntiX2Name = passenger.AntiX2.HasValue &&
-                                            antiXNames.TryGetValue(passenger.AntiX2.Value, out var antiX2Name)
+                recoveryFormModel.AntiX2Name = recoveryForm.AntiX2.HasValue &&
+                                            antiXNames.TryGetValue(recoveryForm.AntiX2.Value, out var antiX2Name)
                     ? antiX2Name
                     : string.Empty;
 
-                return passengerModel;
+                return recoveryFormModel;
             });
         });
 
@@ -294,32 +313,43 @@ public partial class PassengerModelFactory : IPassengerModelFactory
     }
 
     /// <summary>
-    /// Prepare passenger model
+    /// Prepare recovery form model
     /// </summary>
-    /// <param name="model">Passenger model</param>
-    /// <param name="passenger">Passenger</param>
+    /// <param name="model">Recovery form model</param>
+    /// <param name="recoveryForm">Recovery form</param>
     /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
     /// <returns>
     /// A task that represents the asynchronous operation
-    /// The task result contains the passenger model
+    /// The task result contains the recovery form model
     /// </returns>
-    public virtual async Task<PassengerModel> PreparePassengerModelAsync(PassengerModel model, Passenger passenger, bool excludeProperties = false)
+    public virtual async Task<RecoveryFormModel> PrepareRecoveryFormModelAsync(RecoveryFormModel model, RecoveryForm recoveryForm, bool excludeProperties = false)
     {
-        if (passenger != null)
+        if (recoveryForm != null)
         {
             //fill in model values from the entity
-            model ??= new PassengerModel();
+            model ??= new RecoveryFormModel();
             if (!excludeProperties)
             {
-                model = passenger.ToModel(model);
+                model = recoveryForm.ToModel(model);
                 //convert enum values
-                model.Education = (int)passenger.Education;
+                model.Education = (int)recoveryForm.Education;
+
+                //fill identity values from the linked person
+                var person = await _personService.GetPersonByIdAsync(recoveryForm.PersonId);
+                if (person != null)
+                {
+                    model.PersonName = person.FirstName;
+                    model.CardNo = person.CardNo;
+                    model.BirthYear = person.BirthYear;
+                    model.MobileNumber = person.MobileNumber;
+                }
+
                 //convert dates to the user time
-                model.CreatedOnUtc = await _dateTimeHelper.ConvertToUserTimeAsync(passenger.CreatedOnUtc, DateTimeKind.Utc);
-                if (passenger.TravelStartDateUtc.HasValue)
-                    model.TravelStartDateUtc = await _dateTimeHelper.ConvertToUserTimeAsync(passenger.TravelStartDateUtc.Value, DateTimeKind.Utc);
-                if (passenger.TravelEndDateUtc.HasValue)
-                    model.TravelEndDateUtc = await _dateTimeHelper.ConvertToUserTimeAsync(passenger.TravelEndDateUtc.Value, DateTimeKind.Utc);
+                model.CreatedOnUtc = await _dateTimeHelper.ConvertToUserTimeAsync(recoveryForm.CreatedOnUtc, DateTimeKind.Utc);
+                if (recoveryForm.TravelStartDateUtc.HasValue)
+                    model.TravelStartDateUtc = await _dateTimeHelper.ConvertToUserTimeAsync(recoveryForm.TravelStartDateUtc.Value, DateTimeKind.Utc);
+                if (recoveryForm.TravelEndDateUtc.HasValue)
+                    model.TravelEndDateUtc = await _dateTimeHelper.ConvertToUserTimeAsync(recoveryForm.TravelEndDateUtc.Value, DateTimeKind.Utc);
 
                 if (model.CityId == 0 && model.AgencyId > 0)
                 {
@@ -337,7 +367,7 @@ public partial class PassengerModelFactory : IPassengerModelFactory
             }
         }
 
-        model ??= new PassengerModel();
+        model ??= new RecoveryFormModel();
 
         if (model.CityId == 0 && model.AgencyId > 0)
         {
@@ -361,7 +391,7 @@ public partial class PassengerModelFactory : IPassengerModelFactory
             {
                 Text = await _localizationService.GetLocalizedEnumAsync(e),
                 Value = ((int)e).ToString(),
-                Selected = passenger != null && (int)e == (int)passenger.Education
+                Selected = recoveryForm != null && (int)e == (int)recoveryForm.Education
             });
         }
         model.AvailableEducationLevels = educationLevels;
@@ -450,4 +480,3 @@ public partial class PassengerModelFactory : IPassengerModelFactory
 
     #endregion
 }
-

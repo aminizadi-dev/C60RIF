@@ -1,16 +1,16 @@
-@model PassengerModel
+@model RecoveryFormModel
 
 @{
     //page title
-    ViewBag.PageTitle = T("Admin.Passengers.Passengers.AddNew").Text;
+    ViewBag.PageTitle = T("Admin.Passengers.Passengers.EditPassengerDetails").Text;
     //active menu item (system name)
     NopHtml.SetActiveMenuItemSystemName("Passengers list");
 }
 
-<form asp-controller="Passenger" asp-action="Create" method="post">
+<form asp-controller="RecoveryForm" asp-action="Edit" method="post">
     <div class="content-header clearfix">
         <h1 class="float-left">
-            @T("Admin.Passengers.Passengers.AddNew")
+            @T("Admin.Passengers.Passengers.EditPassengerDetails") - @Model.PersonName
             <small>
                 <i class="fas fa-arrow-circle-left"></i>
                 <a asp-action="List">@T("Admin.Passengers.Passengers.BackToList")</a>
@@ -25,9 +25,14 @@
                 <i class="far fa-floppy-disk"></i>
                 @T("Admin.Common.SaveContinue")
             </button>
+            <span id="passenger-delete" class="btn btn-danger">
+                <i class="far fa-trash-can"></i>
+                @T("Admin.Common.Delete")
+            </span>
             @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.PassengerDetailsButtons, additionalData = Model })
         </div>
     </div>
     @await Html.PartialAsync("_CreateOrUpdate", Model)
 </form>
 
+<nop-delete-confirmation asp-model-id="@Model.Id" asp-button-id="passenger-delete" />

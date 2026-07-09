@@ -3,7 +3,7 @@
 
 <div asp-validation-summary="All"></div>
 <input asp-for="Id" type="hidden" />
-<input asp-for="PassengerId" type="hidden" />
+<input asp-for="RecoveryFormId" type="hidden" />
 
 <style>
     .disciplinary-paper-form {
@@ -359,13 +359,13 @@
             var cardNo = $('#@Html.IdFor(m => m.CardNo)').val();
             if (!cardNo) return;
 
-            $.getJSON('@Url.Action("GetPassengerByCardNo", "DisciplinaryForm")', { cardNo: cardNo }, function (data) {
+            $.getJSON('@Url.Action("GetRecoveryFormByCardNo", "DisciplinaryForm")', { cardNo: cardNo }, function (data) {
                 if (!data.found) {
                     alert('@T("Admin.DisciplinaryForms.PassengerNotFound")');
                     return;
                 }
 
-                $('#@Html.IdFor(m => m.PassengerId)').val(data.passengerId);
+                $('#@Html.IdFor(m => m.RecoveryFormId)').val(data.recoveryFormId);
                 var changedSelectors = [];
                 setFieldIfChanged('#@Html.IdFor(m => m.PersonName)', data.personName, changedSelectors);
                 setFieldIfChanged('#@Html.IdFor(m => m.CardNo)', data.cardNo, changedSelectors);

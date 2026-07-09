@@ -35,6 +35,7 @@ public partial class ExportManager : IExportManager
     protected readonly ICustomerService _customerService;
     protected readonly IGenericAttributeService _genericAttributeService;
     protected readonly ILocalizationService _localizationService;
+    protected readonly IPersonService _personService;
     protected readonly IStateProvinceService _stateProvinceService;
 
     #endregion
@@ -52,6 +53,7 @@ public partial class ExportManager : IExportManager
         IGenericAttributeService genericAttributeService,
         ICustomerActivityService customerActivityService,
         ILocalizationService localizationService,
+        IPersonService personService,
         IStateProvinceService stateProvinceService)
     {
         _securitySettings = securitySettings;
@@ -65,6 +67,7 @@ public partial class ExportManager : IExportManager
         _genericAttributeService = genericAttributeService;
         _customerActivityService = customerActivityService;
         _localizationService = localizationService;
+        _personService = personService;
         _stateProvinceService = stateProvinceService;
     }
 
@@ -256,29 +259,33 @@ public partial class ExportManager : IExportManager
     }
 
     /// <summary>
-    /// Export passenger list to XLSX
+    /// Export recovery form list to XLSX
     /// </summary>
-    /// <param name="passengers">Passengers</param>
+    /// <param name="recoveryForms">Recovery forms</param>
     /// <returns>A task that represents the asynchronous operation</returns>
-    public virtual async Task<byte[]> ExportPassengersToXlsxAsync(IList<Passenger> passengers)
+    public virtual async Task<byte[]> ExportRecoveryFormsToXlsxAsync(IList<RecoveryForm> recoveryForms)
     {
         //pre-load related entities for name resolution
-        var agencyIds = passengers.Select(p => p.AgencyId).Where(id => id > 0).Distinct().ToArray();
-        var clinicIds = passengers.Select(p => p.ClinicId).Where(id => id.HasValue && id.Value > 0).Select(id => id.Value).Distinct().ToArray();
-        var antiXIds = passengers
+        var agencyIds = recoveryForms.Select(p => p.AgencyId).Where(id => id > 0).Distinct().ToArray();
+        var clinicIds = recoveryForms.Select(p => p.ClinicId).Where(id => id.HasValue && id.Value > 0).Select(id => id.Value).Distinct().ToArray();
+        var antiXIds = recoveryForms
             .SelectMany(p => new int?[] { p.AntiX1, p.AntiX2 })
             .Where(id => id.HasValue && id.Value > 0)
             .Select(id => id.Value)
             .Distinct()
             .ToArray();
 
+        var personIds = recoveryForms.Select(p => p.PersonId).Where(id => id > 0).Distinct().ToArray();
+
         var agencies = await _agencyService.GetAgenciesByIdsAsync(agencyIds);
         var clinics = await _clinicService.GetClinicsByIdsAsync(clinicIds);
         var antiXItems = await _antiXService.GetAntiXByIdsAsync(antiXIds);
+        var persons = await _personService.GetPersonsByIdsAsync(personIds);
 
         var agencyNames = agencies.ToDictionary(a => a.Id, a => a.Name);
         var clinicNames = clinics.ToDictionary(c => c.Id, c => c.Name);
         var antiXNames = antiXItems.ToDictionary(a => a.Id, a => a.Name);
+        var personsById = persons.ToDictionary(p => p.Id);
 
         //pre-load localized header names and cell values
         var headerRecoveryNo = await _localizationService.GetResourceAsync("Admin.Passengers.Fields.RecoveryNo");
@@ -312,41 +319,44 @@ public partial class ExportManager : IExportManager
         foreach (EducationLevel e in Enum.GetValues(typeof(EducationLevel)))
             educationNames[e] = await _localizationService.GetLocalizedEnumAsync(e);
 
-        var manager = new PropertyManager<Passenger>(new[]
+        var manager = new PropertyManager<RecoveryForm>(new[]
         {
-            new PropertyByName<Passenger>(headerRecoveryNo, (p, _) => p.RecoveryNo),
-            new PropertyByName<Passenger>(headerPersonName, (p, _) => p.PersonName),
-            new PropertyByName<Passenger>(headerGuideNameAndLegionNo, (p, _) => p.GuideNameAndLegionNo),
-            new PropertyByName<Passenger>(headerAgency, (p, _) =>
+            new PropertyByName<RecoveryForm>(headerRecoveryNo, (p, _) => p.RecoveryNo),
+            new PropertyByName<RecoveryForm>(headerPersonName, (p, _) =>
+                personsById.TryGetValue(p.PersonId, out var per) ? per.FirstName : string.Empty),
+            new PropertyByName<RecoveryForm>(headerGuideNameAndLegionNo, (p, _) => p.GuideNameAndLegionNo),
+            new PropertyByName<RecoveryForm>(headerAgency, (p, _) =>
                 agencyNames.TryGetValue(p.AgencyId, out var name) ? name : string.Empty),
-            new PropertyByName<Passenger>(headerClinic, (p, _) =>
+            new PropertyByName<RecoveryForm>(headerClinic, (p, _) =>
                 p.ClinicId.HasValue && clinicNames.TryGetValue(p.ClinicId.Value, out var name) ? name : string.Empty),
-            new PropertyByName<Passenger>(headerAntiX1, (p, _) =>
+            new PropertyByName<RecoveryForm>(headerAntiX1, (p, _) =>
                 antiXNames.TryGetValue(p.AntiX1, out var name) ? name : string.Empty),
-            new PropertyByName<Passenger>(headerAntiX2, (p, _) =>
+            new PropertyByName<RecoveryForm>(headerAntiX2, (p, _) =>
                 p.AntiX2.HasValue && antiXNames.TryGetValue(p.AntiX2.Value, out var name) ? name : string.Empty),
-            new PropertyByName<Passenger>(headerCardNo, (p, _) => p.CardNo),
-            new PropertyByName<Passenger>(headerBirthYear, (p, _) => p.BirthYear),
-            new PropertyByName<Passenger>(headerEducation, (p, _) =>
+            new PropertyByName<RecoveryForm>(headerCardNo, (p, _) =>
+                personsById.TryGetValue(p.PersonId, out var per) ? per.CardNo : string.Empty),
+            new PropertyByName<RecoveryForm>(headerBirthYear, (p, _) =>
+                personsById.TryGetValue(p.PersonId, out var per) ? per.BirthYear : null),
+            new PropertyByName<RecoveryForm>(headerEducation, (p, _) =>
                 educationNames.TryGetValue(p.Education, out var eduName) ? eduName : p.Education.ToString()),
-            new PropertyByName<Passenger>(headerIsMarried, (p, _) =>
+            new PropertyByName<RecoveryForm>(headerIsMarried, (p, _) =>
                 p.IsMarried.HasValue ? (p.IsMarried.Value ? marriedText : singleText) : unknownText),
-            new PropertyByName<Passenger>(headerIsEmployed, (p, _) =>
+            new PropertyByName<RecoveryForm>(headerIsEmployed, (p, _) =>
                 p.IsEmployed.HasValue ? (p.IsEmployed.Value ? employedText : unemployedText) : unknownText),
-            new PropertyByName<Passenger>(headerHasCompanion, (p, _) =>
+            new PropertyByName<RecoveryForm>(headerHasCompanion, (p, _) =>
                 p.HasCompanion.HasValue ? (p.HasCompanion.Value ? companionYes : companionNo) : unknownText),
-            new PropertyByName<Passenger>(headerTravelStartDate, (p, _) =>
+            new PropertyByName<RecoveryForm>(headerTravelStartDate, (p, _) =>
                 p.TravelStartDateUtc.HasValue
                     ? new PersianDateTime(p.TravelStartDateUtc.Value) { EnglishNumber = true }.ToString("yyyy/MM/dd")
                     : string.Empty),
-            new PropertyByName<Passenger>(headerTravelEndDate, (p, _) =>
+            new PropertyByName<RecoveryForm>(headerTravelEndDate, (p, _) =>
                 p.TravelEndDateUtc.HasValue
                     ? new PersianDateTime(p.TravelEndDateUtc.Value) { EnglishNumber = true }.ToString("yyyy/MM/dd")
                     : string.Empty),
-            new PropertyByName<Passenger>(headerCreatedOn, (p, _) => p.CreatedOnUtc),
+            new PropertyByName<RecoveryForm>(headerCreatedOn, (p, _) => p.CreatedOnUtc),
         }, null);
 
-        return await manager.ExportToXlsxAsync(passengers);
+        return await manager.ExportToXlsxAsync(recoveryForms);
     }
 
     #endregion

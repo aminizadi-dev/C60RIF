@@ -18,10 +18,7 @@ public partial class DisciplinaryFormBuilder : NopEntityBuilder<DisciplinaryForm
     public override void MapEntity(CreateTableExpressionBuilder table)
     {
         table
-            .WithColumn(nameof(DisciplinaryForm.PassengerId)).AsInt32().Nullable().ForeignKey<Passenger>()
-            .WithColumn(nameof(DisciplinaryForm.PersonName)).AsString(500).Nullable()
-            .WithColumn(nameof(DisciplinaryForm.CardNo)).AsString(50).Nullable()
-            .WithColumn(nameof(DisciplinaryForm.FamilyName)).AsString(500).Nullable()
+            .WithColumn(nameof(DisciplinaryForm.PersonId)).AsInt32().NotNullable().ForeignKey<Person>()
             .WithColumn(nameof(DisciplinaryForm.Age)).AsInt32().Nullable()
             .WithColumn(nameof(DisciplinaryForm.IsMarried)).AsBoolean().Nullable()
             .WithColumn(nameof(DisciplinaryForm.IsEmployed)).AsBoolean().Nullable()

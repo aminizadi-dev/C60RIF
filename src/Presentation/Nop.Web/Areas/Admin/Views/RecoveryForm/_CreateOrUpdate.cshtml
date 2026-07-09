@@ -1,4 +1,4 @@
-@model PassengerModel
+@model RecoveryFormModel
 
 <div asp-validation-summary="All"></div>
 <input asp-for="Id" type="hidden" />
@@ -342,8 +342,8 @@
     $(document).ready(function () {
         var citySelect = $("#@Html.IdFor(model => model.CityId)");
         var agencySelect = $("#@Html.IdFor(model => model.AgencyId)");
-        var agenciesUrl = "@Url.Action("GetAgenciesByCityId", "Passenger")";
-        var clinicsUrl = "@Url.Action("GetClinicsByCityId", "Passenger")";
+        var agenciesUrl = "@Url.Action("GetAgenciesByCityId", "RecoveryForm")";
+        var clinicsUrl = "@Url.Action("GetClinicsByCityId", "RecoveryForm")";
         var defaultAgencyText = "@T("Admin.Common.Select")";
         var defaultClinicText = "@T("Admin.Common.Select")";
         var clinicSelect = $("#@Html.IdFor(model => model.ClinicId)");

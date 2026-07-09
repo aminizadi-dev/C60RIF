@@ -28,7 +28,7 @@ public partial interface IDisciplinaryFormService
     /// The task result contains the disciplinary forms
     /// </returns>
     Task<IPagedList<DisciplinaryForm>> GetAllDisciplinaryFormsAsync(string personName = null,
-        string familyName = null, string cardNo = null, int passengerId = 0, string agencyName = null,
+        string familyName = null, string cardNo = null, int personId = 0, string agencyName = null,
         DateTime? createdFromUtc = null, DateTime? createdToUtc = null,
         int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false);
 
@@ -53,14 +53,14 @@ public partial interface IDisciplinaryFormService
     Task<IList<DisciplinaryForm>> GetDisciplinaryFormsByIdsAsync(int[] disciplinaryFormIds);
 
     /// <summary>
-    /// Gets a disciplinary form by passenger identifier
+    /// Gets disciplinary forms linked to a person
     /// </summary>
-    /// <param name="passengerId">Passenger identifier</param>
+    /// <param name="personId">Person identifier</param>
     /// <returns>
     /// A task that represents the asynchronous operation
-    /// The task result contains the disciplinary form
+    /// The task result contains the disciplinary forms
     /// </returns>
-    Task<DisciplinaryForm> GetDisciplinaryFormByPassengerIdAsync(int passengerId);
+    Task<IList<DisciplinaryForm>> GetDisciplinaryFormsByPersonIdAsync(int personId);
 
     /// <summary>
     /// Inserts a disciplinary form
@@ -82,14 +82,6 @@ public partial interface IDisciplinaryFormService
     /// <param name="disciplinaryForm">Disciplinary form</param>
     /// <returns>A task that represents the asynchronous operation</returns>
     Task DeleteDisciplinaryFormAsync(DisciplinaryForm disciplinaryForm);
-
-    /// <summary>
-    /// Checks whether a passenger is already linked to a disciplinary form
-    /// </summary>
-    /// <param name="passengerId">Passenger identifier</param>
-    /// <param name="exceptFormId">Exclude disciplinary form identifier</param>
-    /// <returns>A task that represents the asynchronous operation</returns>
-    Task<bool> IsPassengerLinkedAsync(int passengerId, int? exceptFormId = null);
 
     #endregion
 }

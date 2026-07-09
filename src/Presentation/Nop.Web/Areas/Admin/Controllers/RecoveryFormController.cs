@@ -18,7 +18,7 @@ using Nop.Web.Framework.Mvc.Filters;
 
 namespace Nop.Web.Areas.Admin.Controllers;
 
-public partial class PassengerController : BaseAdminController
+public partial class RecoveryFormController : BaseAdminController
 {
     #region Fields
 
@@ -28,8 +28,9 @@ public partial class PassengerController : BaseAdminController
     protected readonly IExportManager _exportManager;
     protected readonly ILocalizationService _localizationService;
     protected readonly INotificationService _notificationService;
-    protected readonly IPassengerModelFactory _passengerModelFactory;
-    protected readonly IPassengerService _passengerService;
+    protected readonly IRecoveryFormModelFactory _recoveryFormModelFactory;
+    protected readonly IRecoveryFormService _recoveryFormService;
+    protected readonly IPersonService _personService;
     protected readonly IPermissionService _permissionService;
     protected readonly IWorkContext _workContext;
 
@@ -39,15 +40,16 @@ public partial class PassengerController : BaseAdminController
 
     #region Ctor
 
-    public PassengerController(
+    public RecoveryFormController(
         IAgencyService agencyService,
         IClinicService clinicService,
         ICustomerActivityService customerActivityService,
         IExportManager exportManager,
         ILocalizationService localizationService,
         INotificationService notificationService,
-        IPassengerModelFactory passengerModelFactory,
-        IPassengerService passengerService,
+        IRecoveryFormModelFactory recoveryFormModelFactory,
+        IRecoveryFormService recoveryFormService,
+        IPersonService personService,
         IPermissionService permissionService,
         IWorkContext workContext)
     {
@@ -57,8 +59,9 @@ public partial class PassengerController : BaseAdminController
         _exportManager = exportManager;
         _localizationService = localizationService;
         _notificationService = notificationService;
-        _passengerModelFactory = passengerModelFactory;
-        _passengerService = passengerService;
+        _recoveryFormModelFactory = recoveryFormModelFactory;
+        _recoveryFormService = recoveryFormService;
+        _personService = personService;
         _permissionService = permissionService;
         _workContext = workContext;
     }
@@ -76,17 +79,17 @@ public partial class PassengerController : BaseAdminController
     public virtual async Task<IActionResult> List()
     {
         //prepare model
-        var model = await _passengerModelFactory.PreparePassengerSearchModelAsync(new PassengerSearchModel());
+        var model = await _recoveryFormModelFactory.PrepareRecoveryFormSearchModelAsync(new RecoveryFormSearchModel());
 
         return View(model);
     }
 
     [HttpPost]
     [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
-    public virtual async Task<IActionResult> PassengerList(PassengerSearchModel searchModel)
+    public virtual async Task<IActionResult> RecoveryFormList(RecoveryFormSearchModel searchModel)
     {
         //prepare model
-        var model = await _passengerModelFactory.PreparePassengerListModelAsync(searchModel);
+        var model = await _recoveryFormModelFactory.PrepareRecoveryFormListModelAsync(searchModel);
 
         return Json(model);
     }
@@ -127,7 +130,7 @@ public partial class PassengerController : BaseAdminController
     public virtual async Task<IActionResult> Create()
     {
         //prepare model
-        var model = await _passengerModelFactory.PreparePassengerModelAsync(new PassengerModel(), null);
+        var model = await _recoveryFormModelFactory.PrepareRecoveryFormModelAsync(new RecoveryFormModel(), null);
 
         return View(model);
     }
@@ -135,7 +138,7 @@ public partial class PassengerController : BaseAdminController
     [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
     [FormValueRequired("save", "save-continue")]
     [CheckPermission(StandardPermission.Passengers.PASSENGERS_CREATE_EDIT_DELETE)]
-    public virtual async Task<IActionResult> Create(PassengerModel model, bool continueEditing)
+    public virtual async Task<IActionResult> Create(RecoveryFormModel model, bool continueEditing)
     {
         if (ModelState.IsValid)
         {
@@ -144,7 +147,7 @@ public partial class PassengerController : BaseAdminController
             if (!ModelState.IsValid)
                 return await RecreateModelAsync(model);
 
-            if (await _passengerService.IsRecoveryNoExistsAsync(model.RecoveryNo))
+            if (await _recoveryFormService.IsRecoveryNoExistsAsync(model.RecoveryNo))
             {
                 ModelState.AddModelError(nameof(model.RecoveryNo),
                     await _localizationService.GetResourceAsync("Admin.Passengers.Fields.RecoveryNo.Duplicate"));
@@ -161,19 +164,32 @@ public partial class PassengerController : BaseAdminController
                 model.ClinicId = null;
 
             //fill entity from model
-            var passenger = model.ToEntity<Passenger>();
-            passenger.CreatedOnUtc = DateTime.UtcNow;
+            var recoveryForm = model.ToEntity<RecoveryForm>();
+            recoveryForm.CreatedOnUtc = DateTime.UtcNow;
             var currentCustomer = await _workContext.GetCurrentCustomerAsync();
             var isAdminUser = currentCustomer != null &&
                 await _permissionService.AuthorizeAsync(StandardPermission.Security.ACCESS_ADMIN_PANEL, currentCustomer);
 
-            if (isAdminUser)
-                passenger.CreatedByCustomerId = currentCustomer.Id;
+            //create the shared person identity, then link it to the recovery form
+            var person = new Person
+            {
+                FirstName = model.PersonName,
+                MobileNumber = model.MobileNumber,
+                CardNo = model.CardNo,
+                BirthYear = model.BirthYear,
+                CreatedOnUtc = recoveryForm.CreatedOnUtc,
+                CreatedByCustomerId = isAdminUser ? currentCustomer.Id : null
+            };
+            await _personService.InsertPersonAsync(person);
+            recoveryForm.PersonId = person.Id;
 
-            await _passengerService.InsertPassengerAsync(passenger);
+            if (isAdminUser)
+                recoveryForm.CreatedByCustomerId = currentCustomer.Id;
+
+            await _recoveryFormService.InsertRecoveryFormAsync(recoveryForm);
 
             if (!string.IsNullOrWhiteSpace(model.CardNo) &&
-                await _passengerService.IsCardNoExistsAsync(model.CardNo, passenger.Id))
+                await _personService.IsCardNoExistsAsync(model.CardNo, person.Id))
             {
                 _notificationService.WarningNotification(
                     await _localizationService.GetResourceAsync("Admin.Passengers.Fields.CardNo.DuplicateWarning"));
@@ -183,14 +199,14 @@ public partial class PassengerController : BaseAdminController
             if (isAdminUser)
             {
                 await _customerActivityService.InsertActivityAsync(currentCustomer, "AddNewPassenger",
-                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.AddNewPassenger"), passenger.Id), passenger);
+                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.AddNewPassenger"), recoveryForm.Id), recoveryForm);
             }
             _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Passengers.Passengers.Added"));
 
             if (!continueEditing)
                 return RedirectToAction("List");
 
-            return RedirectToAction("Edit", new { id = passenger.Id });
+            return RedirectToAction("Edit", new { id = recoveryForm.Id });
         }
 
         return await RecreateModelAsync(model);
@@ -199,13 +215,13 @@ public partial class PassengerController : BaseAdminController
     [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> Edit(int id)
     {
-        //try to get a passenger with the specified id
-        var passenger = await _passengerService.GetPassengerByIdAsync(id);
-        if (passenger == null)
+        //try to get a recovery form with the specified id
+        var recoveryForm = await _recoveryFormService.GetRecoveryFormByIdAsync(id);
+        if (recoveryForm == null)
             return RedirectToAction("List");
 
         //prepare model
-        var model = await _passengerModelFactory.PreparePassengerModelAsync(null, passenger);
+        var model = await _recoveryFormModelFactory.PrepareRecoveryFormModelAsync(null, recoveryForm);
 
         return View(model);
     }
@@ -213,11 +229,11 @@ public partial class PassengerController : BaseAdminController
     [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
     [FormValueRequired("save", "save-continue")]
     [CheckPermission(StandardPermission.Passengers.PASSENGERS_CREATE_EDIT_DELETE)]
-    public virtual async Task<IActionResult> Edit(PassengerModel model, bool continueEditing)
+    public virtual async Task<IActionResult> Edit(RecoveryFormModel model, bool continueEditing)
     {
-        //try to get a passenger with the specified id
-        var passenger = await _passengerService.GetPassengerByIdAsync(model.Id);
-        if (passenger == null)
+        //try to get a recovery form with the specified id
+        var recoveryForm = await _recoveryFormService.GetRecoveryFormByIdAsync(model.Id);
+        if (recoveryForm == null)
             return RedirectToAction("List");
 
         if (ModelState.IsValid)
@@ -227,9 +243,9 @@ public partial class PassengerController : BaseAdminController
                 await ApplyRecoveryNoNormalizationAsync(model);
 
                 if (!ModelState.IsValid)
-                    return await RecreateModelAsync(model, passenger);
+                    return await RecreateModelAsync(model, recoveryForm);
 
-                if (await _passengerService.IsRecoveryNoExistsAsync(model.RecoveryNo, passenger.Id))
+                if (await _recoveryFormService.IsRecoveryNoExistsAsync(model.RecoveryNo, recoveryForm.Id))
                 {
                     ModelState.AddModelError(nameof(model.RecoveryNo),
                         await _localizationService.GetResourceAsync("Admin.Passengers.Fields.RecoveryNo.Duplicate"));
@@ -238,20 +254,33 @@ public partial class PassengerController : BaseAdminController
                 await ValidateTravelDurationAsync(model);
 
                 if (!ModelState.IsValid)
-                    return await RecreateModelAsync(model, passenger);
+                    return await RecreateModelAsync(model, recoveryForm);
 
                 if (model.AntiX2.GetValueOrDefault() <= 0)
                     model.AntiX2 = null;
                 if (model.ClinicId.GetValueOrDefault() <= 0)
                     model.ClinicId = null;
 
-                //fill entity from model
-                passenger = model.ToEntity(passenger);
+                //fill entity from model (PersonId is preserved from the loaded entity)
+                var personId = recoveryForm.PersonId;
+                recoveryForm = model.ToEntity(recoveryForm);
+                recoveryForm.PersonId = personId;
 
-                await _passengerService.UpdatePassengerAsync(passenger);
+                //update the shared person identity
+                var person = await _personService.GetPersonByIdAsync(personId);
+                if (person != null)
+                {
+                    person.FirstName = model.PersonName;
+                    person.MobileNumber = model.MobileNumber;
+                    person.CardNo = model.CardNo;
+                    person.BirthYear = model.BirthYear;
+                    await _personService.UpdatePersonAsync(person);
+                }
+
+                await _recoveryFormService.UpdateRecoveryFormAsync(recoveryForm);
 
                 if (!string.IsNullOrWhiteSpace(model.CardNo) &&
-                    await _passengerService.IsCardNoExistsAsync(model.CardNo, passenger.Id))
+                    await _personService.IsCardNoExistsAsync(model.CardNo, personId))
                 {
                     _notificationService.WarningNotification(
                         await _localizationService.GetResourceAsync("Admin.Passengers.Fields.CardNo.DuplicateWarning"));
@@ -259,14 +288,14 @@ public partial class PassengerController : BaseAdminController
 
                 //activity log
                 await _customerActivityService.InsertActivityAsync("EditPassenger",
-                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.EditPassenger"), passenger.Id), passenger);
+                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.EditPassenger"), recoveryForm.Id), recoveryForm);
 
                 _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Passengers.Passengers.Updated"));
 
                 if (!continueEditing)
                     return RedirectToAction("List");
 
-                return RedirectToAction("Edit", new { id = passenger.Id });
+                return RedirectToAction("Edit", new { id = recoveryForm.Id });
             }
             catch (Exception exc)
             {
@@ -274,24 +303,24 @@ public partial class PassengerController : BaseAdminController
             }
         }
 
-        return await RecreateModelAsync(model, passenger);
+        return await RecreateModelAsync(model, recoveryForm);
     }
 
-    private async Task ApplyRecoveryNoNormalizationAsync(PassengerModel model)
+    private async Task ApplyRecoveryNoNormalizationAsync(RecoveryFormModel model)
     {
         if (!string.IsNullOrWhiteSpace(model.CardNo))
             model.CardNo = DigitHelper.ToEnglishDigits(model.CardNo.Trim());
 
-        model.RecoveryNo = _passengerService.NormalizeRecoveryNo(model.RecoveryNo, model.TravelEndDateUtc);
+        model.RecoveryNo = _recoveryFormService.NormalizeRecoveryNo(model.RecoveryNo, model.TravelEndDateUtc);
 
-        if (model.RecoveryNo?.Length > PassengerRecoveryNoHelper.MaxRecoveryNoLength)
+        if (model.RecoveryNo?.Length > RecoveryNoHelper.MaxRecoveryNoLength)
         {
             ModelState.AddModelError(nameof(model.RecoveryNo),
                 await _localizationService.GetResourceAsync("Admin.Passengers.Fields.RecoveryNo.MaxLength"));
         }
     }
 
-    private async Task ValidateTravelDurationAsync(PassengerModel model)
+    private async Task ValidateTravelDurationAsync(RecoveryFormModel model)
     {
         if (!model.TravelStartDateUtc.HasValue || !model.TravelEndDateUtc.HasValue)
             return;
@@ -304,9 +333,9 @@ public partial class PassengerController : BaseAdminController
         _notificationService.ErrorNotification(message);
     }
 
-    private async Task<IActionResult> RecreateModelAsync(PassengerModel model, Passenger passenger = null)
+    private async Task<IActionResult> RecreateModelAsync(RecoveryFormModel model, RecoveryForm recoveryForm = null)
     {
-        model = await _passengerModelFactory.PreparePassengerModelAsync(model, passenger, true);
+        model = await _recoveryFormModelFactory.PrepareRecoveryFormModelAsync(model, recoveryForm, true);
 
         //if we got this far, something failed, redisplay form
         return View(model);
@@ -316,18 +345,18 @@ public partial class PassengerController : BaseAdminController
     [CheckPermission(StandardPermission.Passengers.PASSENGERS_CREATE_EDIT_DELETE)]
     public virtual async Task<IActionResult> Delete(int id)
     {
-        //try to get a passenger with the specified id
-        var passenger = await _passengerService.GetPassengerByIdAsync(id);
-        if (passenger == null)
+        //try to get a recovery form with the specified id
+        var recoveryForm = await _recoveryFormService.GetRecoveryFormByIdAsync(id);
+        if (recoveryForm == null)
             return RedirectToAction("List");
 
         try
         {
-            await _passengerService.DeletePassengerAsync(passenger);
+            await _recoveryFormService.DeleteRecoveryFormAsync(recoveryForm);
 
             //activity log
             await _customerActivityService.InsertActivityAsync("DeletePassenger",
-                string.Format(await _localizationService.GetResourceAsync("ActivityLog.DeletePassenger"), passenger.Id), passenger);
+                string.Format(await _localizationService.GetResourceAsync("ActivityLog.DeletePassenger"), recoveryForm.Id), recoveryForm);
 
             _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Passengers.Passengers.Deleted"));
 
@@ -336,19 +365,19 @@ public partial class PassengerController : BaseAdminController
         catch (Exception exc)
         {
             _notificationService.ErrorNotification(exc.Message);
-            return RedirectToAction("Edit", new { id = passenger.Id });
+            return RedirectToAction("Edit", new { id = recoveryForm.Id });
         }
     }
 
     [HttpPost, ActionName("ExportExcel")]
     [FormValueRequired("exportexcel-all")]
     [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
-    public virtual async Task<IActionResult> ExportExcelAll(PassengerSearchModel model)
+    public virtual async Task<IActionResult> ExportExcelAll(RecoveryFormSearchModel model)
     {
-        var passengers = await _passengerService.GetAllPassengersAsync(
+        var recoveryForms = await _recoveryFormService.GetAllRecoveryFormsAsync(
             recoveryNo: string.IsNullOrWhiteSpace(model.SearchRecoveryNo)
                 ? null
-                : _passengerService.NormalizeRecoveryNo(model.SearchRecoveryNo, null),
+                : _recoveryFormService.NormalizeRecoveryNo(model.SearchRecoveryNo, null),
             personName: model.SearchPersonName,
             cityId: model.SearchCityId,
             agencyId: model.SearchAgencyId,
@@ -363,30 +392,29 @@ public partial class PassengerController : BaseAdminController
             recoveryYear: model.SearchRecoveryYear,
             recoveryMonth: model.SearchRecoveryMonth);
 
-        var bytes = await _exportManager.ExportPassengersToXlsxAsync(passengers.ToList());
+        var bytes = await _exportManager.ExportRecoveryFormsToXlsxAsync(recoveryForms.ToList());
 
-        return File(bytes, MimeTypes.TextXlsx, "passengers.xlsx");
+        return File(bytes, MimeTypes.TextXlsx, "recoveryforms.xlsx");
     }
 
     [HttpPost]
     [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> ExportExcelSelected(string selectedIds)
     {
-        var passengers = new List<Passenger>();
+        var recoveryForms = new List<RecoveryForm>();
         if (selectedIds != null)
         {
             var ids = selectedIds
                 .Split(_separator, StringSplitOptions.RemoveEmptyEntries)
                 .Select(x => Convert.ToInt32(x))
                 .ToArray();
-            passengers.AddRange(await _passengerService.GetPassengersByIdsAsync(ids));
+            recoveryForms.AddRange(await _recoveryFormService.GetRecoveryFormsByIdsAsync(ids));
         }
 
-        var bytes = await _exportManager.ExportPassengersToXlsxAsync(passengers);
+        var bytes = await _exportManager.ExportRecoveryFormsToXlsxAsync(recoveryForms);
 
-        return File(bytes, MimeTypes.TextXlsx, "passengers.xlsx");
+        return File(bytes, MimeTypes.TextXlsx, "recoveryforms.xlsx");
     }
 
     #endregion
 }
-

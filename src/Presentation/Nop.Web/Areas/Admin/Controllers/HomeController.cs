@@ -30,7 +30,8 @@ public partial class HomeController : BaseAdminController
     protected readonly IGenericAttributeService _genericAttributeService;
     protected readonly IWorkContext _workContext;
     protected readonly NopHttpClient _nopHttpClient;
-    protected readonly IPassengerService _passengerService;
+    protected readonly IRecoveryFormService _recoveryFormService;
+    protected readonly IPersonService _personService;
     protected readonly ICityService _cityService;
     protected readonly IAgencyService _agencyService;
     protected readonly IAntiXService _antiXService;
@@ -49,7 +50,8 @@ public partial class HomeController : BaseAdminController
         IGenericAttributeService genericAttributeService,
         IWorkContext workContext,
         NopHttpClient nopHttpClient,
-        IPassengerService passengerService,
+        IRecoveryFormService recoveryFormService,
+        IPersonService personService,
         ICityService cityService,
         IAgencyService agencyService,
         IAntiXService antiXService)
@@ -64,7 +66,8 @@ public partial class HomeController : BaseAdminController
         _workContext = workContext;
         _genericAttributeService = genericAttributeService;
         _nopHttpClient = nopHttpClient;
-        _passengerService = passengerService;
+        _recoveryFormService = recoveryFormService;
+        _personService = personService;
         _cityService = cityService;
         _agencyService = agencyService;
         _antiXService = antiXService;
@@ -150,7 +153,7 @@ public partial class HomeController : BaseAdminController
         var result = new List<object>();
 
         // Get all passengers with TravelEndDateUtc
-        var allPassengers = await _passengerService.GetAllPassengersAsync(
+        var allPassengers = await _recoveryFormService.GetAllRecoveryFormsAsync(
             recoveryNo: null,
             personName: null,
             cityId: 0,
@@ -170,7 +173,7 @@ public partial class HomeController : BaseAdminController
             .Where(p => p.TravelEndDateUtc.HasValue && p.TravelEndDateUtc.Value > DateTime.MinValue)
             .Select(p => new
             {
-                Passenger = p,
+                RecoveryForm = p,
                 PersianDate = new PersianDateTime(p.TravelEndDateUtc.Value)
             })
             .ToList();
@@ -253,7 +256,7 @@ public partial class HomeController : BaseAdminController
     public virtual async Task<IActionResult> LoadPassengerTreatmentYears()
     {
         // Get all passengers with TravelEndDateUtc
-        var allPassengers = await _passengerService.GetAllPassengersAsync(
+        var allPassengers = await _recoveryFormService.GetAllRecoveryFormsAsync(
             recoveryNo: null,
             personName: null,
             cityId: 0,
@@ -314,7 +317,7 @@ public partial class HomeController : BaseAdminController
 
         var agencies = await _agencyService.GetAgenciesByCityIdAsync(cityId, showHidden: true);
 
-        var passengers = await _passengerService.GetAllPassengersAsync(
+        var passengers = await _recoveryFormService.GetAllRecoveryFormsAsync(
             recoveryNo: null,
             personName: null,
             cityId: cityId,
@@ -355,7 +358,7 @@ public partial class HomeController : BaseAdminController
     [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> LoadAntiXConsumptionStatistics()
     {
-        var passengers = await _passengerService.GetAllPassengersAsync(
+        var passengers = await _recoveryFormService.GetAllRecoveryFormsAsync(
             recoveryNo: null,
             personName: null,
             cityId: 0,
@@ -416,7 +419,7 @@ public partial class HomeController : BaseAdminController
     [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> LoadPassengerMaritalStatusStatistics()
     {
-        var passengers = await _passengerService.GetAllPassengersAsync(
+        var passengers = await _recoveryFormService.GetAllRecoveryFormsAsync(
             recoveryNo: null,
             personName: null,
             cityId: 0,
@@ -452,7 +455,7 @@ public partial class HomeController : BaseAdminController
     [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> LoadPassengerEmploymentStatusStatistics()
     {
-        var passengers = await _passengerService.GetAllPassengersAsync(
+        var passengers = await _recoveryFormService.GetAllRecoveryFormsAsync(
             recoveryNo: null,
             personName: null,
             cityId: 0,
@@ -494,7 +497,7 @@ public partial class HomeController : BaseAdminController
 
         var agencies = await _agencyService.GetAgenciesByCityIdAsync(cityId, showHidden: true);
 
-        var passengers = await _passengerService.GetAllPassengersAsync(
+        var passengers = await _recoveryFormService.GetAllRecoveryFormsAsync(
             recoveryNo: null,
             personName: null,
             cityId: cityId,
@@ -556,7 +559,7 @@ public partial class HomeController : BaseAdminController
     [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> LoadPassengerAgeDistribution()
     {
-        var passengers = await _passengerService.GetAllPassengersAsync(
+        var passengers = await _recoveryFormService.GetAllRecoveryFormsAsync(
             recoveryNo: null,
             personName: null,
             cityId: 0,
@@ -574,7 +577,11 @@ public partial class HomeController : BaseAdminController
         var pc = new System.Globalization.PersianCalendar();
         var currentPersianYear = pc.GetYear(DateTime.Now);
 
-        var withAge = passengers
+        //birth year now lives on the linked person
+        var personIds = passengers.Select(p => p.PersonId).Where(id => id > 0).Distinct().ToArray();
+        var persons = await _personService.GetPersonsByIdsAsync(personIds);
+
+        var withAge = persons
             .Where(p => p.BirthYear.HasValue && p.BirthYear.Value >= 1300 && p.BirthYear.Value <= currentPersianYear)
             .Select(p => currentPersianYear - p.BirthYear.Value)
             .ToList();
@@ -598,7 +605,7 @@ public partial class HomeController : BaseAdminController
     [CheckPermission(StandardPermission.Passengers.PASSENGERS_VIEW)]
     public virtual async Task<IActionResult> LoadPassengerEducationDistribution()
     {
-        var passengers = await _passengerService.GetAllPassengersAsync(
+        var passengers = await _recoveryFormService.GetAllRecoveryFormsAsync(
             recoveryNo: null,
             personName: null,
             cityId: 0,

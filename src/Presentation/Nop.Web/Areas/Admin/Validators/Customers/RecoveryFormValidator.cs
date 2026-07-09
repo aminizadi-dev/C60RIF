@@ -6,9 +6,9 @@ using Nop.Web.Framework.Validators;
 
 namespace Nop.Web.Areas.Admin.Validators.Customers;
 
-public partial class PassengerValidator : BaseNopValidator<PassengerModel>
+public partial class RecoveryFormValidator : BaseNopValidator<RecoveryFormModel>
 {
-    public PassengerValidator(ILocalizationService localizationService)
+    public RecoveryFormValidator(ILocalizationService localizationService)
     {
         RuleFor(x => x.PersonName)
             .NotEmpty()
@@ -46,7 +46,6 @@ public partial class PassengerValidator : BaseNopValidator<PassengerModel>
             .When(x => x.BirthYear.HasValue)
             .WithMessageAwait(localizationService.GetResourceAsync("Admin.Passengers.Fields.BirthYear.Range"));
 
-        SetDatabaseValidationRules<Passenger>();
+        SetDatabaseValidationRules<RecoveryForm>();
     }
 }
-

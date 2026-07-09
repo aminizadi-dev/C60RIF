@@ -84,7 +84,7 @@ public partial class AdminMenu : IAdminMenu
                     SystemName = "Passengers",
                     Title = await _localizationService.GetResourceAsync("Admin.Passengers.Passengers"),
                     PermissionNames = new List<string> { StandardPermission.Passengers.PASSENGERS_VIEW },
-                    Url = GetMenuItemUrl("Passenger", "List"),
+                    Url = GetMenuItemUrl("RecoveryForm", "List"),
                     IconClass = "far fa-id-card"
                 },
                 new()

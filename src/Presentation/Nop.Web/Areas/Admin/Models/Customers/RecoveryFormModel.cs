@@ -7,13 +7,13 @@ using Nop.Web.Framework.Mvc.ModelBinding;
 namespace Nop.Web.Areas.Admin.Models.Customers;
 
 /// <summary>
-/// Represents a passenger model
+/// Represents a recovery form model
 /// </summary>
-public partial record PassengerModel : BaseNopEntityModel
+public partial record RecoveryFormModel : BaseNopEntityModel
 {
     #region Ctor
 
-    public PassengerModel()
+    public RecoveryFormModel()
     {
         AvailableEducationLevels = new List<SelectListItem>();
         AvailableAntiXItems = new List<SelectListItem>();
@@ -31,6 +31,9 @@ public partial record PassengerModel : BaseNopEntityModel
 
     [NopResourceDisplayName("Admin.Passengers.Fields.PersonName")]
     public string PersonName { get; set; }
+
+    [NopResourceDisplayName("Admin.Passengers.Fields.MobileNumber")]
+    public string MobileNumber { get; set; }
 
     [NopResourceDisplayName("Admin.Passengers.Fields.GuideNameAndLegionNo")]
     public string GuideNameAndLegionNo { get; set; }
@@ -107,4 +110,3 @@ public partial record PassengerModel : BaseNopEntityModel
 
     #endregion
 }
-

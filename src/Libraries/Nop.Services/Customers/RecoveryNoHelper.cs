@@ -7,7 +7,7 @@ namespace Nop.Services.Customers;
 /// <summary>
 /// Normalizes recovery numbers based on Persian travel end year rules
 /// </summary>
-public static class PassengerRecoveryNoHelper
+public static class RecoveryNoHelper
 {
     public const int RecoveryYear1405 = 1405;
     public const string Prefix1405 = "05";

@@ -336,8 +336,12 @@ public partial class AdminMapperConfiguration : Profile, IOrderedMapperProfile
             .ForMember(model => model.Location, options => options.Ignore())
             .ForMember(model => model.LastVisitedPage, options => options.Ignore());
 
-        CreateMap<Passenger, PassengerModel>()
+        CreateMap<RecoveryForm, RecoveryFormModel>()
             .ForMember(model => model.CreatedOnUtc, options => options.Ignore())
+            .ForMember(model => model.PersonName, options => options.Ignore())
+            .ForMember(model => model.CardNo, options => options.Ignore())
+            .ForMember(model => model.BirthYear, options => options.Ignore())
+            .ForMember(model => model.MobileNumber, options => options.Ignore())
             .ForMember(model => model.AvailableEducationLevels, options => options.Ignore())
             .ForMember(model => model.AvailableAntiXItems, options => options.Ignore())
             .ForMember(model => model.AvailableCities, options => options.Ignore())
@@ -345,13 +349,20 @@ public partial class AdminMapperConfiguration : Profile, IOrderedMapperProfile
             .ForMember(model => model.AvailableClinics, options => options.Ignore())
             .ForMember(model => model.Education, options => options.MapFrom(src => (int)src.Education));
 
-        CreateMap<PassengerModel, Passenger>()
+        CreateMap<RecoveryFormModel, RecoveryForm>()
             .ForMember(entity => entity.CreatedOnUtc, options => options.Ignore())
+            .ForMember(entity => entity.CreatedByCustomerId, options => options.Ignore())
+            .ForMember(entity => entity.PersonId, options => options.Ignore())
             .ForMember(entity => entity.AntiX1, options => options.MapFrom(src => src.AntiX1))
             .ForMember(entity => entity.AntiX2, options => options.MapFrom(src => src.AntiX2))
             .ForMember(entity => entity.Education, options => options.MapFrom(src => (EducationLevel)src.Education));
 
         CreateMap<DisciplinaryForm, DisciplinaryFormModel>()
+            .ForMember(model => model.RecoveryFormId, options => options.Ignore())
+            .ForMember(model => model.PersonName, options => options.Ignore())
+            .ForMember(model => model.FamilyName, options => options.Ignore())
+            .ForMember(model => model.CardNo, options => options.Ignore())
+            .ForMember(model => model.MobileNumber, options => options.Ignore())
             .ForMember(model => model.AvailableEducationLevels, options => options.Ignore())
             .ForMember(model => model.AvailableAgencies, options => options.Ignore())
             .ForMember(model => model.CreatedOnPersian, options => options.Ignore())
@@ -385,6 +396,7 @@ public partial class AdminMapperConfiguration : Profile, IOrderedMapperProfile
         CreateMap<DisciplinaryFormModel, DisciplinaryForm>()
             .ForMember(entity => entity.CreatedOnUtc, options => options.Ignore())
             .ForMember(entity => entity.CreatedByCustomerId, options => options.Ignore())
+            .ForMember(entity => entity.PersonId, options => options.Ignore())
             .ForMember(entity => entity.ReferralReasons, options => options.Ignore())
             .ForMember(entity => entity.EducationalResources, options => options.Ignore())
             .ForMember(entity => entity.ServiceRoles, options => options.Ignore())
