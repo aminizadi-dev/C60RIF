@@ -51,6 +51,7 @@ public class SchemaMigration : ForwardOnlyMigration
         Create.TableFor<ExternalAuthenticationRecord>();
         Create.TableFor<Person>();
         Create.TableFor<RecoveryForm>();
+        Create.TableFor<WiliamForm>();
         //COMMERCE TABLES REMOVED - Phase C
         //Removed: CheckoutAttribute, ReturnRequest, Product, Order, ShoppingCartItem, etc.
         Create.TableFor<Store>();
