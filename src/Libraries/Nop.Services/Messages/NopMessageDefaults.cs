@@ -32,10 +32,8 @@ public static partial class NopMessageDefaults
     /// </summary>
     public static string[] MSALScopes => ["https://outlook.office365.com/.default"];
 
-    /// <summary>
-    /// Gets the newsletter subscription type name by default
-    /// </summary>
-    public static string DefaultSubscriptionType => "Newsletter";
+    //NEWSLETTER FEATURE REMOVED
+    //Removed: DefaultSubscriptionType
 
     #region Caching defaults
 

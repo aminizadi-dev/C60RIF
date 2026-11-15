@@ -471,7 +471,9 @@ public partial class AdminMapperConfiguration : Profile, IOrderedMapperProfile
         CreateMap<ActivityLog, ActivityLogModel>()
             .ForMember(model => model.ActivityLogTypeName, options => options.Ignore())
             .ForMember(model => model.CreatedOn, options => options.Ignore())
-            .ForMember(model => model.CustomerEmail, options => options.Ignore());
+            .ForMember(model => model.CreatedOnPersian, options => options.Ignore())
+            .ForMember(model => model.CustomerEmail, options => options.Ignore())
+            .ForMember(model => model.CustomerName, options => options.Ignore());
         CreateMap<ActivityLogModel, ActivityLog>()
             .ForMember(entity => entity.ActivityLogTypeId, options => options.Ignore())
             .ForMember(entity => entity.CreatedOnUtc, options => options.Ignore())
@@ -532,20 +534,8 @@ public partial class AdminMapperConfiguration : Profile, IOrderedMapperProfile
     /// </summary>
     protected virtual void CreateMessagesMaps()
     {
-        CreateMap<Campaign, CampaignModel>()
-            .ForMember(model => model.AllowedTokens, options => options.Ignore())
-            .ForMember(model => model.AvailableCustomerRoles, options => options.Ignore())
-            .ForMember(model => model.AvailableNewsLetterSubscriptionTypes, options => options.Ignore())
-            .ForMember(model => model.AvailableEmailAccounts, options => options.Ignore())
-            .ForMember(model => model.AvailableStores, options => options.Ignore())
-            .ForMember(model => model.CreatedOn, options => options.Ignore())
-            .ForMember(model => model.DontSendBeforeDate, options => options.Ignore())
-            .ForMember(model => model.EmailAccountId, options => options.Ignore())
-            .ForMember(model => model.TestEmail, options => options.Ignore())
-            .ForMember(model => model.CopyCampaignModel, options => options.Ignore());
-        CreateMap<CampaignModel, Campaign>()
-            .ForMember(entity => entity.CreatedOnUtc, options => options.Ignore())
-            .ForMember(entity => entity.DontSendBeforeDateUtc, options => options.Ignore());
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: Campaign maps
 
         CreateMap<EmailAccount, EmailAccountModel>()
             .ForMember(model => model.IsDefaultEmailAccount, options => options.Ignore())
@@ -566,27 +556,8 @@ public partial class AdminMapperConfiguration : Profile, IOrderedMapperProfile
         CreateMap<MessageTemplateModel, MessageTemplate>()
             .ForMember(entity => entity.DelayPeriod, options => options.Ignore());
 
-        CreateMap<NewsLetterSubscription, NewsLetterSubscriptionModel>()
-            .ForMember(model => model.CreatedOn, options => options.Ignore())
-            .ForMember(model => model.SubscriptionTypeName, options => options.Ignore())
-            .ForMember(model => model.AvailableNewsLetterSubscriptionTypes, options => options.Ignore())
-            .ForMember(model => model.AvailableNewsLetterSubscriptionStores, options => options.Ignore())
-            .ForMember(model => model.AvailableNewsLetterSubscriptionLanguages, options => options.Ignore())
-            .ForMember(model => model.SelectedNewsLetterSubscriptionTypeId, options => options.Ignore())
-            .ForMember(model => model.SelectedNewsLetterSubscriptionStoreId, options => options.Ignore())
-            .ForMember(model => model.SelectedNewsLetterSubscriptionLanguageId, options => options.Ignore())
-            .ForMember(model => model.LanguageName, options => options.Ignore())
-            .ForMember(model => model.StoreName, options => options.Ignore());
-        CreateMap<NewsLetterSubscriptionModel, NewsLetterSubscription>()
-            .ForMember(entity => entity.CreatedOnUtc, options => options.Ignore())
-            .ForMember(entity => entity.TypeId, options => options.Ignore())
-            .ForMember(entity => entity.NewsLetterSubscriptionGuid, options => options.Ignore())
-            .ForMember(entity => entity.LanguageId, option => option.Ignore())
-            .ForMember(entity => entity.StoreId, options => options.Ignore());
-
-        //Newsletter subscription type
-        CreateMap<NewsLetterSubscriptionType, NewsLetterSubscriptionTypeModel>();
-        CreateMap<NewsLetterSubscriptionTypeModel, NewsLetterSubscriptionType>();
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: newsletter subscription and subscription type maps
 
         CreateMap<QueuedEmail, QueuedEmailModel>()
             .ForMember(model => model.CreatedOn, options => options.Ignore())
@@ -622,7 +593,6 @@ public partial class AdminMapperConfiguration : Profile, IOrderedMapperProfile
             .ForMember(model => model.ShowOnEmailWishlistToFriendPage_OverrideForStore, options => options.Ignore())
             .ForMember(model => model.ShowOnLoginPage_OverrideForStore, options => options.Ignore())
             .ForMember(model => model.ShowOnNewsCommentPage_OverrideForStore, options => options.Ignore())
-            .ForMember(model => model.ShowOnNewsLetterPage_OverrideForStore, options => options.Ignore())
             .ForMember(model => model.ShowOnProductReviewPage_OverrideForStore, options => options.Ignore())
             .ForMember(model => model.ShowOnRegistrationPage_OverrideForStore, options => options.Ignore())
             .ForMember(model => model.ShowOnForgotPasswordPage_OverrideForStore, options => options.Ignore())

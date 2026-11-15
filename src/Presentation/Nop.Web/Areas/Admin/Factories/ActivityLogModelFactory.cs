@@ -1,4 +1,5 @@
-﻿using Nop.Services.Customers;
+﻿using Nop.Core;
+using Nop.Services.Customers;
 using Nop.Services.Helpers;
 using Nop.Services.Logging;
 using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
@@ -122,6 +123,7 @@ public partial class ActivityLogModelFactory : IActivityLogModelFactory
             createdOnTo: endDateValue,
             activityLogTypeId: searchModel.ActivityLogTypeId,
             ipAddress: searchModel.IpAddress,
+            comment: searchModel.Comment,
             pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
         if (activityLog is null)
@@ -138,10 +140,14 @@ public partial class ActivityLogModelFactory : IActivityLogModelFactory
                 var logItemModel = logItem.ToModel<ActivityLogModel>();
                 logItemModel.ActivityLogTypeName = (await _customerActivityService.GetActivityTypeByIdAsync(logItem.ActivityLogTypeId))?.Name;
 
-                logItemModel.CustomerEmail = activityLogCustomers?.FirstOrDefault(x => x.Id == logItem.CustomerId)?.Email;
+                var customer = activityLogCustomers?.FirstOrDefault(x => x.Id == logItem.CustomerId);
+                logItemModel.CustomerEmail = customer?.Email;
+                var fullName = customer != null ? await _customerService.GetCustomerFullNameAsync(customer) : null;
+                logItemModel.CustomerName = !string.IsNullOrWhiteSpace(fullName) ? fullName : customer?.Email;
 
-                //convert dates to the user time
+                //convert dates to the user time and format as Jalali
                 logItemModel.CreatedOn = await _dateTimeHelper.ConvertToUserTimeAsync(logItem.CreatedOnUtc, DateTimeKind.Utc);
+                logItemModel.CreatedOnPersian = new PersianDateTime(logItemModel.CreatedOn) { EnglishNumber = true }.ToString("yyyy/MM/dd HH:mm:ss");
 
                 return logItemModel;
             });

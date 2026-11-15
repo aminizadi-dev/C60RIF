@@ -129,6 +129,7 @@ public partial class NopStartup : INopStartup
         services.AddScoped<IRecoveryFormService, RecoveryFormService>();
         services.AddScoped<IDisciplinaryFormService, DisciplinaryFormService>();
         services.AddScoped<Nop.Services.Reports.IPassengerPerformanceReportService, Nop.Services.Reports.PassengerPerformanceReportService>();
+        services.AddScoped<Nop.Services.Reports.IPassengerChartReportService, Nop.Services.Reports.PassengerChartReportService>();
         //COMMERCE SERVICE REMOVED - Phase C
         //Removed: services.AddScoped<ICustomerReportService, CustomerReportService>(); (commerce feature)
         services.AddScoped<IPermissionService, PermissionService>();
@@ -147,10 +148,11 @@ public partial class NopStartup : INopStartup
         services.AddScoped<IQueuedEmailService, QueuedEmailService>();
         services.AddScoped<ITopicService, TopicService>();
         services.AddScoped<IMenuService, MenuService>();
-        services.AddScoped<INewsLetterSubscriptionService, NewsLetterSubscriptionService>();
-        services.AddScoped<INewsLetterSubscriptionTypeService, NewsLetterSubscriptionTypeService>();
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: services.AddScoped<INewsLetterSubscriptionService, NewsLetterSubscriptionService>();
+        //Removed: services.AddScoped<INewsLetterSubscriptionTypeService, NewsLetterSubscriptionTypeService>();
         services.AddScoped<INotificationService, NotificationService>();
-        services.AddScoped<ICampaignService, CampaignService>();
+        //Removed: services.AddScoped<ICampaignService, CampaignService>();
         services.AddScoped<IEmailAccountService, EmailAccountService>();
         services.AddScoped<ITokenizer, Tokenizer>();
         services.AddScoped<ISmtpBuilder, SmtpBuilder>();

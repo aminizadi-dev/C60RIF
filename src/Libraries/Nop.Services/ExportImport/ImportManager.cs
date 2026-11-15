@@ -45,8 +45,9 @@ public partial class ImportManager : IImportManager
     protected readonly ILocalizedEntityService _localizedEntityService;
     protected readonly ILogger _logger;
     protected readonly IMeasureService _measureService;
-    protected readonly INewsLetterSubscriptionService _newsLetterSubscriptionService;
-    protected readonly INewsLetterSubscriptionTypeService _newsLetterSubscriptionTypeService;
+    //NEWSLETTER FEATURE REMOVED
+    //Removed: protected readonly INewsLetterSubscriptionService _newsLetterSubscriptionService;
+    //Removed: protected readonly INewsLetterSubscriptionTypeService _newsLetterSubscriptionTypeService;
     protected readonly INopFileProvider _fileProvider;
     protected readonly IPictureService _pictureService;
     protected readonly IServiceScopeFactory _serviceScopeFactory;
@@ -77,8 +78,9 @@ public partial class ImportManager : IImportManager
         ILocalizedEntityService localizedEntityService,
         ILogger logger,
         IMeasureService measureService,
-        INewsLetterSubscriptionService newsLetterSubscriptionService,
-        INewsLetterSubscriptionTypeService newsLetterSubscriptionTypeService,
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: INewsLetterSubscriptionService newsLetterSubscriptionService,
+        //Removed: INewsLetterSubscriptionTypeService newsLetterSubscriptionTypeService,
         INopFileProvider fileProvider,
         IPictureService pictureService,
         IServiceScopeFactory serviceScopeFactory,
@@ -104,8 +106,9 @@ public partial class ImportManager : IImportManager
         _localizedEntityService = localizedEntityService;
         _logger = logger;
         _measureService = measureService;
-        _newsLetterSubscriptionService = newsLetterSubscriptionService;
-        _newsLetterSubscriptionTypeService = newsLetterSubscriptionTypeService;
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: _newsLetterSubscriptionService = newsLetterSubscriptionService;
+        //Removed: _newsLetterSubscriptionTypeService = newsLetterSubscriptionTypeService;
         _pictureService = pictureService;
         _serviceScopeFactory = serviceScopeFactory;
         _stateProvinceService = stateProvinceService;

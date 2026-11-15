@@ -9,27 +9,8 @@ namespace Nop.Services.Messages;
 /// </summary>
 public static class EventPublisherExtensions
 {
-    /// <summary>
-    /// Publishes the newsletter subscribe event.
-    /// </summary>
-    /// <param name="eventPublisher">The event publisher.</param>
-    /// <param name="subscription">The newsletter subscription.</param>
-    /// <returns>A task that represents the asynchronous operation</returns>
-    public static async Task PublishNewsLetterSubscribeAsync(this IEventPublisher eventPublisher, NewsLetterSubscription subscription)
-    {
-        await eventPublisher.PublishAsync(new EmailSubscribedEvent(subscription));
-    }
-
-    /// <summary>
-    /// Publishes the newsletter unsubscribe event.
-    /// </summary>
-    /// <param name="eventPublisher">The event publisher.</param>
-    /// <param name="subscription">The newsletter subscription.</param>
-    /// <returns>A task that represents the asynchronous operation</returns>
-    public static async Task PublishNewsLetterUnsubscribeAsync(this IEventPublisher eventPublisher, NewsLetterSubscription subscription)
-    {
-        await eventPublisher.PublishAsync(new EmailUnsubscribedEvent(subscription));
-    }
+    //NEWSLETTER FEATURE REMOVED
+    //Removed: PublishNewsLetterSubscribeAsync, PublishNewsLetterUnsubscribeAsync
 
     /// <summary>
     /// Entity tokens added

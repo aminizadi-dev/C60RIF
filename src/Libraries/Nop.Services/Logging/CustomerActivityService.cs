@@ -207,19 +207,24 @@ public partial class CustomerActivityService : ICustomerActivityService
     /// <param name="entityId">Entity identifier; pass null to load all records</param>
     /// <param name="pageIndex">Page index</param>
     /// <param name="pageSize">Page size</param>
+    /// <param name="comment">Comment/message text; pass null or empty to load all records</param>
     /// <returns>
     /// A task that represents the asynchronous operation
     /// The task result contains the activity log items
     /// </returns>
     public virtual async Task<IPagedList<ActivityLog>> GetAllActivitiesAsync(DateTime? createdOnFrom = null, DateTime? createdOnTo = null,
         int? customerId = null, int? activityLogTypeId = null, string ipAddress = null, string entityName = null, int? entityId = null,
-        int pageIndex = 0, int pageSize = int.MaxValue)
+        int pageIndex = 0, int pageSize = int.MaxValue, string comment = null)
     {
         return await _activityLogRepository.GetAllPagedAsync(query =>
         {
             //filter by IP
             if (!string.IsNullOrEmpty(ipAddress))
                 query = query.Where(logItem => logItem.IpAddress.Contains(ipAddress));
+
+            //filter by comment/message
+            if (!string.IsNullOrWhiteSpace(comment))
+                query = query.Where(logItem => logItem.Comment != null && logItem.Comment.Contains(comment));
 
             //filter by creation date
             if (createdOnFrom.HasValue)

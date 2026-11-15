@@ -385,7 +385,10 @@ IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Enum
 
 IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'ActivityLog.AddNewPassenger' AND [LanguageId] = @LanguageId)
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
-    VALUES (@LanguageId, 'ActivityLog.AddNewPassenger', N'مسافر جدید با شناسه {0} افزوده شد');
+    VALUES (@LanguageId, 'ActivityLog.AddNewPassenger', N'رهجو جدید با شماره رهایی {0} و شماره کارت {1} افزوده شد');
+ELSE
+    UPDATE [LocaleStringResource] SET [ResourceValue] = N'رهجو جدید با شماره رهایی {0} و شماره کارت {1} افزوده شد'
+    WHERE [ResourceName] = 'ActivityLog.AddNewPassenger' AND [LanguageId] = @LanguageId;
 
 IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'ActivityLog.EditPassenger' AND [LanguageId] = @LanguageId)
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
@@ -394,6 +397,17 @@ IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Acti
 IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'ActivityLog.DeletePassenger' AND [LanguageId] = @LanguageId)
     INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
     VALUES (@LanguageId, 'ActivityLog.DeletePassenger', N'مسافر با شناسه {0} حذف شد');
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Customers.ActivityLog.Fields.CustomerName' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Customers.ActivityLog.Fields.CustomerName', N'نام کاربر');
+ELSE
+    UPDATE [LocaleStringResource] SET [ResourceValue] = N'نام کاربر'
+    WHERE [ResourceName] = 'Admin.Customers.ActivityLog.Fields.CustomerName' AND [LanguageId] = @LanguageId;
+
+IF NOT EXISTS (SELECT 1 FROM [LocaleStringResource] WHERE [ResourceName] = 'Admin.Customers.ActivityLog.Fields.CustomerName.Hint' AND [LanguageId] = @LanguageId)
+    INSERT INTO [LocaleStringResource] ([LanguageId], [ResourceName], [ResourceValue])
+    VALUES (@LanguageId, 'Admin.Customers.ActivityLog.Fields.CustomerName.Hint', N'نام و نام خانوادگی کاربر');
 
 -- =============================================
 -- Common Validation Messages (Persian overrides)

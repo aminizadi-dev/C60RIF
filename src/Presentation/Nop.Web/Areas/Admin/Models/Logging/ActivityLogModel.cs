@@ -21,11 +21,17 @@ public partial record ActivityLogModel : BaseNopEntityModel
     [DataType(DataType.EmailAddress)]
     public string CustomerEmail { get; set; }
 
+    [NopResourceDisplayName("Admin.Customers.ActivityLog.Fields.CustomerName")]
+    public string CustomerName { get; set; }
+
     [NopResourceDisplayName("Admin.Customers.ActivityLog.Fields.Comment")]
     public string Comment { get; set; }
 
     [NopResourceDisplayName("Admin.Customers.ActivityLog.Fields.CreatedOn")]
     public DateTime CreatedOn { get; set; }
+
+    [NopResourceDisplayName("Admin.Customers.ActivityLog.Fields.CreatedOn")]
+    public string CreatedOnPersian { get; set; }
 
     [NopResourceDisplayName("Admin.Customers.ActivityLog.Fields.IpAddress")]
     public string IpAddress { get; set; }

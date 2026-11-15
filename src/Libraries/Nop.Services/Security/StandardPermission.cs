@@ -32,6 +32,7 @@ public partial class StandardPermission
 
     public partial class Reports
     {
+        public const string REPORTS_VIEW = $"{nameof(Reports)}.ReportsView";
         public const string PASSENGER_PERFORMANCE_VIEW = $"{nameof(Reports)}.PassengerPerformanceView";
     }
 

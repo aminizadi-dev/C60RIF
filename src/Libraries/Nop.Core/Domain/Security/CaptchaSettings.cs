@@ -52,10 +52,8 @@ public partial class CaptchaSettings : ISettings
     /// </summary>
     public bool ShowOnNewsCommentPage { get; set; }
 
-    /// <summary>
-    /// A value indicating whether CAPTCHA should be displayed on the "News letter" page
-    /// </summary>
-    public bool ShowOnNewsletterPage { get; set; }        
+    //NEWSLETTER FEATURE REMOVED
+    //Removed: ShowOnNewsletterPage
 
     /// <summary>
     /// A value indicating whether CAPTCHA should be displayed on the product reviews page

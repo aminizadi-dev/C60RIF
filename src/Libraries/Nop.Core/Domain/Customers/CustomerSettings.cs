@@ -182,20 +182,8 @@ public partial class CustomerSettings : ISettings
     /// </summary>
     public CustomerNameFormat CustomerNameFormat { get; set; }
 
-    /// <summary>
-    /// Gets or sets a value indicating whether 'Newsletter' form field is enabled
-    /// </summary>
-    public bool NewsletterEnabled { get; set; }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether to hide newsletter box
-    /// </summary>
-    public bool HideNewsletterBlock { get; set; }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether newsletter block should allow to unsubscribe
-    /// </summary>
-    public bool NewsletterBlockAllowToUnsubscribe { get; set; }
+    //NEWSLETTER FEATURE REMOVED
+    //Removed: NewsletterEnabled, HideNewsletterBlock, NewsletterBlockAllowToUnsubscribe
 
     /// <summary>
     /// Gets or sets a value indicating the number of minutes for 'online customers' module

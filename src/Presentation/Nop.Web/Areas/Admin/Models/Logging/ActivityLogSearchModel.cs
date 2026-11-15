@@ -38,5 +38,8 @@ public partial record ActivityLogSearchModel : BaseSearchModel
     [NopResourceDisplayName("Admin.Customers.ActivityLog.Fields.IpAddress")]
     public string IpAddress { get; set; }
 
+    [NopResourceDisplayName("Admin.Customers.ActivityLog.Fields.Comment")]
+    public string Comment { get; set; }
+
     #endregion
 }

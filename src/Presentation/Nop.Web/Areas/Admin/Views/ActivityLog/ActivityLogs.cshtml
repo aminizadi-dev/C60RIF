@@ -78,6 +78,14 @@
                                         <nop-editor asp-for="IpAddress" />
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <nop-label asp-for="Comment" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <nop-editor asp-for="Comment" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -109,7 +117,8 @@
                             new FilterParameter(nameof(Model.CreatedOnTo)),
                             new FilterParameter(nameof(Model.CreatedOnFrom)),
                             new FilterParameter(nameof(Model.IpAddress)),
-                            new FilterParameter(nameof(Model.ActivityLogTypeId))
+                            new FilterParameter(nameof(Model.ActivityLogTypeId)),
+                            new FilterParameter(nameof(Model.Comment))
                         },
                         ColumnCollection = new List<ColumnProperty>
                         {
@@ -118,10 +127,10 @@
                                 Title = T("Admin.Customers.ActivityLog.Fields.ActivityLogType").Text,
                                 Width = "200"
                             },
-                            new ColumnProperty(nameof(ActivityLogModel.CustomerEmail))
+                            new ColumnProperty(nameof(ActivityLogModel.CustomerName))
                             {
-                                Title = T("Admin.Customers.ActivityLog.Fields.CustomerEmail").Text,
-                                Width = "100",
+                                Title = T("Admin.Customers.ActivityLog.Fields.CustomerName").Text,
+                                Width = "150",
                                 Render = new RenderLink(new DataUrl("~/Admin/Customer/Edit", nameof(ActivityLogModel.CustomerId)))
                             },
                             new ColumnProperty(nameof(ActivityLogModel.IpAddress))
@@ -133,11 +142,11 @@
                             {
                                 Title = T("Admin.Customers.ActivityLog.Fields.Comment").Text
                             },
-                            new ColumnProperty(nameof(ActivityLogModel.CreatedOn))
+                            new ColumnProperty(nameof(ActivityLogModel.CreatedOnPersian))
                             {
                                 Title = T("Admin.Customers.ActivityLog.Fields.CreatedOn").Text,
                                 Width = "200",
-                                Render = new RenderDate()
+                                ClassName = NopColumnClassDefaults.Ltr
                             },
                             new ColumnProperty(nameof(ActivityLogModel.Id))
                             {

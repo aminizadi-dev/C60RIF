@@ -105,11 +105,53 @@
             }
         }
 
+        // Mirrors MediaSettings so the browser never uploads more pixels than the server keeps.
+        const maxImageSize = @mediaSettings.MaximumImageSize;
+        const imageQuality = @mediaSettings.DefaultImageQuality / 100;
+        const resizableTypes = ['image/jpeg', 'image/pjpeg', 'image/png'];
+
+        // Camera photos are several megabytes, which is painfully slow to upload on a mobile
+        // connection, while the server downscales them to maxImageSize anyway. Any failure here
+        // falls back to the original file, so the server side behaviour stays unchanged.
+        async function downscaleBeforeUpload(file) {
+            if (!resizableTypes.includes(file.type) || typeof createImageBitmap !== 'function')
+                return file;
+
+            let bitmap;
+            try {
+                bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+            } catch {
+                return file;
+            }
+
+            try {
+                const scale = maxImageSize / Math.max(bitmap.width, bitmap.height);
+                if (scale >= 1)
+                    return file;
+
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.round(bitmap.width * scale);
+                canvas.height = Math.round(bitmap.height * scale);
+                canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+
+                const outputType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, outputType, imageQuality));
+                if (!blob || blob.size >= file.size)
+                    return file;
+
+                const extension = outputType === 'image/png' ? '.png' : '.jpg';
+                const name = file.name.replace(/\.[^.]*$/, '') + extension;
+
+                return new File([blob], name, { type: outputType, lastModified: Date.now() });
+            } catch {
+                return file;
+            } finally {
+                bitmap.close?.();
+            }
+        }
+
         const serverConfig = {
             process: (fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
-                const formData = new FormData();
-                formData.append(fieldName, file, file.name);
-
                 const request = new XMLHttpRequest();
                 request.open('POST', uploadUrl);
 
@@ -160,7 +202,11 @@
                     }
                 };
 
-                request.send(formData);
+                downscaleBeforeUpload(file).then((uploadFile) => {
+                    const formData = new FormData();
+                    formData.append(fieldName, uploadFile, uploadFile.name);
+                    request.send(formData);
+                });
             },
             remove: (source, load, error) => {
                 resetImageToDefault();
@@ -193,6 +239,29 @@
             browserInput.setAttribute('accept', 'image/*');
             browserInput.setAttribute('capture', 'environment');
         }
+
+        // Saving while a picture is still uploading stores PictureId = 0, so the record ends up
+        // without an image. Keep the submit buttons locked until every upload on this form settled.
+        const $form = $(filePondInstance.element).closest('form');
+
+        function setUploadInProgress(inProgress) {
+            if (!$form.length)
+                return;
+
+            const uploading = $form.data('uploadingPictures') || new Set();
+            if (inProgress)
+                uploading.add('@clientId');
+            else
+                uploading.delete('@clientId');
+
+            $form.data('uploadingPictures', uploading);
+            $form.find('button[type="submit"], input[type="submit"]').prop('disabled', uploading.size > 0);
+        }
+
+        filePondInstance.on('processfilestart', () => setUploadInProgress(true));
+        filePondInstance.on('processfile', () => setUploadInProgress(false));
+        filePondInstance.on('processfileabort', () => setUploadInProgress(false));
+        filePondInstance.on('processfilerevert', () => setUploadInProgress(false));
 
         $removeEl.on('click', function (e) {
             resetImageToDefault();

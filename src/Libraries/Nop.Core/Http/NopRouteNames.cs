@@ -587,10 +587,8 @@ public static partial class NopRouteNames
         /// </summary>
         public const string DELETE_PM = "DeletePM";
 
-        /// <summary>
-        /// Gets the newsletter activation route name
-        /// </summary>
-        public const string NEWSLETTER_ACTIVATION = "NewsletterActivation";
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: NEWSLETTER_ACTIVATION route name
 
         /// <summary>
         /// Gets the robots.txt (file result) route name
@@ -728,10 +726,8 @@ public static partial class NopRouteNames
         /// </summary>
         public const string SET_PRODUCT_REVIEW_HELPFULNESS = "SetProductReviewHelpfulness";
 
-        /// <summary>
-        /// Gets the subscribe newsletters route name
-        /// </summary>
-        public const string SUBSCRIBE_NEWSLETTER = "SubscribeNewsletter";
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: SUBSCRIBE_NEWSLETTER route name
 
         /// <summary>
         /// Gets the topics route name

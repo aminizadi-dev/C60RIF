@@ -66,8 +66,9 @@ public partial class CustomerModelFactory : ICustomerModelFactory
     //Removed: protected readonly IGdprService _gdprService;
     protected readonly IGenericAttributeService _genericAttributeService;
     protected readonly ILocalizationService _localizationService;
-    protected readonly INewsLetterSubscriptionService _newsLetterSubscriptionService;
-    protected readonly INewsLetterSubscriptionTypeService _newsLetterSubscriptionTypeService;
+    //NEWSLETTER FEATURE REMOVED
+    //Removed: protected readonly INewsLetterSubscriptionService _newsLetterSubscriptionService;
+    //Removed: protected readonly INewsLetterSubscriptionTypeService _newsLetterSubscriptionTypeService;
     //Removed: protected readonly IOrderService _orderService;
     protected readonly IPermissionService _permissionService;
     protected readonly IPictureService _pictureService;
@@ -114,8 +115,9 @@ public partial class CustomerModelFactory : ICustomerModelFactory
         //Removed: IGdprService gdprService,
         IGenericAttributeService genericAttributeService,
         ILocalizationService localizationService,
-        INewsLetterSubscriptionService newsLetterSubscriptionService,
-        INewsLetterSubscriptionTypeService newsLetterSubscriptionTypeService,
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: INewsLetterSubscriptionService newsLetterSubscriptionService,
+        //Removed: INewsLetterSubscriptionTypeService newsLetterSubscriptionTypeService,
         //Removed: IOrderService orderService,
         IPermissionService permissionService,
         IPictureService pictureService,
@@ -158,8 +160,9 @@ public partial class CustomerModelFactory : ICustomerModelFactory
         //Removed: _gdprService = gdprService;
         _genericAttributeService = genericAttributeService;
         _localizationService = localizationService;
-        _newsLetterSubscriptionService = newsLetterSubscriptionService;
-        _newsLetterSubscriptionTypeService = newsLetterSubscriptionTypeService;
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: _newsLetterSubscriptionService = newsLetterSubscriptionService;
+        //Removed: _newsLetterSubscriptionTypeService = newsLetterSubscriptionTypeService;
         //Removed: _orderService = orderService;
         _permissionService = permissionService;
         _pictureService = pictureService;
@@ -239,19 +242,8 @@ public partial class CustomerModelFactory : ICustomerModelFactory
             model.Phone = customer.Phone;
             model.Fax = customer.Fax;
 
-            //newsletter subscriptions
-            var currentSubscriptions = await _newsLetterSubscriptionService.GetNewsLetterSubscriptionsByEmailAsync(customer.Email, storeId: store.Id);
-            var newsLetterSubscriptionTypes = await _newsLetterSubscriptionTypeService.GetAllNewsLetterSubscriptionTypesAsync(store.Id);
-            foreach (var newsLetterSubscriptionType in newsLetterSubscriptionTypes)
-            {
-                var nsModel = new NewsLetterSubscriptionModel
-                {
-                    TypeId = newsLetterSubscriptionType.Id,
-                    Name = await _localizationService.GetLocalizedAsync(newsLetterSubscriptionType, x => x.Name),
-                    IsActive = currentSubscriptions.Any(subscription => subscription.TypeId == newsLetterSubscriptionType.Id && subscription.Active)
-                };
-                model.NewsLetterSubscriptions.Add(nsModel);
-            }
+            //NEWSLETTER FEATURE REMOVED
+            //Removed: newsletter subscriptions
 
             model.Signature = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.SignatureAttribute);
             model.Email = customer.Email;
@@ -344,7 +336,8 @@ public partial class CustomerModelFactory : ICustomerModelFactory
         model.PhoneRequired = _customerSettings.PhoneRequired;
         model.FaxEnabled = _customerSettings.FaxEnabled;
         model.FaxRequired = _customerSettings.FaxRequired;
-        model.NewsletterEnabled = _customerSettings.NewsletterEnabled;
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: model.NewsletterEnabled = _customerSettings.NewsletterEnabled;
         model.UsernamesEnabled = _customerSettings.UsernamesEnabled;
         model.AllowUsersToChangeUsernames = _customerSettings.AllowUsersToChangeUsernames;
         model.CheckUsernameAvailabilityEnabled = _customerSettings.CheckUsernameAvailabilityEnabled;
@@ -417,7 +410,8 @@ public partial class CustomerModelFactory : ICustomerModelFactory
         model.PhoneRequired = _customerSettings.PhoneRequired;
         model.FaxEnabled = _customerSettings.FaxEnabled;
         model.FaxRequired = _customerSettings.FaxRequired;
-        model.NewsletterEnabled = _customerSettings.NewsletterEnabled;
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: model.NewsletterEnabled = _customerSettings.NewsletterEnabled;
         model.AcceptPrivacyPolicyEnabled = _customerSettings.AcceptPrivacyPolicyEnabled;
         model.AcceptPrivacyPolicyPopup = _commonSettings.PopupForTermsOfServiceLinks;
         model.UsernamesEnabled = _customerSettings.UsernamesEnabled;
@@ -425,22 +419,8 @@ public partial class CustomerModelFactory : ICustomerModelFactory
         model.HoneypotEnabled = _securitySettings.HoneypotEnabled;
         model.DisplayCaptcha = _captchaSettings.Enabled && _captchaSettings.ShowOnRegistrationPage;
         model.EnteringEmailTwice = _customerSettings.EnteringEmailTwice;
-        if (setDefaultValues)
-        {
-            //newsletter subscriptions
-            var store = await _storeContext.GetCurrentStoreAsync();
-            var newsLetterSubscriptionTypes = await _newsLetterSubscriptionTypeService.GetAllNewsLetterSubscriptionTypesAsync(store.Id);
-            foreach (var newsLetterSubscriptionType in newsLetterSubscriptionTypes)
-            {
-                var nsModel = new NewsLetterSubscriptionModel
-                {
-                    TypeId = newsLetterSubscriptionType.Id,
-                    Name = await _localizationService.GetLocalizedAsync(newsLetterSubscriptionType, x => x.Name),
-                    IsActive = newsLetterSubscriptionType.TickedByDefault
-                };
-                model.NewsLetterSubscriptions.Add(nsModel);
-            }
-        }
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: newsletter subscriptions default values
 
         //countries and states
         if (_customerSettings.CountryEnabled)

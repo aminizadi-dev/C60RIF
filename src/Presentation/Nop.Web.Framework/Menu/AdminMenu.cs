@@ -97,15 +97,81 @@ public partial class AdminMenu : IAdminMenu
                 },
                 new()
                 {
-                    SystemName = "PassengerPerformanceReport",
-                    Title = await _localizationService.GetResourceAsync("Admin.Reports.PassengerPerformance"),
-                    PermissionNames = new List<string>
+                    SystemName = "Reports",
+                    Title = await _localizationService.GetResourceAsync("Admin.Reports"),
+                    IconClass = "fas fa-chart-bar",
+                    ChildNodes = new List<AdminMenuItem>
                     {
-                        StandardPermission.Passengers.PASSENGERS_VIEW,
-                        StandardPermission.Reports.PASSENGER_PERFORMANCE_VIEW
-                    },
-                    Url = GetMenuItemUrl("PassengerPerformanceReport", "Index"),
-                    IconClass = "fas fa-chart-bar"
+                        new()
+                        {
+                            SystemName = "ChartReportAge",
+                            Title = await _localizationService.GetResourceAsync("Admin.Reports.Charts.Age"),
+                            PermissionNames = new List<string> { StandardPermission.Reports.REPORTS_VIEW },
+                            Url = GetMenuItemUrl("ChartReport", "Age"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                        new()
+                        {
+                            SystemName = "ChartReportEducation",
+                            Title = await _localizationService.GetResourceAsync("Admin.Reports.Charts.Education"),
+                            PermissionNames = new List<string> { StandardPermission.Reports.REPORTS_VIEW },
+                            Url = GetMenuItemUrl("ChartReport", "Education"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                        new()
+                        {
+                            SystemName = "ChartReportLiberationByYear",
+                            Title = await _localizationService.GetResourceAsync("Admin.Reports.Charts.LiberationByYear"),
+                            PermissionNames = new List<string> { StandardPermission.Reports.REPORTS_VIEW },
+                            Url = GetMenuItemUrl("ChartReport", "LiberationByYear"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                        new()
+                        {
+                            SystemName = "ChartReportLiberationByCity",
+                            Title = await _localizationService.GetResourceAsync("Admin.Reports.Charts.LiberationByCity"),
+                            PermissionNames = new List<string> { StandardPermission.Reports.REPORTS_VIEW },
+                            Url = GetMenuItemUrl("ChartReport", "LiberationByCity"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                        new()
+                        {
+                            SystemName = "ChartReportAntiX",
+                            Title = await _localizationService.GetResourceAsync("Admin.Reports.Charts.AntiX"),
+                            PermissionNames = new List<string> { StandardPermission.Reports.REPORTS_VIEW },
+                            Url = GetMenuItemUrl("ChartReport", "AntiX"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                        new()
+                        {
+                            SystemName = "ChartReportMaritalStatus",
+                            Title = await _localizationService.GetResourceAsync("Admin.Reports.Charts.MaritalStatus"),
+                            PermissionNames = new List<string> { StandardPermission.Reports.REPORTS_VIEW },
+                            Url = GetMenuItemUrl("ChartReport", "MaritalStatus"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                        new()
+                        {
+                            SystemName = "ChartReportEmployment",
+                            Title = await _localizationService.GetResourceAsync("Admin.Reports.Charts.Employment"),
+                            PermissionNames = new List<string> { StandardPermission.Reports.REPORTS_VIEW },
+                            Url = GetMenuItemUrl("ChartReport", "Employment"),
+                            IconClass = "far fa-dot-circle"
+                        },
+                        new()
+                        {
+                            SystemName = "PassengerPerformanceReport",
+                            Title = await _localizationService.GetResourceAsync("Admin.Reports.PassengerPerformance"),
+                            PermissionNames = new List<string>
+                            {
+                                StandardPermission.Reports.REPORTS_VIEW,
+                                StandardPermission.Reports.PASSENGER_PERFORMANCE_VIEW,
+                                StandardPermission.Passengers.PASSENGERS_VIEW
+                            },
+                            Url = GetMenuItemUrl("PassengerPerformanceReport", "Index"),
+                            IconClass = "far fa-dot-circle"
+                        }
+                    }
                 },
                 //customers
                 new()

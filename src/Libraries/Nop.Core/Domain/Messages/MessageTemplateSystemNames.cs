@@ -163,19 +163,8 @@ public static partial class MessageTemplateSystemNames
 
     #endregion
 
-    #region Newsletter
-
-    /// <summary>
-    /// Represents system name of subscription activation message
-    /// </summary>
-    public const string NEWSLETTER_SUBSCRIPTION_ACTIVATION_MESSAGE = "NewsLetterSubscription.ActivationMessage";
-
-    /// <summary>
-    /// Represents system name of subscription deactivation message
-    /// </summary>
-    public const string NEWSLETTER_SUBSCRIPTION_DEACTIVATION_MESSAGE = "NewsLetterSubscription.DeactivationMessage";
-
-    #endregion
+    //NEWSLETTER FEATURE REMOVED
+    //Removed: newsletter subscription activation/deactivation message template names
 
     #region To friend
 

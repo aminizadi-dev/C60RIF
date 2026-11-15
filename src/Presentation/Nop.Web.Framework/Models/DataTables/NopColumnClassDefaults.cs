@@ -16,4 +16,9 @@ public static partial class NopColumnClassDefaults
     /// Column contains button
     /// </summary>
     public static string Button => "button-column";
+
+    /// <summary>
+    /// Force LTR direction (dates, numbers)
+    /// </summary>
+    public static string Ltr => "text-ltr";
 }

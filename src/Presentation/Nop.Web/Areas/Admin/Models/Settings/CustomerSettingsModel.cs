@@ -116,14 +116,8 @@ public partial record CustomerSettingsModel : BaseNopModel, ISettingsModel
     [NopResourceDisplayName("Admin.Configuration.Settings.CustomerUser.NotifyFailedLoginAttempt")]
     public bool NotifyFailedLoginAttempt { get; set; }
 
-    [NopResourceDisplayName("Admin.Configuration.Settings.CustomerUser.NewsletterEnabled")]
-    public bool NewsletterEnabled { get; set; }
-
-    [NopResourceDisplayName("Admin.Configuration.Settings.CustomerUser.HideNewsletterBlock")]
-    public bool HideNewsLetterBlock { get; set; }
-
-    [NopResourceDisplayName("Admin.Configuration.Settings.CustomerUser.NewsletterBlockAllowToUnsubscribe")]
-    public bool NewsLetterBlockAllowToUnsubscribe { get; set; }
+    //NEWSLETTER FEATURE REMOVED
+    //Removed: NewsletterEnabled, HideNewsLetterBlock, NewsLetterBlockAllowToUnsubscribe
 
     [NopResourceDisplayName("Admin.Configuration.Settings.CustomerUser.StoreLastVisitedPage")]
     public bool StoreLastVisitedPage { get; set; }

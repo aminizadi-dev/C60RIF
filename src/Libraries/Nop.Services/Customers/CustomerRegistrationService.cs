@@ -30,7 +30,8 @@ public partial class CustomerRegistrationService : ICustomerRegistrationService
     protected readonly IEventPublisher _eventPublisher;
     protected readonly IGenericAttributeService _genericAttributeService;
     protected readonly ILocalizationService _localizationService;
-    protected readonly INewsLetterSubscriptionService _newsLetterSubscriptionService;
+    //NEWSLETTER FEATURE REMOVED
+    //Removed: protected readonly INewsLetterSubscriptionService _newsLetterSubscriptionService;
     protected readonly INotificationService _notificationService;
     protected readonly IPermissionService _permissionService;
     protected readonly IStoreContext _storeContext;
@@ -50,7 +51,8 @@ public partial class CustomerRegistrationService : ICustomerRegistrationService
         IEventPublisher eventPublisher,
         IGenericAttributeService genericAttributeService,
         ILocalizationService localizationService,
-        INewsLetterSubscriptionService newsLetterSubscriptionService,
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: INewsLetterSubscriptionService newsLetterSubscriptionService,
         INotificationService notificationService,
         IPermissionService permissionService,
         IStoreContext storeContext,
@@ -66,7 +68,8 @@ public partial class CustomerRegistrationService : ICustomerRegistrationService
         _eventPublisher = eventPublisher;
         _genericAttributeService = genericAttributeService;
         _localizationService = localizationService;
-        _newsLetterSubscriptionService = newsLetterSubscriptionService;
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: _newsLetterSubscriptionService = newsLetterSubscriptionService;
         _notificationService = notificationService;
         _permissionService = permissionService;
         _storeContext = storeContext;

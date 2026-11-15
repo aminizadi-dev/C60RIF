@@ -12263,6 +12263,12 @@
   <LocaleResource Name="Admin.Customers.ActivityLog.Fields.CustomerEmail.Hint">
     <Value>A customer Email.</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Customers.ActivityLog.Fields.CustomerName">
+    <Value>Customer name</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Customers.ActivityLog.Fields.CustomerName.Hint">
+    <Value>The customer first and last name.</Value>
+  </LocaleResource>
   <LocaleResource Name="Admin.Customers.ActivityLog.Fields.IpAddress">
     <Value>IP address</Value>
   </LocaleResource>
@@ -13331,8 +13337,74 @@
   <LocaleResource Name="Admin.Reports.PassengerPerformance.Fields.CountUnattributed">
     <Value>Without creator</Value>
   </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.Age">
+    <Value>Average age of Congress 60 visitors</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.Education">
+    <Value>Education level of Congress 60 visitors</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.LiberationByYear">
+    <Value>Registered liberations during the year</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.LiberationByCity">
+    <Value>Registered liberations by province/city</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.AntiX">
+    <Value>AntiX consumption distribution</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.MaritalStatus">
+    <Value>Marital status</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.Employment">
+    <Value>Employment status</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.Print">
+    <Value>Print</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.Apply">
+    <Value>Show</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.DateFrom">
+    <Value>From date</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.DateTo">
+    <Value>To date</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.City">
+    <Value>City</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.Agency">
+    <Value>Region (agency)</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.Year">
+    <Value>Liberation year</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.All">
+    <Value>All</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.Total">
+    <Value>Total</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.NoData">
+    <Value>No records match this filter</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.Person">
+    <Value>people</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.Unknown">
+    <Value>Unknown</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.TravelStartHint">
+    <Value>The date range filters by travel start date.</Value>
+  </LocaleResource>
+  <LocaleResource Name="Admin.Reports.Charts.LiberationDateHint">
+    <Value>The date range filters by liberation date.</Value>
+  </LocaleResource>
+  <LocaleResource Name="Security.Permission.Reports.ReportsView">
+    <Value>Admin area. Reports. View</Value>
+  </LocaleResource>
   <LocaleResource Name="ActivityLog.AddNewPassenger">
-    <Value>New passenger added. ID = {0}</Value>
+    <Value>New passenger added. Recovery No = {0}, Card No = {1}</Value>
   </LocaleResource>
   <LocaleResource Name="ActivityLog.EditPassenger">
     <Value>Passenger edited. ID = {0}</Value>

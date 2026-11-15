@@ -162,13 +162,8 @@ public static partial class NopCommonDefaults
     /// </remarks>
     public static string NopInstallationCompletedPath => "installation-completed?version={0}&local={1}&email={2}&url={3}&language={4}&culture={5}";
 
-    /// <summary>
-    /// Gets a path to request the nopCommerce official site to subscribe to the nopCommerce newsletters
-    /// </summary>
-    /// <remarks>
-    /// {0} : subscriber email
-    /// </remarks>
-    public static string NopSubscribeNewsLettersPath => "subscribe-newsletters?&email={0}";
+    //NEWSLETTER FEATURE REMOVED
+    //Removed: NopSubscribeNewsLettersPath
 
     /// <summary>
     /// Gets a path to request the nopCommerce official site for available categories of marketplace extensions

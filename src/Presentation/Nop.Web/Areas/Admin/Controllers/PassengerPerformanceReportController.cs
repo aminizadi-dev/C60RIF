@@ -18,6 +18,7 @@ public partial class PassengerPerformanceReportController : BaseAdminController
 
     [CheckPermission(new[]
     {
+        StandardPermission.Reports.REPORTS_VIEW,
         StandardPermission.Reports.PASSENGER_PERFORMANCE_VIEW,
         StandardPermission.Passengers.PASSENGERS_VIEW
     })]
@@ -30,6 +31,7 @@ public partial class PassengerPerformanceReportController : BaseAdminController
     [HttpPost]
     [CheckPermission(new[]
     {
+        StandardPermission.Reports.REPORTS_VIEW,
         StandardPermission.Reports.PASSENGER_PERFORMANCE_VIEW,
         StandardPermission.Passengers.PASSENGERS_VIEW
     })]

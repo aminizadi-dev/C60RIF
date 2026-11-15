@@ -325,10 +325,8 @@ public partial class RouteProvider : BaseRouteProvider, IRouteProvider
             pattern: $"{lang}/checkout/completed/{{orderId:int?}}",
             defaults: new { controller = "Checkout", action = "Completed" });
 
-        //subscribe newsletters (AJAX)
-        endpointRouteBuilder.MapControllerRoute(name: NopRouteNames.Ajax.SUBSCRIBE_NEWSLETTER,
-            pattern: $"subscribenewsletter",
-            defaults: new { controller = "Newsletter", action = "SubscribeNewsletter" });
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: subscribe newsletters (AJAX) route
 
         //email wishlist
         endpointRouteBuilder.MapControllerRoute(name: NopRouteNames.Standard.EMAIL_WISHLIST,
@@ -757,10 +755,8 @@ public partial class RouteProvider : BaseRouteProvider, IRouteProvider
             defaults: new { controller = "PrivateMessages", action = "DeletePM" });
         */
 
-        //activate newsletters
-        endpointRouteBuilder.MapControllerRoute(name: NopRouteNames.Standard.NEWSLETTER_ACTIVATION,
-            pattern: $"{lang}/newsletter/subscriptionactivation/{{token:guid}}/{{active}}",
-            defaults: new { controller = "Newsletter", action = "SubscriptionActivation" });
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: activate newsletters route
 
         //robots.txt (file result)
         endpointRouteBuilder.MapControllerRoute(name: NopRouteNames.Standard.ROBOTS_TXT,

@@ -45,9 +45,8 @@ public partial record CaptchaSettingsModel : BaseNopModel, ISettingsModel
     public bool ShowOnNewsCommentPage { get; set; }
     public bool ShowOnNewsCommentPage_OverrideForStore { get; set; }
 
-    [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.CaptchaShowOnNewsletterPage")]
-    public bool ShowOnNewsLetterPage { get; set; }
-    public bool ShowOnNewsLetterPage_OverrideForStore { get; set; }
+    //NEWSLETTER FEATURE REMOVED
+    //Removed: ShowOnNewsLetterPage, ShowOnNewsLetterPage_OverrideForStore
 
     [NopResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.CaptchaShowOnProductReviewPage")]
     public bool ShowOnProductReviewPage { get; set; }

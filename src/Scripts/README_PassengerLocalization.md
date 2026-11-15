@@ -107,7 +107,7 @@ DECLARE @LanguageId INT = 2; -- شناسه زبان فارسی خود را ای�
 - `Enums.EducationLevel.Doctorate` - دکترا
 
 ### Activity Log
-- `ActivityLog.AddNewPassenger` - مسافر جدید با شناسه {0} افزوده شد
+- `ActivityLog.AddNewPassenger` - رهجو جدید با شماره رهایی {0} و شماره کارت {1} افزوده شد
 - `ActivityLog.EditPassenger` - مسافر با شناسه {0} ویرایش شد
 - `ActivityLog.DeletePassenger` - مسافر با شناسه {0} حذف شد
 

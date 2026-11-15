@@ -51,10 +51,8 @@ public class Indexes : ForwardOnlyMigration
             .WithOptions().NonClustered();
 
 
-        Create.Index("IX_NewsletterSubscription_Email_StoreId").OnTable(nameof(NewsLetterSubscription))
-            .OnColumn(nameof(NewsLetterSubscription.Email)).Ascending()
-            .OnColumn(nameof(NewsLetterSubscription.StoreId)).Ascending()
-            .WithOptions().NonClustered();
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: IX_NewsletterSubscription_Email_StoreId
 
         Create.Index("IX_Log_CreatedOnUtc").OnTable(nameof(Log))
             .OnColumn(nameof(Log.CreatedOnUtc)).Descending()

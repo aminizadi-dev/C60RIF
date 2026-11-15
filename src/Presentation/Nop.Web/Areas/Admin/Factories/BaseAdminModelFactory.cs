@@ -30,7 +30,8 @@ public partial class BaseAdminModelFactory : IBaseAdminModelFactory
     protected readonly IEmailAccountService _emailAccountService;
     protected readonly ILanguageService _languageService;
     protected readonly ILocalizationService _localizationService;
-    protected readonly INewsLetterSubscriptionTypeService _newsLetterSubscriptionTypeService;
+    //NEWSLETTER FEATURE REMOVED
+    //Removed: protected readonly INewsLetterSubscriptionTypeService _newsLetterSubscriptionTypeService;
     protected readonly IStateProvinceService _stateProvinceService;
     protected readonly IStaticCacheManager _staticCacheManager;
     protected readonly IPluginService _pluginService;
@@ -49,7 +50,8 @@ public partial class BaseAdminModelFactory : IBaseAdminModelFactory
         IEmailAccountService emailAccountService,
         ILanguageService languageService,
         ILocalizationService localizationService,
-        INewsLetterSubscriptionTypeService newsLetterSubscriptionTypeService,
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: INewsLetterSubscriptionTypeService newsLetterSubscriptionTypeService,
         IStateProvinceService stateProvinceService,
         IStaticCacheManager staticCacheManager,
         IPluginService pluginService,
@@ -64,7 +66,8 @@ public partial class BaseAdminModelFactory : IBaseAdminModelFactory
         _emailAccountService = emailAccountService;
         _languageService = languageService;
         _localizationService = localizationService;
-        _newsLetterSubscriptionTypeService = newsLetterSubscriptionTypeService;
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: _newsLetterSubscriptionTypeService = newsLetterSubscriptionTypeService;
         _stateProvinceService = stateProvinceService;
         _staticCacheManager = staticCacheManager;
         _pluginService = pluginService;
@@ -296,27 +299,8 @@ public partial class BaseAdminModelFactory : IBaseAdminModelFactory
         await PrepareDefaultItemAsync(items, withSpecialDefaultItem, defaultItemText);
     }
 
-    /// <summary>
-    /// Prepare available newsletter subscription types
-    /// </summary>
-    /// <param name="items">Newsletter subscription type items</param>
-    /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
-    /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-    /// <returns>A task that represents the asynchronous operation</returns>
-    public virtual async Task PrepareSubscriptionTypesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null)
-    {
-        ArgumentNullException.ThrowIfNull(items);
-
-        //prepare available newsletter subscription types
-        var availableSubscriptionTypes = await _newsLetterSubscriptionTypeService.GetAllNewsLetterSubscriptionTypesAsync();
-        foreach (var subscriptionType in availableSubscriptionTypes)
-        {
-            items.Add(new SelectListItem { Value = subscriptionType.Id.ToString(), Text = subscriptionType.Name });
-        }
-
-        //insert special item for the default value
-        await PrepareDefaultItemAsync(items, withSpecialDefaultItem, defaultItemText);
-    }
+    //NEWSLETTER FEATURE REMOVED
+    //Removed: PrepareSubscriptionTypesAsync
 
     /// <summary>
     /// Prepare available email accounts

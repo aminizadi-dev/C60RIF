@@ -199,7 +199,7 @@ public partial class RecoveryFormController : BaseAdminController
             if (isAdminUser)
             {
                 await _customerActivityService.InsertActivityAsync(currentCustomer, "AddNewPassenger",
-                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.AddNewPassenger"), recoveryForm.Id), recoveryForm);
+                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.AddNewPassenger"), recoveryForm.RecoveryNo, person.CardNo), recoveryForm);
             }
             _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Passengers.Passengers.Added"));
 

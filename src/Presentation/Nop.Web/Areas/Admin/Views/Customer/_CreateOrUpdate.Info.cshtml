@@ -223,15 +223,8 @@
     }
     @if (Model.Id > 0)
     {
-        <div class="form-group row">
-            <div class="col-md-3">
-                <nop-label asp-for="IsTaxExempt" />
-            </div>
-            <div class="col-md-9">
-                <nop-editor asp-for="IsTaxExempt" />
-                <span asp-validation-for="IsTaxExempt"></span>
-            </div>
-        </div>
+        @* Hidden to preserve the value without showing the field in the UI *@
+        <input asp-for="IsTaxExempt" type="hidden" />
     }
     @if (Model.AllowCustomersToSetTimeZone)
     {
@@ -364,15 +357,8 @@
         </div>
     </div>
         }
-    <div class="form-group row">
-        <div class="col-md-3">
-            <nop-label asp-for="AdminComment" />
-        </div>
-        <div class="col-md-9">
-            <nop-textarea asp-for="AdminComment" />
-            <span asp-validation-for="AdminComment"></span>
-        </div>
-    </div>
+    @* Hidden to preserve the value without showing the field in the UI *@
+    <input asp-for="AdminComment" type="hidden" />
     @if (Model.DisplayRegisteredInStore)
     {
         <div class="form-group row">

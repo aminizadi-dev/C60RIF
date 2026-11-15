@@ -1,0 +1,493 @@
+@model ChartReportModel
+@{
+    ViewBag.PageTitle = Model.Title;
+    NopHtml.SetActiveMenuItemSystemName(Model.SystemName);
+    var hasFilters = Model.ShowCity || Model.ShowAgency || Model.ShowDateRange || Model.ShowYear;
+}
+
+<style>
+    .persian-date-hint {
+        display: none;
+    }
+
+    .chart-report-canvas-wrap {
+        height: 480px;
+        position: relative;
+    }
+
+    .chart-report-print-image {
+        display: none;
+        width: 100%;
+        height: auto;
+        background: #fff;
+    }
+
+    .chart-report-total {
+        margin-top: 12px;
+        font-size: 16px;
+    }
+
+    .chart-report-caption {
+        margin-bottom: 8px;
+    }
+
+    @@page {
+        size: A4 landscape;
+        margin: 10mm;
+    }
+
+    @@media print {
+        .no-print,
+        .main-header,
+        .main-sidebar,
+        .main-footer,
+        .control-sidebar {
+            display: none !important;
+        }
+
+        .content-wrapper {
+            margin: 0 !important;
+            background: #fff !important;
+        }
+
+        .content {
+            padding: 0 !important;
+        }
+
+        .chart-report-card {
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .chart-report-canvas-wrap {
+            display: none !important;
+        }
+
+        .chart-report-print-image {
+            display: block !important;
+            width: 100% !important;
+            height: auto !important;
+        }
+    }
+</style>
+
+<div class="content-header clearfix no-print">
+    <h1 class="float-left">
+        @Model.Title
+    </h1>
+    <div class="float-right">
+        <button type="button" id="chart-report-print" class="btn btn-primary">
+            <i class="fas fa-print"></i>
+            @T("Admin.Reports.Charts.Print")
+        </button>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div id="chart-report"
+             data-url="@Model.DataUrl"
+             data-years-url="@Model.YearsUrl"
+             data-agencies-url="@Model.AgenciesUrl"
+             data-show-year="@Model.ShowYear.ToString().ToLowerInvariant()"
+             data-show-city="@Model.ShowCity.ToString().ToLowerInvariant()"
+             data-person="@Model.PersonText"
+             data-no-data="@Model.NoDataText"
+             data-all="@Model.AllText">
+            @if (hasFilters)
+            {
+                <div class="card card-default card-search no-print">
+                    <div class="card-body">
+                        <div class="row">
+                            @if (Model.ShowYear)
+                            {
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <label class="col-form-label" for="chart-report-year">@T("Admin.Reports.Charts.Year")</label>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <select id="chart-report-year" class="form-control"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (Model.ShowCity)
+                            {
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <nop-label asp-for="CityId" />
+                                        </div>
+                                        <div class="col-md-8">
+                                            <nop-select asp-for="CityId" asp-items="Model.AvailableCities" />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (Model.ShowAgency)
+                            {
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <nop-label asp-for="AgencyId" />
+                                        </div>
+                                        <div class="col-md-8">
+                                            <nop-select asp-for="AgencyId" asp-items="Model.AvailableAgencies" />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        @if (Model.ShowDateRange)
+                        {
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <nop-label asp-for="DateFrom" />
+                                        </div>
+                                        <div class="col-md-8">
+                                            <nop-editor asp-for="DateFrom" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <nop-label asp-for="DateTo" />
+                                        </div>
+                                        <div class="col-md-8">
+                                            <nop-editor asp-for="DateTo" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.DateHint))
+                            {
+                                <p class="text-muted">@Model.DateHint</p>
+                            }
+                        }
+                        <div class="row">
+                            <div class="text-center col-12">
+                                <button type="button" id="chart-report-apply" class="btn btn-primary btn-search">
+                                    <i class="fas fa-magnifying-glass"></i>
+                                    @T("Admin.Reports.Charts.Apply")
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="card card-primary card-outline chart-report-card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">
+                        <i class="fas fa-chart-bar"></i>
+                        @Model.Title
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <p id="chart-report-caption" class="chart-report-caption text-muted"></p>
+                    <div class="chart chart-report-canvas-wrap">
+                        <canvas id="chart-report-canvas"></canvas>
+                    </div>
+                    <img id="chart-report-print-image" class="chart-report-print-image" alt="@Model.Title" />
+                    <p id="chart-report-empty" class="text-muted" style="display:none;">@Model.NoDataText</p>
+                    <p class="chart-report-total">
+                        <strong>@Model.TotalText:</strong>
+                        <span id="chart-report-total">0</span>
+                        @Model.PersonText
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="~/lib_npm/chart.js/chart.umd.min.js"></script>
+<script>
+    $(function () {
+        var root = document.getElementById('chart-report');
+        var dataUrl = root.getAttribute('data-url');
+        var yearsUrl = root.getAttribute('data-years-url');
+        var agenciesUrl = root.getAttribute('data-agencies-url');
+        var showYear = root.getAttribute('data-show-year') === 'true';
+        var showCity = root.getAttribute('data-show-city') === 'true';
+        var personText = root.getAttribute('data-person') || '';
+        var chart;
+
+        var palette = [
+            'rgba(255, 99, 132, 0.8)',
+            'rgba(54, 162, 235, 0.8)',
+            'rgba(255, 206, 86, 0.8)',
+            'rgba(75, 192, 192, 0.8)',
+            'rgba(153, 102, 255, 0.8)',
+            'rgba(255, 159, 64, 0.8)',
+            'rgba(199, 199, 199, 0.8)',
+            'rgba(83, 102, 255, 0.8)',
+            'rgba(255, 99, 255, 0.8)',
+            'rgba(99, 255, 132, 0.8)',
+            'rgba(255, 140, 90, 0.8)',
+            'rgba(70, 130, 180, 0.8)'
+        ];
+
+        var dataLabelsPlugin = {
+            id: 'chartReportDataLabels',
+            afterDatasetsDraw: function (chartInstance) {
+                var ctx = chartInstance.ctx;
+                var total = 0;
+                chartInstance.data.datasets[0].data.forEach(function (value) { total += (value || 0); });
+                chartInstance.data.datasets.forEach(function (dataset, datasetIndex) {
+                    var meta = chartInstance.getDatasetMeta(datasetIndex);
+                    if (meta.hidden) return;
+                    meta.data.forEach(function (bar, index) {
+                        var value = dataset.data[index];
+                        if (!value) return;
+                        var percent = total > 0 ? Math.round(value / total * 100) : 0;
+                        ctx.save();
+                        ctx.fillStyle = '#333';
+                        ctx.font = '12px Tahoma, Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        ctx.fillText(value + ' (' + percent + '%)', bar.x, bar.y - 4);
+                        ctx.restore();
+                    });
+                });
+            }
+        };
+
+        function selectedText(selector) {
+            var element = document.querySelector(selector);
+            if (!element || element.selectedIndex < 0)
+                return '';
+            return element.options[element.selectedIndex].text;
+        }
+
+        function filters() {
+            return {
+                cityId: $('#CityId').val() || 0,
+                agencyId: $('#AgencyId').val() || 0,
+                year: $('#chart-report-year').val() || 0,
+                dateFrom: $('#DateFrom').val() || '',
+                dateTo: $('#DateTo').val() || ''
+            };
+        }
+
+        function updateCaption() {
+            var parts = [];
+            if (showYear && $('#chart-report-year').val())
+                parts.push(selectedText('#chart-report-year'));
+            if ($('#CityId').length)
+                parts.push(selectedText('#CityId'));
+            if ($('#AgencyId').length)
+                parts.push(selectedText('#AgencyId'));
+            if ($('#DateFrom').val())
+                parts.push($('#DateFrom').val());
+            if ($('#DateTo').val())
+                parts.push($('#DateTo').val());
+            $('#chart-report-caption').text(parts.filter(Boolean).join(' | '));
+        }
+
+        function renderChart(data) {
+            var labels = [];
+            var values = [];
+            var total = 0;
+            if (data && data.length) {
+                for (var i = 0; i < data.length; i++) {
+                    labels.push(data[i].label);
+                    var count = parseInt(data[i].count, 10) || 0;
+                    values.push(count);
+                    total += count;
+                }
+            }
+
+            $('#chart-report-total').text(total);
+            $('#chart-report-empty').toggle(total === 0);
+            updateCaption();
+
+            var colors = labels.map(function (_, index) { return palette[index % palette.length]; });
+            var borders = colors.map(function (color) { return color.replace('0.8', '1'); });
+
+            if (!chart) {
+                chart = new Chart(document.getElementById('chart-report-canvas').getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: colors,
+                            borderColor: borders,
+                            borderWidth: 1
+                        }]
+                    },
+                    plugins: [dataLabelsPlugin],
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: false,
+                        layout: { padding: { top: 28 } },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return context.parsed.y + ' ' + personText;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { maxRotation: 45, minRotation: 0, autoSkip: false }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                ticks: { precision: 0 }
+                            }
+                        }
+                    }
+                });
+            } else {
+                chart.data.labels = labels;
+                chart.data.datasets[0].data = values;
+                chart.data.datasets[0].backgroundColor = colors;
+                chart.data.datasets[0].borderColor = borders;
+                chart.resize();
+                chart.update();
+            }
+        }
+
+        function loadChart() {
+            $.ajax({
+                cache: false,
+                type: 'GET',
+                url: dataUrl,
+                data: filters(),
+                success: renderChart
+            });
+        }
+
+        function loadYears(thenLoadChart) {
+            if (!showYear || !yearsUrl) {
+                if (thenLoadChart)
+                    loadChart();
+                return;
+            }
+
+            var current = $('#chart-report-year').val();
+            $.ajax({
+                cache: false,
+                type: 'GET',
+                url: yearsUrl,
+                data: {
+                    cityId: $('#CityId').val() || 0,
+                    agencyId: $('#AgencyId').val() || 0
+                },
+                success: function (data) {
+                    var select = $('#chart-report-year');
+                    select.empty();
+                    var selected = current;
+                    if (data && data.length) {
+                        for (var i = 0; i < data.length; i++) {
+                            var option = $('<option></option>').attr('value', data[i].year).text(data[i].year);
+                            if (!selected && data[i].selected)
+                                selected = data[i].year;
+                            select.append(option);
+                        }
+                    }
+                    if (selected && select.find('option[value="' + selected + '"]').length)
+                        select.val(selected);
+                    if (thenLoadChart)
+                        loadChart();
+                }
+            });
+        }
+
+        function loadAgencies(cityId) {
+            var agency = $('#AgencyId');
+            if (!agency.length)
+                return;
+
+            var allText = root.getAttribute('data-all') || '';
+            agency.empty();
+            agency.append($('<option></option>').attr('value', '0').text(allText));
+            if (!cityId || cityId === '0') {
+                agency.val('0').trigger('change.select2');
+                return;
+            }
+
+            $.getJSON(agenciesUrl, { cityId: cityId }, function (data) {
+                if (data && data.length) {
+                    for (var i = 0; i < data.length; i++)
+                        agency.append($('<option></option>').attr('value', data[i].id).text(data[i].name));
+                }
+                agency.val('0').trigger('change.select2');
+            });
+        }
+
+        function snapshotChart() {
+            var source = document.getElementById('chart-report-canvas');
+            var image = document.getElementById('chart-report-print-image');
+            if (!source || !image || !chart)
+                return null;
+
+            chart.resize();
+            chart.update('none');
+
+            var exportCanvas = document.createElement('canvas');
+            exportCanvas.width = source.width;
+            exportCanvas.height = source.height;
+            var ctx = exportCanvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+            ctx.drawImage(source, 0, 0);
+            return exportCanvas.toDataURL('image/png');
+        }
+
+        function restoreAfterPrint() {
+            $('.chart-report-canvas-wrap').css('display', '');
+            $('#chart-report-print-image').css('display', 'none');
+        }
+
+        $('#CityId').on('change', function () {
+            loadAgencies($(this).val());
+        });
+
+        $('#chart-report-year').on('change', function () {
+            loadChart();
+        });
+
+        $('#chart-report-apply').on('click', function () {
+            loadYears(true);
+        });
+
+        $('#chart-report-print').on('click', function () {
+            var url = snapshotChart();
+            var image = document.getElementById('chart-report-print-image');
+            if (!url || !image)
+                return;
+
+            var opened = false;
+            var openPrint = function () {
+                if (opened)
+                    return;
+                opened = true;
+                $('.chart-report-canvas-wrap').css('display', 'none');
+                image.style.display = 'block';
+                image.style.width = '100%';
+                setTimeout(function () { window.print(); }, 50);
+            };
+
+            image.onload = openPrint;
+            image.src = url;
+            if (image.complete && image.naturalWidth > 0)
+                openPrint();
+        });
+
+        window.addEventListener('afterprint', restoreAfterPrint);
+
+        loadYears(true);
+    });
+</script>

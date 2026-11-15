@@ -33,7 +33,8 @@ public partial record InstallModel : INopConnectionStringInfo
     public bool ConnectionStringRaw { get; set; }
 
     public bool InstallRegionalResources { get; set; }
-    public bool SubscribeNewsletters { get; set; }
+    //NEWSLETTER FEATURE REMOVED
+    //Removed: public bool SubscribeNewsletters { get; set; }
 
     public string DatabaseName { get; set; }
     public string ServerName { get; set; }

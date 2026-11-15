@@ -49,6 +49,7 @@ public partial class DefaultPermissionConfigManager : IPermissionConfigManager
 
         #region Reports
 
+        new ("Admin area. Reports. View", StandardPermission.Reports.REPORTS_VIEW, nameof(StandardPermission.Reports), NopCustomerDefaults.AdministratorsRoleName),
         new ("Admin area. Reports. Passenger performance", StandardPermission.Reports.PASSENGER_PERFORMANCE_VIEW, nameof(StandardPermission.Reports), NopCustomerDefaults.AdministratorsRoleName, NopCustomerDefaults.ForumModeratorsRoleName),
 
         #endregion

@@ -40,10 +40,8 @@ public static partial class TokenGroupNames
     /// </summary>
     public static string RecurringPaymentTokens => "Recurring payment tokens";
 
-    /// <summary>
-    /// Represents tokens with information about the newsletter subscription
-    /// </summary>
-    public static string SubscriptionTokens => "Newsletter subscription tokens";
+    //NEWSLETTER FEATURE REMOVED
+    //Removed: SubscriptionTokens
 
     /// <summary>
     /// Represents tokens with information about the product

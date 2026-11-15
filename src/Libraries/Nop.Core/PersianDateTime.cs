@@ -581,12 +581,17 @@ namespace Nop.Core
 
 		public static bool operator ==(PersianDateTime persianDateTime1, PersianDateTime persianDateTime2)
 		{
-			return persianDateTime1 != null && persianDateTime1.Equals(persianDateTime2);
+			if (ReferenceEquals(persianDateTime1, persianDateTime2))
+				return true;
+			if (ReferenceEquals(persianDateTime1, null) || ReferenceEquals(persianDateTime2, null))
+				return false;
+
+			return persianDateTime1.Equals(persianDateTime2);
 		}
 
 		public static bool operator !=(PersianDateTime persianDateTime1, PersianDateTime persianDateTime2)
 		{
-			return persianDateTime1 != null && !persianDateTime1.Equals(persianDateTime2);
+			return !(persianDateTime1 == persianDateTime2);
 		}
 
 		public static bool operator >(PersianDateTime persianDateTime1, PersianDateTime persianDateTime2)

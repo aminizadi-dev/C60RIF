@@ -71,7 +71,9 @@ public partial class AppStartedConsumer : IConsumer<AppStartedEvent>
         //insert new ACL permission if exists
         await _permissionService.InsertPermissionsAsync();
 
-        await _permissionService.EnsurePermissionRecordsAsync(StandardPermission.Reports.PASSENGER_PERFORMANCE_VIEW);
+        await _permissionService.EnsurePermissionRecordsAsync(
+            StandardPermission.Reports.REPORTS_VIEW,
+            StandardPermission.Reports.PASSENGER_PERFORMANCE_VIEW);
 
         await _permissionService.EnsureCustomerRolePermissionMappingsByRoleIdAsync(
             NopCustomerDefaults.PassengerPerformanceReportRoleId,

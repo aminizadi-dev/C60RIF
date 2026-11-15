@@ -67,12 +67,11 @@ public class SchemaMigration : ForwardOnlyMigration
         Create.TableFor<ActivityLogType>();
         Create.TableFor<ActivityLog>();
         Create.TableFor<Log>();
-        Create.TableFor<Campaign>();
         Create.TableFor<EmailAccount>();
         Create.TableFor<MessageTemplate>();
-        Create.TableFor<NewsLetterSubscriptionType>();
-        Create.TableFor<NewsLetterSubscription>();
         Create.TableFor<QueuedEmail>();
+        //NEWSLETTER FEATURE REMOVED
+        //Removed: Campaign, NewsLetterSubscriptionType, NewsLetterSubscription
         //COMMERCE TABLES REMOVED - Phase C
         //Removed: NewsItem, NewsComment, Poll, PollAnswer, PollVotingRecord
         Create.TableFor<AclRecord>();
